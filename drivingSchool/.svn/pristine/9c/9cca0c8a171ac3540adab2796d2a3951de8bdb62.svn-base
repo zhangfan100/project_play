@@ -1,0 +1,300 @@
+#instrctor_header{
+	height:77px;
+	/* overflow:visible; */
+	background-color:#0e4c92;
+}
+
+#instrctor_profile_ico{
+	background-image:url(../../img/instrctor/instrctor_profile.png);
+}
+#training_record_ico{
+	background-image:url(../../img/instrctor/training_record.png);
+}
+#comment_statistic_ico{
+	background-image:url(../../img/instrctor/comment_statistic.png);
+}
+
+#my_students_ico{
+	background-image:url(../../img/instrctor/my_students.png);
+}
+
+/* 基本资料 */
+#instrctor_profile_basic_form{
+	margin:10px 0 0 40px;
+}
+#instrctor_profile_basic_formc input{
+	width:114px;
+	border-radius:5px;
+	margin-right:18px;
+	/* margin-bottom:30px; */
+}
+
+#instrctor_profile_basic_form span{
+	margin-right:5px;
+}
+
+#instrctor_profile_basic_form button{
+	width:105px;
+	height:40px;
+	border-radius:4px;
+	background-color:#DBE1F0;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+	color:#25407D;
+	font-weight:bold;
+
+}
+
+#instrctor_profile_basic_form button:hover{
+	background-color:#7B97D9;
+	color:white;
+}
+#img_pic{
+	height:230px;
+}
+
+.profile_info  img{
+	max-height:210px;
+	max-width:170px;
+}
+.profile_info{
+	float:left;
+	margin:28px 0 0 20px;
+	width:280px;
+	
+}
+.cannot_edit_info{
+	margin-left:10px;
+}
+/* 基本资料 */
+/*密码修改*/
+#instrctor_profile_password_form{
+	margin:45px 0 0 80px;
+}
+#instrctor_profile_password_form button{
+	width:95px;
+	height:35px;
+	border-radius:4px;
+	background-color:#DBE1F0;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+	color:#25407D;
+	font-weight:bold;
+}
+
+#instrctor_profile_password_form button:hover{
+	background-color:#7B97D9;
+	color:white;
+}
+#instrctor_profile_password_form span{
+	margin-right:5px;
+}
+/*密码修改*/
+
+/* 图片管理 */
+
+.images input[type="checkbox"]{
+    margin: -200px 0 0  10px;
+}
+.images{
+	overflow:auto;
+	height:100%;
+	background:#fafafa;
+}
+.images ul{
+	list-style:none;
+	margin:0;
+	padding:0px;
+}
+.images li{
+	display:inline;
+	float:left;
+	margin:10px;
+	padding:7px;
+	border:1px solid #d6d6d6;
+	box-shadow: 0px 1px 3px 0px rgb( 136, 136, 136 );
+	width: 200px;
+	height: 160px;
+
+}
+.item{
+	display:block;
+	text-decoration:none;
+}
+.item .image_show{
+	height:100px;
+}
+.item img{
+	max-height: 80px;
+/* 	height: 168px; */	
+}
+.item span{
+	font-weight:bold;
+	color:#c3c3c3;
+}
+.item .image_describe{
+	margin:0 0 0 10px;
+}
+
+.item .image_describe input{
+	margin-top:-3px;
+}
+.item  .image_detail{
+	margin:5px 0 0 10px;
+}
+.item  .image_date{
+	margin-right:70px;
+}
+
+.item  .image_delet{
+	text-decoration:none;
+	color:#c3c3c3;
+}
+.item  .image_delet:hover{
+	color:#f07f23;
+}
+
+#edit_image_detail{
+	display:block;
+	text-decoration:none;
+	margin:20px 0 0 80px;
+}
+#edit_image_detail img{
+	width: 322px;
+	height: 168px;	
+	margin-bottom:5px;
+}
+#upload_image_window{
+	
+	font-weight:bold;
+	color:#c3c3c3;
+
+}
+#upload_image_dir{
+	
+	background-color:#f3f3f3;
+	height:45px;
+	font-size:15px;
+}
+#upload_image_dir span{
+	line-height:50px;
+
+}
+
+#upload_image_dir select{
+	width:270px;
+	height:28px;
+	line-height:40px;
+	font-size:16px;
+	font-weight:bold;
+	color:#c5c5c5;
+	padding:3px 0;
+	
+}
+
+#upload_image_preview{
+	height:350px;
+}
+#upload_image_btns{
+	padding:8px 0;
+	background-color:#f3f3f3;
+	
+}
+#upload_button{
+	margin-left:550px;
+	border-radius: 5px;
+	background-color: #74c54c;
+	width: 91px;
+	height: 32px;
+	font-size:16px;
+	color:#f8f8f8;
+}
+#add_button{
+	border-radius:5px;
+	background-color:#a7a7a6;
+	width: 91px;
+	height: 32px;
+	font-size:16px;
+	color:#f8f8f8;
+}
+
+
+/* *图片管理* */
+
+
+
+/* 评论统计 */
+
+.comment_statistic_title{
+	font-size:18px;
+	padding:10px 20px;
+	color:#ffffff;
+	letter-spacing:2px;
+	border-top-left-radius:5px;
+	border-top-right-radius:5px;
+	background-color:#82a2e8;
+}
+.comment_statistic_detail{
+	/* height:120px; */
+	font-size:38px;
+	padding:15px 20px;
+	border:1px solid #888888;
+	border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+}
+
+.comment_statistic_detail ul{
+	clear: both;
+	list-style:none;
+	margin:0px;
+}
+.comment_statistic_detail li{
+	float:left;
+	padding:10px 30px 5px 30px;
+	border-right:1px dashed;
+} 
+.comment_statistic_detail .article{
+	font-size:18px;
+	color:#616161;
+}
+.comment_statistic_detail .number{
+	color:#82a2e8;
+}
+.comment_statistic_detail .description{
+	font-size:14px;
+}
+.clearfix:after {  
+    content: ".";   
+    display: block;   
+    height: 0;   
+    clear: both;   
+    visibility: hidden;  
+}  
+.clearfix {  
+    zoom:1;
+} 
+
+/* 评论统计 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

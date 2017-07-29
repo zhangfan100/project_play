@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IPrizeInfoDao">
+
+<select id="queryPrizeInfo" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="HashMap">
+	SELECT p.`id`,p.`prizeName`,p.`prizeCount`,p.`type`,ly.`title`,pic.`path`
+		FROM 
+		`lotteryinfo`ly 
+		LEFT JOIN `prizeinfo` p
+		ON p.`lotteryId`=ly.`id`
+		LEFT JOIN `picture` pic
+		ON p.`picId`=pic.`id`
+		WHERE 1=1 AND p.`id`>1
+	<if test="conditions.beginDate!=null"> and p.prizeBeginDate &gt;= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null">and date(p.prizeBeginDate) &lt;= #{conditions.endDate}</if>
+		<if test="conditions.keyWord!=null">
+			<![CDATA[ and (p.`prizeName` like CONCAT('%',#{conditions.keyWord},'%'))]]>
+		</if> 
+		order by p.`prizeBeginDate` desc
+</select>
+
+
+<select id="queryPrizeInfoId" parameterType="Integer" resultType="Map">
+	SELECT 
+  	* 
+	FROM
+ 	 `prizeInfo` p
+ 	LEFT JOIN `lotteryinfo` ly
+ 	ON ly.`id`=p.`lotteryId` 
+ 	where 1=1 and p.id=#{id}
+</select>
+
+<select id="queryPrizeListByLotteryId" parameterType="Integer" resultType="PrizeInfo" >
+	select * from `PrizeInfo` where `lotteryId`=#{lotteryId}
+</select>
+<update id="prizeCountMinus" parameterType="int">
+	UPDATE 
+	  `prizeinfo` p 
+	SET
+	  p.prizeCount = (p.prizeCount - 1)
+	WHERE p.`id` = #{id}
+</update>
+
+	<update id="editPrizeInfoSubmit" parameterType="PrizeInfo">
+	update PrizeInfo
+	<set>
+	<if test="prizeName!=null">
+				`prizeName`=#{prizeName},
+	</if>
+	<if test="type!=null">
+				type=#{type},
+	</if>
+	<if test="prizeCount!=null">
+				prizeCount=#{prizeCount},
+	</if>
+	</set>
+	where id=#{id}
+	</update>
+
+<select id="queryPrizeInfoList" resultType="Map" parameterType="Integer">
+	SELECT p.`prizeName`,sy.`createTime`,p.`id`,pic.`path` FROM `studentlotteryinfo` sy
+	LEFT JOIN `lotteryinfo` ly
+	ON sy.`lotteryId`=ly.`id`
+	LEFT JOIN `prizeinfo` p
+	ON sy.`prizeId`=p.`id`
+	LEFT JOIN `picture` pic
+	ON p.`picId`=pic.`id`
+	WHERE sy.`stuId`=#{stuId}
+</select>
+
+<insert id="addPrizeInfoSubmit" parameterType="PrizeInfo">
+INSERT INTO PrizeInfo (prizeName,picId,lotteryId,type,prizeCount,prizeBeginDate,prizeEndDate) 
+VALUES (#{prizeName},#{picId},#{lotteryId},#{type},#{prizeCount},#{prizeBeginDate},#{prizeEndDate})
+
+</insert>
+
+
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IAccountLogDao">
+
+	<insert id="insertAccountLog" parameterType="Accountlog" useGeneratedKeys="true" keyProperty="id">
+		insert into accountlog(cash,accountType,time,payType,userId,status) values(#{cash},#{accountType},sysdate(),#{payType},#{userId},#{status})
+	</insert>
+	
+	
+</mapper>

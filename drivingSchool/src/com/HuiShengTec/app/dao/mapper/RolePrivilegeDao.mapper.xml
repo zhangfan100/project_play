@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IRolePrivilegeDao">
+	<select id="queryRolePrivilege" parameterType="Role" resultType="java.util.HashMap">
+	SELECT 
+	  e.id,
+	  e.title,
+	  e.pid,
+	  IFNULL(rp.checked,0) AS 'checked'
+	FROM
+	  Privilege e
+	  LEFT JOIN 
+	  (SELECT COUNT(*) AS 'checked',rp.privilegeId FROM RolePrivilege rp WHERE rp.roleId=#{id} GROUP BY rp.privilegeId) rp
+	  ON rp.privilegeId=e.id
+	WHERE e.roleType = #{type} ORDER BY e.sort ASC
+	</select>
+	<insert id="addRolePrivilege" parameterType="RolePrivilege" useGeneratedKeys="true" keyProperty="id" >
+	INSERT INTO RolePrivilege 
+	(roleId, privilegeId) 
+		VALUES
+	(#{roleId},#{privilegeId})
+	</insert>
+	<delete id="delRolePrivilege" parameterType="RolePrivilege">
+	DELETE 
+	FROM
+	  RolePrivilege 
+	WHERE roleId = #{roleId}
+	  AND privilegeid = #{privilegeId} 
+	</delete>
+	
+	<!-- 根据角色ID，获取权限菜单 -->
+	<select id="queryPrivilegeMenu" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+		select t2.id,t2.title,t2.url,t2.iconClass,t2.pid 
+		from RolePrivilege t1 left join Privilege t2 on t1.privilegeId=t2.id
+		where t1.roleId = #{roleId} and t2.isMenu=1 order by sort ASC
+	</select>
+	
+	<select id="queryAllPrivilege" resultType="com.HuiShengTec.entity.Privilege">
+		select id,url,roleType,loginFlag,logFlag from Privilege where url is not null
+	</select>
+	<select id="queryAllRolePrivilege" resultType="RolePrivilege">
+		select * from roleprivilege
+	</select>
+</mapper>

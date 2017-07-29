@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.HuiShengTec.app.dao.ICoachWeekLessonConfigDao">
+  
+    
+    <!-- 插入数据 -->
+  	<insert id="insertCoachWeekLessonConfig" parameterType="CoachWeekLessonConfig">
+  		INSERT INTO coachWeekLessonConfig(coachId,WEEKDAY,timeSlot,SUBJECT,timeSlotType) VALUES(#{coachId},#{weedDay},#{timeSlot},#{subject},#{timeSlotType})
+  	</insert>
+  	
+  	<!-- 查询所有的课程设置 -->
+  	<select id="queryAllWeekSetting" parameterType="int"
+		resultType="java.util.HashMap">
+		select c.id,cc.name,c.weekDay,c.timeSlot,c.subject,c.timeSlotType
+		from CoachWeekLessonConfig c left join coachinfo cc on(c.coachId=cc.id) where c.coachId = #{coachId}
+		ORDER BY c.weekDay <!-- 默认 是升序的-->
+    </select>
+    
+    <!-- 通过教练id查询所有的课程设置 -->
+  	<select id="queryAllWeekSettingById" parameterType="com.HuiShengTec.base.entity.PageBean"
+		resultType="java.util.HashMap">
+		select c.id,cc.name,c.weekDay,c.timeSlot,c.subject,c.timeSlotType
+		from CoachWeekLessonConfig c left join coachinfo cc on(c.coachId=cc.id) where c.coachId = #{conditions.coachId}
+    </select>
+    
+    <!-- 通过课程id查询课程设置 -->
+  	<select id="queryCoachWeekLessonConfigById" parameterType="int"
+		resultType="java.util.HashMap">
+		select * from coachweeklessonconfig where id = #{id}
+    </select>
+    
+    <!-- 课程设置信息更新 -->
+	<update id="editSettingSubmit" parameterType="CoachWeekLessonConfig">
+		update coachWeekLessonConfig
+		<set>
+			<if test="subject!=null">
+				subject=#{subject},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+    <!-- 对教练模式进行更改 -->
+	<update id="changeTimeSlotType" parameterType="java.util.HashMap">
+		update coachweeklessonconfig
+		 <set>
+		    <if test="flag==true">
+		      timeSlotType = 1
+			</if>
+			<if test="flag==false">
+			  timeSlotType = 2
+			</if>
+		   , subject=#{subject} 
+		 </set>
+		where weekDay =#{weekDay} and coachId=#{coachId} and timeSlot=#{timeSlot}
+	</update>
+    
+    <!-- 增加课程设置 -->
+    <insert id="addWeeklessonconfig" parameterType="CoachWeekLessonConfig" 
+	useGeneratedKeys="true" keyProperty="id">
+		insert into coachweeklessonconfig
+			(coachId,weekDay,timeSlot,subject,timeSlotType)
+		values
+			(#{coachId},#{weekDay},#{timeSlot},#{subject},#{timeSlotType})
+	</insert>
+  </mapper>

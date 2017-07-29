@@ -1,0 +1,71 @@
+package com.HuiShengTec.app.dao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.HuiShengTec.base.dao.IBaseDao;
+import com.HuiShengTec.base.entity.PageBean;
+import com.HuiShengTec.entity.CoachInfo;
+public interface ICoachInfoDao extends IBaseDao{
+	public List<HashMap<String, Object>> queryCoachInfoById(Integer campusId);
+	public Map<String,Object> queryCohInfo(Integer data);
+	public Map<String,Object> queryMobCohInfoCount(Integer data);
+	
+	public CoachInfo queryCoachInfo(Integer data);
+	
+	/**
+	 * 查询分校对应的教师
+	 * @param coachId
+	 * @return
+	 */
+	public List<HashMap<String, Object>> queryTopScoreCoach(Integer campusId);
+	
+	
+	/**
+	 * 修改教员信息
+	 * @param info
+	 */
+	public Integer editCoachInfo(CoachInfo cohInfo);
+	
+	/**
+	 * 查询驾考教练列表
+	 * @author mihuajun
+	 * @param pageBean
+	 * @return
+	 */
+	public List<Map<String,Object>> queryDriveCoachPage(Map<String,Object> param);
+	
+	/**
+	 * 分页显示教练信息
+	 * @param pageBean
+	 * @return
+	 */
+	public List<Map<String,Object>> queryCoachsByPage(PageBean pageBean);
+	
+	/**
+	 * 根据ID，删除教练
+	 * @param id
+	 * @return 
+	 */
+	public Integer deleteCoachById(Integer id);
+	
+	public List<HashMap<String,Object>> queryCoachShowInfo(PageBean bean);
+	public HashMap<String, Object> queryteacherAttr(PageBean bean);
+	public List<HashMap<String, Object>> queryTeacherTypeTwoAttr(PageBean bean);
+	public List<HashMap<String,Object>> queryCommentNum(Integer id);
+	public List<HashMap<String, Object>> queryCommentInfo(Integer id);
+	/**
+	 * 新增教练
+	 * @param coachInfo
+	 */
+	public void insertStudentInfo(CoachInfo coachInfo);
+	/**
+	 * 根据关键字搜索教练
+	 * @param condition
+	 * @return
+	 */
+	public List<HashMap<String, Object>> queryCoachByKeyWord(
+			PageBean bean);
+	
+}

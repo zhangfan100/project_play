@@ -1,0 +1,165 @@
+div,body,table{margin:0;padding:0}
+.content_2{
+    height:auto;
+    margin: 0 auto;
+    font-family: '微软雅黑';
+}
+.leftNav{
+    width:195px;
+    height:100px;
+    float:left;
+    border:1px solid red;
+}
+.rightContent{
+    width:797px;
+    height:auto;
+     float: right;
+}
+.content_4{
+    border:1px solid  rgb(200,200,200);
+    width:100%;
+    height:auto;
+}
+.rightContent h2 {
+    display: inline;
+    line-height: 2px;
+}
+h2{
+    font-size: 18px;
+    color: rgb( 87, 82, 82 );
+    font-weight: normal;
+}
+.content_5{
+    width:90%;
+    height:auto;
+    margin: 0 auto;
+}
+.reminder{
+    width:100%;
+    margin: 45px 0 40px 0;
+}
+.title_6{
+    font-size: 16px;
+    color: #736e6a;
+}
+.subject{
+    font-size: 20px;
+    color:#ff6603;
+    margin-left: 15px;
+}
+.time{
+    margin-left: 19%;
+}
+.time input[type='text']{
+    width:260px;
+    height:40px;
+    line-height: 40px;
+    border-radius: 3px;
+    outline: none;
+    padding-left: 20px;
+    font-size: 16px;
+    color: #736e6a;
+    margin-left: 10px;
+    border:1px solid #aaaaaa;
+}
+.rightContent table{
+    width:100%;
+    border:2px solid #a0a0a0;
+}
+
+.rightContent table thead td{
+    background: #ff8729;
+    color:white;
+    font-size: 16px;
+}
+.rightContent table tbody td{
+    font-size: 14px;
+    color:#736e6a;
+    text-align: center;
+    height:50px;
+    line-height: 50px;
+    width:60px;
+}
+.rightContent .pastC{
+border:none;
+}
+.pastC thead td{
+    height:45px;
+    line-height: 45px;
+    text-align: center;
+    width:60px;
+}
+
+.button{
+    margin: 20px 0 40px 0;
+}
+.button input[type='button']{
+    width:85px;
+    height:35px;
+    outline: none;
+    text-align: center;
+    border-radius: 3px;
+    line-height: 35px;
+    text-align:center ;
+    border:1px solid #b2c3dc;
+    background-image:-webkit-linear-gradient(top,#f2f6fd,#e7edf5);
+    background-image:-moz-linear-gradient(top,#f2f6fd,#e7edf5);
+    background-image:-ms-linear-gradient(top,#f2f6fd,#e7edf5);
+    background-image:-o-linear-gradient(top,#f2f6fd,#e7edf5);
+    color:#324c73;
+    font-size: 14px;
+    margin-left: 49.5%;
+}
+.check{
+    font-size: 14px;
+    color: #736e6a;
+}
+.order input[type='checkbox']{
+    width:15px;
+    height:15px;
+    vertical-align: middle;
+}
+.orderT{
+	height:auto;
+    margin-bottom: 80px;
+}
+.orderT thead td{
+    height:65px;
+    line-height: 40px;
+    text-align: center;
+}
+.orderT tbody td{
+    height:50px;
+    line-height: 50px;
+}
+.orderT td{
+    border:1px solid #d2d2d2;
+}
+.orderT tr td:first-child{
+    width:130px;
+    border-left:none;
+}
+.orderT tr .lastTd{
+    border-right:none;
+}
+.orderT tbody tr:hover td:first-child{
+    background: white;
+}
+.orderT tbody tr:hover{
+    background: #eeeeee;
+}
+#noChec{
+    width:20px;
+    height:21px;
+    vertical-align: top;
+    display: inline-block;
+    background: url(../../../static/images/checkbox2.png) no-repeat top;
+}
+#Chec{
+    width:20px;
+    height:16px;
+    vertical-align: middle;
+    display: inline-block;
+    background: url(../../../static/images/checkbox1.png) no-repeat center;
+}
+

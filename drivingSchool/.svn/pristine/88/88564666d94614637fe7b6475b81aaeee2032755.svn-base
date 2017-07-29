@@ -1,0 +1,4 @@
+eclipse.preferences.version=1
+validator.Checked=WebRoot/static,WebRoot/WEB-INF/jsp,WebRoot/index.jsp,src/com/HuiShengTec/app/dao/mapper/IncomeItemDao.mapper.xml
+validator.Revalidate=true
+validator.Unchecked=

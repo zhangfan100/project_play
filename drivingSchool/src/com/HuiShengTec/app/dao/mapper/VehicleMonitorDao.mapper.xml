@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IVehicleMonitorDao">
+
+   <select id="getFirstJudge" resultType="map">
+         SELECT 
+			  m.id as 'mapmarkId',
+			  s.id as 'sceneId',
+			  s.`title`,
+			  m.distance 
+			FROM(
+			    
+			    SELECT 
+			      id,
+			      title,
+			      sceneId,
+			      ROUND(6378.138 * 2 * ASIN(SQRT(POW(SIN((lat * PI() / 180- 
+			      #{lat}*PI()/180)/2),2)+COS(lat*PI()/180)*COS(#{lat}*PI()/180)*
+			      POW(SIN((lng * PI() / 180- #{lng}*PI()/180)/2),2)))*1000) distance FROM mapmark 
+			      ORDER BY distance LIMIT 1
+			      )m
+			      LEFT JOIN scene s ON
+			      s.`id`=m.sceneId
+   </select>
+	
+</mapper>

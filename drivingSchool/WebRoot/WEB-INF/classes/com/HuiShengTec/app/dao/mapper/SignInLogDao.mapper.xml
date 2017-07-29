@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ISignInLogDao">
+	<insert id="addSignInLog" parameterType="com.HuiShengTec.entity.SignInLog">
+		insert into SignInLog 
+		(userId,userName,roleType,loginTime,loginIP)
+		values
+		(#{userId},#{userName},#{roleType},#{loginTime},#{loginIP})
+	</insert>
+	
+	<select id="querySignInLogPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="SignInLog">
+		select * from dbo.signinlog where userFlag = #{conditions.userFlag}
+		<if test="conditions.beginDate!=null"> and CONVERT(varchar(100), loginTime,23) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and CONVERT(varchar(100), loginTime,23) <= #{conditions.endDate}]]></if> 
+		order by loginTime desc 
+	</select>
+	
+	<delete id="delSignInLog" parameterType="java.lang.Integer">
+		delete from dbo.signinlog
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where id  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+</mapper>

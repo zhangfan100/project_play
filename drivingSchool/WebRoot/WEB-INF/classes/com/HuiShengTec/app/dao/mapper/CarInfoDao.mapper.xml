@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ICarInfoDao">
+	<select id="queryCarInfoPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		SELECT
+		  e.id,
+		  e.carCode,
+		  b.title,
+		  e.licenceCode,
+		  e.carType,
+		  e.carIP,
+		  e.status
+		FROM
+		  CarInfo e,
+		  CarBrand b 
+		WHERE e.carBrandId = b.id 
+	</select>
+	<select id="queryCarInfo" parameterType="int" resultType="java.util.HashMap">
+		SELECT
+		  e.*
+		FROM
+		  CarInfo e,
+		  coachinfo c
+		WHERE e.id = c.carId
+		and c.id=#{cohId}
+	</select>
+	<select id="queryCarInfoById" parameterType="int" resultType="CarInfo">
+		SELECT 
+		  e.* 
+		FROM
+		  CarInfo e 
+		WHERE e.id =#{id}
+	</select>
+	<update id="updateCarInfo" parameterType="CarInfo" >
+		UPDATE 
+		  CarInfo 
+		SET
+		  carCode = #{carCode},
+		  carBrandId = #{carBrandId},
+		  licenceType = #{licenceType},
+		  licenceCode = #{licenceCode},
+		  allowLicenceType = #{allowLicenceType},
+		  createDate = #{createDate},
+		  carType = #{carType},
+		  updateTime = SYSDATE(),
+		  lifeEndDate = #{lifeEndDate},
+		  licenceOrgan = #{licenceOrgan},
+		  STATUS = #{status},
+		  carIP = #{carIP} 
+		WHERE id = #{id} ;
+	</update>
+	<insert id="addCarInfo" parameterType="CarInfo" >
+		INSERT INTO CarInfo (
+		  carCode,
+		  carBrandId,
+		  licenceType,
+		  licenceCode,
+		  allowLicenceType,
+		  carType,
+		  createDate,
+		  updateTime,
+		  lifeEndDate,
+		  licenceOrgan,
+		  STATUS,
+		  carIP
+		) 
+		VALUES
+		  (
+		    #{carCode},
+		    #{carBrandId},
+		    #{licenceType},
+		    #{licenceCode},
+		    #{allowLicenceType},
+		    #{carType},
+		    #{createDate},
+		    SYSDATE(),
+		    #{lifeEndDate},
+		    #{licenceOrgan},
+		    #{status},
+		    #{carIP}
+		  ) ;
+	</insert>
+	
+	<select id="queryUndistCar" parameterType="java.lang.String" resultType="java.util.HashMap">
+	<if test="id!=null">
+		(select t1.id,t1.licenceCode, 0 sort from CarInfo t1 where id = #{id})
+		union
+	</if>
+	(select t1.id,t1.licenceCode,1 sort from CarInfo t1 left join CoachInfo t2
+			 on t1.id = t2.carId where t1.carType=0 and t1.status=1 and t2.carId is null 
+		<if test="_parameter!=null">
+			 and t1.licenceCode  like concat('%',#{q},'%') 
+		</if>
+	) order by sort
+		limit 0,4
+	</select>
+	<select  id="queryFirstFreeCarId" parameterType="date" resultType="int" >
+	SELECT
+	  c.`id`
+	FROM
+	  carinfo c 
+	LEFT JOIN
+	(
+	SELECT 
+	  li.`carId`,
+	  COUNT(li.id) AS 'count' 
+	FROM
+	  lessoninfo li
+	  WHERE li.`beginTime`=#{beginTime}
+	GROUP BY li.`carId`) li ON li.`carId`=c.`id`
+	WHERE li.`count` IS NULL 
+	  AND c.`carType` = 2 
+	LIMIT 1 
+	</select>
+</mapper>

@@ -1,0 +1,386 @@
+@CHARSET "UTF-8";
+.wrap_container {
+	width: 1025px;
+	min-height: 880px;
+}
+.main_content{
+	width: 1025px;
+}
+.right{
+	float:right;
+}
+h2{
+	font-size: 18px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 87, 82, 82 );
+}
+.wrap_container h3{
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 70, 70, 70 );
+  	padding-left: 50px;
+}
+h4 {
+	font-size: 16px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 115, 110, 106 );
+}
+
+.left_content{
+	margin-top: 8px;
+	width: 195px;
+	float:left;
+}
+.left_content a{
+	color: rgb( 70, 70, 70 );
+	display: block;
+	width: 100%;
+	height: 100%;
+	padding-left: 65px;
+}
+.person_nav{
+	line-height: 2.5;
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	
+	
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 200, 200, 200 );
+	background-color: rgb( 255, 255, 255 );
+	width: 195px;
+    height: 700px;
+}
+.person_nav ul li ul li{
+}
+.person_nav ul li ul li:hover{
+	background-color: #eeeeee;
+	color: rgb( 240, 127, 43 );
+}
+.person_nav ul li ul li a:hover,.person_nav ul li ul li .selected{
+	background-color: #eeeeee;
+	color: rgb( 240, 127, 43 );
+}
+.person_nav_li{
+	margin-bottom:40px;
+	cursor: default;
+}
+.person_nav_li .selected_li a{
+	color:rgb( 240, 127, 43 );
+	background-color: #eeeeee;
+}
+.right_content{
+	width: 797px;
+	float:right;
+}
+	
+.right_box_0{
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 200, 200, 200 );
+	background-color: rgb( 255, 255, 255 );
+	width: 797px;
+	min-height: 700px;
+}
+.right_box_0>ul>li{
+	float:left;
+	margin-left: 25px;
+}
+.input_box input, .input_box select{
+	padding-left: 10px;
+	border-width: 1px;
+	border-color: rgb( 170, 170, 170 );
+	border-style: solid;
+	border-radius: 5px;
+	width: 231px;
+	height: 35px;
+	/* border: none; */
+}
+/* .input_box input:focus{
+	border: none;
+} */
+.ca_img{
+	display:block;
+	position: absolute;
+	margin-top: -31px;
+	margin-left: 200px;
+}
+.input_box_yxyy .yx_head {
+	margin-right:20px;
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 255, 255, 255 );
+	background-color: #ff8729;
+	height: 46px;
+	border-top: 1px solid rgb( 198, 196, 196 );
+}
+.input_box_yxyy ul li{
+	float:left;
+	width: 93px;
+	text-align: center;
+	margin-left: 10px;
+	padding-top: 12px;
+	
+}
+.input_box_yxyy ul{
+	margin-right:20px;
+	height: 46px;
+	border-left: 1px solid rgb( 198, 196, 196 );
+	border-right: 1px solid rgb( 198, 196, 196 );
+	border-bottom: 1px solid rgb( 198, 196, 196 );
+}
+#rbox input[type="button"],.search-btn{
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 177, 194, 220 );
+	border-radius: 5px;
+	background-image: -moz-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	opacity: 0.988;
+	width: 92px;
+	height: 37px;
+	font-size: 16px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 50, 76, 115 );
+}
+.search-btn{
+	background-image: -moz-linear-gradient( 90deg, rgb(249,124,26) 0%, rgb(249,124,26) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(249,124,26) 0%, rgb(249,124,26) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(249,124,26) 0%, rgb(249,124,26) 100%);
+	border-color: rgb(235,114,18);
+	color:#FFF8F5;
+}
+.input_box_yyxk,.input_box_price{
+	border:2px solid #A1A1A1;
+	height: auto;
+}
+.input_box_yyxk ul li,.input_box_price ul li{
+	float: left;
+	width: 63px;
+	text-align: center;
+	padding-top: 12px;
+	
+}
+.input_box_yyxk .yy_head,.input_box_price .price_head {
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 255, 255, 255 );
+	background-color: #ff8729;
+	height: 67px;
+	/* border-top: 1px solid rgb( 198, 196, 196 ); */
+}
+.input_box_price{
+	position: absolute;
+}
+.input_box_price .price_head {
+	background-color:#CCCCCC;
+	height:54px;
+	color:#3D3D3D;
+}
+
+.input_box_yyxk ul{
+	height: 56px;
+	/* border-left: 1px solid rgb( 198, 196, 196 );
+	border-right: 1px solid rgb( 198, 196, 196 );*/
+	border-bottom: 1px solid rgb( 198, 196, 196 ); 
+}
+.input_box_price .price_content ul{background:blue;}
+.input_box_price .price_content ul:nth-child(even) {
+	background:#EEEEEE;
+}
+.input_box_price .price_content ul:nth-child(odd) {
+	background:#FFFFFF;
+}
+.input_box_price ul{
+	height: 45px;
+	color:#6B6969;
+}
+.elective_page_content ul li,.input_box_yyxk .yy_head li,.input_box_price .price_head li,.input_box_price .price_content li{
+	height: 100%;
+	border-right: 1px solid #d3d3d3;
+	padding-top: 17px;
+}
+.input_box_yxyy span{
+	line-height: 3;
+	margin-top:5px;
+}
+ .yyxk_tip{
+ 	height: 32px;
+ 	margin-left: 411px;
+	margin-top: -15px;
+}
+.yyxk_tip li{
+	margin-left: 20px;
+	float:left;
+}
+#tp-tbody .disable-Selected,#tp-tbody .temp-disable-Selected{
+	background-color: rgb( 238, 238, 238 );
+}
+.order_tips{
+	padding-left: 30px;
+}
+#tp-tbody .enable-Selected,#tp-tbody .temp-Selected{
+	background:url('../images/yx.png') no-repeat center;
+}
+.order_box{
+	min-height: 184px;
+}
+
+.right_box_0 .car{
+	margin-top:22px;
+	color:#736E6A;
+}
+.right_box_0 .car>div{
+	margin-top:8px;
+}
+.right_box_0 .car>div>label{
+	line-height:18px;
+	height:18px;
+	font-weight: normal;
+	font-size:16px;
+}
+.right_box_0 .price{
+	font-size:16px;
+	font-weight:bold;
+	color:#D93D06;
+	display: inline-block;
+	width:80px;
+}
+.right_box_0 .tip-t{
+	display: inline-block;
+	width: 0px;
+	height: 0px;
+	margin-left: 5px;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-bottom: 7px solid #3e3e3e;
+	position: relative;
+	top: -1px;
+	left: 6px;
+}
+.right_box_0 .yyxk_tip .v-five{
+	border: 2px solid transparent;
+	position: relative;
+	top: -2px;
+	z-index: 30001;
+	width: 130px;
+	cursor:pointer;
+}
+.right_box_0 .yyxk_tip .selected .tip-t{
+	border-bottom:none;
+	border-top: 7px solid #3e3e3e;
+}
+.right_box_0 .yyxk_tip .selected{
+	border: 2px solid #a1a1a1;
+	border-bottom: none;
+	background-color: #cccccc;
+	height: 43px;
+	line-height: 34px;
+	top:-9px;
+}
+
+/*addLessonInfo.jsp start*/
+
+#sbox>div{
+	display: inline-block;
+	width: 246px;
+	height: 100px;
+	background:blue;
+}
+#rbox .desc{line-height:34px}
+.right_box_0>div{
+/* 	margin:10px 10px 10px 20px; */
+}
+
+#addLessonInfo #course{
+	margin-right: 30px;
+	border:2px solid #D3D3D3;
+}
+#course .tname{
+	width:67px;
+	float:left;
+	border-right:3px solid #D3D3D3;
+}
+#course .tname>li,#course .tp>.tp-item>li{
+	width: 63px;
+	height:55px;
+	line-height:55px;
+	text-align:center;
+	list-style: none;
+	margin:0px;
+	padding:0px;
+	border:1px solid #D3D3D3;
+	margin-left:-1px;
+	margin-top:-1px;
+	background-color:#fff;
+}
+#course .tname .head,#course .tp .head{
+	background-color:#FF8729;
+	line-height:normal;
+	color:#fff;
+	padding-top:10px;
+	height:67px;
+}
+#course .tp{
+	overflow: hidden;
+	overflow-x:auto; 
+}
+#course .tp>.tp-item>li{
+	display: inline-block;
+}
+
+#course .tp tr{
+	
+}
+#course .tp td,#course .tname td{
+	border: 1px solid #D3D3D3;
+	width: 72px;
+	height: 55px;
+	text-align:center;
+}
+#course .tp .head{
+	
+}
+#ali-sbox{
+	
+}
+#ali-sbox>div{
+	height:100px;
+	float: left;
+}
+/*addLessonInfo.jsp end*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

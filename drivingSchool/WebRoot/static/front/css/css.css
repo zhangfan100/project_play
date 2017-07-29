@@ -1,0 +1,111 @@
+
+/* �ҵ���Ϣ */
+#person_image{
+	margin:75px 0 0 110px;
+	float:left;
+}
+#person_image img{
+	max-width:135px;
+}
+#person_image input{
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 177, 194, 220 );
+	border-radius: 5px;
+	background-image: -moz-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	width: 96px;
+  	height: 34px;
+	opacity: 0.988;
+	font-size:15px;
+	margin-left:25px;
+	text-align: center;
+	font-size: 16px;
+ 	font-family: "Microsoft YaHei";
+  	color: rgb( 50, 76, 115 );
+	
+}
+#person_image input:hover{
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 177, 194, 220 );
+	border-radius: 5px;
+	background-image: -moz-linear-gradient( 90deg, rgb(205,217,236) 0%, rgb(243,247,253) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(205,217,236) 0%, rgb(243,247,253) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(205,217,236) 0%, rgb(243,247,253) 100%);
+	
+}
+#image{
+	width:135px;
+	height:204px;
+}
+#basic_info{
+	margin:52px 0 0 90px;
+	float:left;
+	font-size:16px;
+}
+#btn-groups{
+	clear:both;
+	margin:0 0 0 310px;
+}
+#btn-groups input{
+	
+	border-style: solid;
+	border-width: 1px;
+	border-color: #b1c2dc;
+	border-radius: 5px;
+	background-image: -moz-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	opacity: 0.988;
+	font-size:15px;
+	padding:7px 21px; 
+	margin:96px 20px 0 0;
+}
+	
+/* �ҵ���Ϣ */
+/* �˺����� */
+#password_edit{
+	font-size:16px;
+	margin:85px 0 0 100px;
+}
+
+#account_btn-groups{
+	clear:both;
+	margin:0 0 0 200px;
+}
+#account_btn-groups input{
+	border-style: solid;
+	border-width: 1px;
+	border-color: #b1c2dc;
+	border-radius: 5px;
+	background-image: -moz-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(230,236,245) 0%, rgb(243,247,253) 100%);
+	opacity: 0.988;
+	font-size:15px;
+	padding:7px 21px; 
+	margin:96px 20px 0 0;
+}
+/* �˺����� */
+/* ԤԼģ�� */
+#test_book_info{
+	height: 70px;
+	font-size:16px;
+	margin:38px 0 0 68px;
+}
+.info_item_left{
+	float:left;
+	width:250px;
+	margin-bottom:20px;
+}
+.info_item_right{
+	float:left;
+	width:300px;
+	margin-bottom:20px;
+}
+#test_book_options{
+	margin:20px 0 0 45px;
+}
+/* ԤԼģ�� */

@@ -1,0 +1,132 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="../../TagLib/TagLib.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<%@include file="../../TagLib/StuLib.jsp"%>
+
+</head>
+<body>
+	<%@include file="../../TagLib/Menu.jsp"%>
+	<script type="text/javascript" src="${path }/static/scripts/highcharts/highcharts.js"></script>
+	<div class="wrap_container yahei">
+		<div class="main_content">
+			<div class="left_content">
+				<div class="left_content">
+					<h2>个人中心</h2>
+					<div class="person_nav">
+					<ul>
+					<c:forEach items="${stumenu }" var="item" varStatus="status">
+				<li class="${item.iconClass }">
+					<h3>
+					<span <c:if test="${item.url!=null }">url="${path }${item.url }"</c:if> class="person_nav_li">
+						 	${item.title }
+						 	<c:if test="${fn:length(item.childrens)>0 }"><span class="sub"></span></c:if>
+					</span>
+					</h3>
+				</li>
+				<ul><li>
+				<c:if test="${fn:length(item.childrens)>0 }"> 
+						<ul><li>
+							<c:forEach var="item1" items="${item.childrens }" varStatus="status1">
+								<li>
+							<a href="javascript:void(0);" url="${item1.url }" onclick="jumpPage('${path }${item1.url }',this)">
+								${item1.title }
+							</a>
+								</li>
+							</c:forEach>
+						</li></ul>
+					</c:if>
+				</li></ul>
+			</c:forEach>
+			</ul>
+			</div>
+		</div>
+			</div>
+			<div id="right_panel"></div>
+			<div id="p"></div>
+		</div>
+	</div>
+	<div class="footer">
+		<div class="footer_center">
+			<div class="clearfix">
+				<div class="col-md-12 column ">
+					<div class="footer_one">
+						<h3>关于</h3>
+						<ul>
+							<li><a>关于慧莘</a></li>
+							<li><a>版权声明</a></li>
+							<li><a>关于隐私</a></li>
+							<li><a>免责声明</a></li>
+							<li><a>网站地图</a></li>
+							<li><a>加入慧莘</a></li>
+
+						</ul>
+					</div>
+					<div class="footer_two">
+						<h3>友情链接</h3>
+						<ul>
+							<li><a>友情链接</a></li>
+							<li><a>嘀嘀叭叭交规考试</a></li>
+							<li><a>上海机动车驾驶员培训行业</a></li>
+							<li><a>一汽大众</a></li>
+							<li><a>悦达起亚</a></li>
+							<li><a>神州租车</a></li>
+
+						</ul>
+
+					</div>
+					<div class="footer_three">
+						<h3>联系我们</h3>
+						<ul>
+							<li><a>${contact }</a></li>
+							<li><a>${phone1 }</a></li>
+							<li><a>${phone2 }</a></li>
+							<li><a>${service_period }</a></li>
+							<li><a>${monitor_phone }</a></li>
+							<li><a>${service_mailbox }</a></li>
+
+						</ul>
+
+					</div>
+					<div class="footer_four">
+						<h3>关注我们</h3>
+						<ul>
+							<li><a>新浪微博</a></li>
+							<li><a>腾讯微博</a></li>
+							<li><a><img src="${path}/static/front/images/ewm.png"></a></li>
+						</ul>
+					</div>
+					<div class="footer_five">
+						<h3>版权信息</h3>
+						<ul>
+							<li><a>${copyRight_info }</a></li>
+							<li><a>${filings }</a></li>
+							<li><a>${license }</a></li>
+							<li><a>${filings_address }</a></li>
+							<li><a>${filings_code }</a></li>
+							<li><a>${copyRight_years }</a></li>
+							
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	$(".topnav .active").removeClass("active");
+	$(function(){
+		var sign ="${param.sign}";
+		if(sign!=""){
+			$(".left_content a[url='"+sign+"']").click();
+		}else{
+			$(".left_content a:contains('培训统计')").click();
+		}
+	});
+</script>
+</body>
+</html>

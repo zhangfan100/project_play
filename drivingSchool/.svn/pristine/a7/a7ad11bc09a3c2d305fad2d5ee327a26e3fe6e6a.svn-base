@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ITimePriceDao">
+	<select id="queryCurrTimePriceList" resultType="TimePrice" >
+		SELECT * FROM TimePrice where `status`=1
+	</select>
+	<select id="queryAllTimePriceList" resultType="TimePrice" >
+		SELECT * FROM TimePrice
+	</select>
+	
+	<!-- 编辑时间段价格 -->
+	<update id="editTimePriceSubmit" parameterType="TimePrice">
+		update TimePrice SET pricePlus=#{pricePlus} where id=#{id}
+	</update>
+	
+	<update id="editTimePriceStatus" parameterType="java.util.Map">
+		update TimePrice set status=#{status} where id in
+		<foreach collection="ids" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+	</update>
+	
+	<!-- 七天价格查询 -->
+	<select id="queryPriceByConditions" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+			select t1.`date`,
+			<foreach item="timer" collection="timeList" separator=",">
+				max(if(t1.time=${timer.beginTime},t1.price,0)) as t${timer.beginTime}
+			</foreach>
+			from DatePrice t1 
+			where t1.licenceId=#{licenceId} and carBrandId=#{carBrandId} group by t1.`date`
+	</select>
+	<!-- 编辑七天价格 -->
+	<update id="updateSevenDaySubmit" parameterType="java.util.Map">
+		update DatePrice set price = #{price}
+		where licenceId=#{licenceId} and carBrandId = #{carBrandId} and date = #{date} and time = #{time}
+	</update>
+</mapper>

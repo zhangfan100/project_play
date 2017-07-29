@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ICoachGroupDao">
+	<select id="queryCoachWeekGroup" parameterType="int" resultType="java.util.HashMap" >
+		SELECT
+			e.coachId,
+			w.subject,
+			w.weekDay
+		FROM
+			CoachGroup e
+		LEFT JOIN
+			WeekGroup w ON w.id=e.groupId
+		WHERE w.weekDay = #{weekDay}
+	</select>
+	
+	<select id="queryUnusedCoachPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		SELECT c.`id`,c.`name`,c.`coachCode` FROM coachinfo c WHERE c.`id` IN 
+           (SELECT cl.coachId FROM coachweeklessonconfig  cl WHERE cl.weekDay =#{conditions.weekDay} AND cl.timeSlot =#{conditions.timeSlot} AND cl.timeSlotType =2)
+	</select>
+	
+	<select id="queryUsedCoachPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		SELECT c.`id`,c.`name`,c.`coachCode` FROM coachinfo c WHERE c.`id` IN 
+            (SELECT cl.coachId FROM coachweeklessonconfig  cl WHERE cl.weekDay =#{conditions.weekDay} AND cl.timeSlot =#{conditions.timeSlot} AND cl.subject =#{conditions.subject} AND cl.timeSlotType =1)
+	</select>
+	
+	<select id="queryWeekGroupId" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select id from weekgroup where weekDay = #{weekDay} and subject = #{subject}
+	</select>
+	
+	<insert id="insertCoachGroup" parameterType="java.util.HashMap" useGeneratedKeys="true" keyProperty="id">
+		insert into coachgroup(groupId,coachId) values(#{groupId},#{coachId})
+	</insert>
+	
+	<delete id="removeCoachGroup" >
+		delete from coachgroup where id in(
+			<foreach collection="array" item="item" separator=",">
+				#{item}
+			</foreach>
+		)
+	</delete>
+	
+	<select id="queryCoachGroupInfo" resultType="map">
+	SELECT 
+	  cg.*,
+	  wp.`weekDay`,
+	  wp.`subject` 
+	FROM
+	  coachgroup cg 
+	  LEFT JOIN weekgroup wp 
+	    ON wp.`id` = cg.`groupId` 
+	</select>
+</mapper>

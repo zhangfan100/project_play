@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IMessageDao">
+	
+	<select id="queryMessagePage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		select m.id,m.title,r.title  traiName,m.messageDate,s.username from Message m left join Login s on s.id = m.userId 
+		left join MessageKind k on k.kindKey = m.kindID left join CampusInfo r on r.id = m.seperateSchoolId
+		 where 1=1 and k.kindKey=#{conditions.kindKey}
+		 
+		<if test="conditions.beginDate!=null"> and  date(m.messageDate) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and  date(m.messageDate) <= #{conditions.endDate}]]></if> 
+		<if test="conditions.keyWord!=null">
+			<![CDATA[ and (m.title like CONCAT('%',#{conditions.keyWord},'%') or r.title like CONCAT('%',#{conditions.keyWord},'%'))]]>
+		</if> 
+		  order by m.messageDate desc
+	</select>
+	
+	<select id="queryMessageKind" parameterType="java.lang.Integer" resultType="MessageKind">
+		select * from messagekind where 1=1 
+		<if test="_parameter!=null">
+			and kindKey = #{kindKey}
+		</if>
+	</select>
+	
+	<select id="queryMessageByID" parameterType="Integer" resultType="java.util.HashMap">
+		select * from Message where id = #{id}
+	</select>
+	
+	<insert id="addMessageSubmit" parameterType="Message">
+		insert into Message(kindID,title,content,messageDate,isDisplay,userId,isTop,isHot,readCount,seperateSchoolId) 
+		values(#{kindID},#{title},#{content},sysdate(),#{isDisplay},#{userId},#{isTop},#{isHot},0,#{seperateSchoolId})
+	</insert>
+	
+	<update id="editMessageSubmit" parameterType="Message">
+		update Message set kindID = #{kindID},title = #{title},content = #{content},messageDate=sysdate(),isDisplay=#{isDisplay},isTop=#{isTop},isHot=#{isHot},
+		seperateSchoolId = #{seperateSchoolId}
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteMessageByID" parameterType="java.util.HashMap">
+		delete from Message where 1=1 
+		
+		<if test="kindId!=null">
+			 and kindID = #{kindId}
+		</if>
+		
+		<if test="ids!=null">
+			<foreach collection="ids" close=")" open=" and id  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	<select id="queryschoolSept" resultType="CampusInfo">
+		select id,title from CampusInfo
+	</select>
+	
+	<select id="queryTopCache" resultType="java.util.HashMap">
+		<foreach item="item" collection="array" separator="union">
+			<![CDATA[
+			select e.* from 
+			(select t1.id,t1.isTop,t1.isHot,t2.kindKey,t1.title,t1.messageDate 
+			from Message t1 left join MessageKind t2 on t2.id = t1.kindID where t2.kindKey=#{item} and t1.isDisplay<>1
+			order by t1.isTop desc,t1.isHot desc,t1.messageDate desc limit 0,6) e]]>
+		</foreach>
+		order by isTop desc,isHot desc,messageDate desc
+	</select>
+	
+	<update id="updateMessageNotTop" parameterType="Message">
+		<![CDATA[update Message set isTop=0 where isTop=1 and kindID =#{kindID}]]>
+		<if test="id!=null">
+			<![CDATA[and id<>#{id}]]>
+		</if>
+	</update>
+	
+	<select id="listMessage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap" >
+		<![CDATA[
+		select t1.id,t1.isTop,t1.isHot,t2.kindKey,t1.title,t1.messageDate 
+			from Message t1 left join MessageKind t2 on t2.id = t1.kindID where t2.kindKey=#{conditions.kindKey} and t1.isDisplay<>1
+			order by t1.isTop desc,t1.isHot desc,t1.messageDate desc]]>
+	</select>
+	
+	<select id="queryMessage" parameterType="Integer" resultType="java.util.HashMap">
+		select m.id,m.title,k.kindName,r.title traiName from Message m 
+		left join MessageKind k on k.kindKey = m.kindID left join CampusInfo r on r.id = m.seperateSchoolId
+		 where k.kindKey=#{kindKey}
+  	</select>
+  	
+  	<select id="queryProfileMessageByID" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+  		select t1.*,t2.kindName,t2.kindKey from message t1 left join messagekind t2 on t2.id = t1.kindId where t1.id = #{id}
+  	</select>
+	
+</mapper>

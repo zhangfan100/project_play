@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ILessonPlanDao">
+	<select id="queryLessonPlanCount" resultType="int">
+		SELECT
+		COUNT(1) FROM LessonPlan
+	</select>
+	<insert id="addLessonPlan" parameterType="LessonPlan" >
+		INSERT INTO LessonPlan (
+		coachId,
+		`date`,
+		`time`,
+		`subject`,
+		`status`
+		)
+		VALUES
+		(
+		#{coachId},
+		#{date},
+		#{time},
+		#{subject},
+		0
+		) ;
+	</insert>
+	
+	<select id="queryLessonPlanByCoachId" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		SELECT 
+		  ci.`id` AS `coachId`,
+		  ci.`name` AS `coachName`,
+		  li.`time` 
+		FROM
+		  CoachInfo ci 
+		  LEFT JOIN 
+		    (SELECT 
+		      li.`coachId`,
+		      CONCAT(
+		        't',
+		        DATE_FORMAT(li.`beginTime`, '%H')
+		      ) AS `time` 
+		    FROM
+		      LessonInfo li 
+		    WHERE CAST(li.`beginTime` AS DATE) = #{studyDate}) li 
+		    ON li.`coachId` = ci.`id` 
+		WHERE ci.`id` = #{coachId} 
+	</select>
+	<select id="queryLessonPlanByDuty" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		SELECT 
+		  lp.coachId,
+		  c.name as coachName
+		  <foreach item="price" collection="timePriceList">
+		  ,MAX(
+		    CASE
+		      lp.`time` 
+		      WHEN ${price.beginTime} 
+		      THEN lp.`status` 
+		      ELSE 0 
+		    END
+		  ) AS 
+		  <if test="price.beginTime lt 10">'t0${price.beginTime}'</if>
+		  <if test="price.beginTime gt 9">'t${price.beginTime}'</if>
+		  </foreach>
+		FROM
+		  LessonPlan lp
+		LEFT JOIN CoachInfo c 
+    		ON c.id = lp.`coachId`
+		WHERE lp.`subject` = #{subject} 
+		  AND lp.`date` = #{studyDate} 
+		GROUP BY lp.`coachId`
+	</select>
+	<update id="updateLessonPlan" parameterType="LessonPlan" >
+		UPDATE 
+			`LessonPlan` 
+		SET
+			`status` = #{status},
+			`studentPlanId` = #{studentPlanId} 
+		WHERE
+			`coachId` = #{coachId} and
+			`date` = #{date} and
+			`time` = #{time} and
+			`subject` = #{subject}
+	</update>
+	<update id="resetLessonPlan" parameterType="int" >
+		UPDATE 
+		  LessonPlan lp INNER JOIN LessonInfo li
+		SET
+		  lp.`status` = 0,
+		  lp.`studentPlanId`=NULL
+		WHERE lp.`studentPlanId`=li.`id`
+		AND lp.`studentPlanId` in 
+		<foreach collection="list" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+		AND li.`lessonstatus`&lt;&gt;2
+		
+	</update>
+	
+	<!-- 查询是否已被使用,为0是未被使用 -->
+	<select id="queryIsUseLessonPlan" parameterType="map" resultType="int" >
+		select count(1) from `LessonPlan` where
+		`coachId` = #{coachId} and
+			`date` = #{date} and
+			`time` = #{time} and
+			`subject` = #{subject} AND `status`>0
+	</select>
+	
+	<select id="queryIsExistLessonPlan" parameterType="map" resultType="map">
+		SELECT 
+		  IFNULL(COUNT(1),0) AS 'count',
+		  lp.`time` 
+		FROM
+		  lessonplan lp 
+		WHERE lp.`date` = CAST(#{date} AS DATE) 
+		  AND lp.`coachId` = #{coachId}
+		  AND lp.`subject` = #{subject}
+		  AND lp.`time` = #{time}  
+		GROUP BY lp.`date`,
+		  lp.`time`,
+		  lp.`coachId`,
+		  lp.`subject` 
+	</select>
+	
+	
+</mapper>

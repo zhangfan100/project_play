@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IDrivingLicenceDao">
+	<select id="queryCurrentDrivingLicence" resultType="DrivingLicence">
+		SELECT * FROM DrivingLicence WHERE `status`=1
+	</select>
+	
+	<select id="queryAllLicence" resultType="DrivingLicence">
+		SELECT * FROM DrivingLicence
+	</select>
+	
+	<update id="editDrivingLicenceSubmit" parameterType="DrivingLicence">
+	update DrivingLicence  SET pricePlus=#{pricePlus} where id=#{id}
+	</update>
+	
+	<update id="editDrivingLicenceStatus" parameterType="java.util.Map">
+		update DrivingLicence  set `status`=#{status} where id in
+		<foreach collection="ids" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+	</update>
+</mapper>

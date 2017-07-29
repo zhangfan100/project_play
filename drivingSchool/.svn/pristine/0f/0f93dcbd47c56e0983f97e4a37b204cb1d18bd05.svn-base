@@ -1,0 +1,151 @@
+package com.HuiShengTec.app.publicAction;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import javax.imageio.ImageIO;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.HuiShengTec.base.action.BaseAction;
+import com.HuiShengTec.base.cache.PropertiesCache;
+import com.HuiShengTec.utils.PicZoom;
+import com.HuiShengTec.utils.Toolkit;
+
+/**
+ * 
+ * 文件上传，完事后返回文件路径
+ * @author mihuajun
+ *
+ */
+@RequestMapping("/upload")
+@Controller
+public class UploadFileAction  extends BaseAction{
+	
+	/**
+	 * 上传图像
+	 * @param thumFlag
+	 * @param mode
+	 * @param savePath
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping("/img")
+	@ResponseBody
+	public Map<String,Object> uploapImage(String thumFlag,String mode,String savePath) throws IOException{
+		
+		Map<String,Object> result = new HashMap<String, Object>();
+		
+		// 转型为MultipartHttpRequest：   
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        // 获得文件：   
+        MultipartFile file = multipartRequest.getFile("imgFile");
+        // 获得文件名：   
+        String filename = file.getOriginalFilename();
+        //获取后缀名
+        String suffix =  filename.substring(filename.indexOf(".")+1);
+        
+        String localBasePath = request.getSession().getServletContext().getRealPath("");
+		String imgPath = savePath!=null?"/attachment/"+savePath:PropertiesCache.getValue("imgPath");
+		String thumPath = savePath!=null?"/attachment/"+savePath:PropertiesCache.getValue("thumPath");
+		Toolkit.buildDirectory(localBasePath+imgPath);
+		Toolkit.buildDirectory(localBasePath+thumPath);
+        
+        String newFileName = Toolkit.RandomStr()+"."+suffix;
+        
+        //生成 的本地文件路径、镜像文件以及URI路径
+        String localFilePath = localBasePath+imgPath+"/IMG_"+newFileName;
+        
+        
+        // 写入文件
+        File source = new File(localFilePath);
+        file.transferTo(source);
+        result.put("url", (imgPath+"/IMG_"+newFileName).replaceAll("//", "/"));
+        
+        
+        //是否生缩略图并返回缩略图路径
+        if(thumFlag!=null){
+        	String localThumPath = localBasePath+thumPath+"/TMP_"+newFileName;
+        	
+        	 //创建缩略图
+	        InputStream is=new FileInputStream(source);
+        	try {
+		        BufferedImage bi=ImageIO.read(is);
+		        
+		        //等比例缩放
+		        double twidth = Double.valueOf(PropertiesCache.getValue("thum_img_width"));
+		        double theight = Double.valueOf(PropertiesCache.getValue("thum_img_height"));
+		        
+		        //写入缩略图
+		        ImageIO.write(PicZoom.zoom(bi,(int)twidth,(int)theight), suffix, new File(localThumPath));
+		        is.close();
+	        
+		    result.put("url",(thumPath+"/TMP_"+newFileName).replaceAll("//", "/"));
+        	} finally{
+        		if(is!=null)is.close();
+				// TODO: handle exception
+			}
+        }
+        result.put("error",0);
+        
+        //是否返回根路径 URL
+        if("root".equals(mode)){
+        	result.put("url", (request.getContextPath()+(String)result.get("url")).replaceAll("//", "/"));
+        }
+        
+        return result;
+	}
+	
+	
+	/**
+	 * 上传文件
+	 * @param tempfilePath
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/file")
+	@ResponseBody
+	public Map<String,Object> uploadFile(String tempfilePath) throws Exception{
+		Map<String,Object> result = new HashMap<String, Object>();
+		// 转型为MultipartHttpRequest：   
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        // 获得文件：   
+        MultipartFile file = multipartRequest.getFile("selectedFile");
+        // 获得文件名：   
+        String filename = file.getOriginalFilename();
+        //获取后缀名
+        String suffix =  filename.substring(filename.indexOf(".")+1);
+        
+		String filePath = PropertiesCache.getValue("card_filePath");
+        
+        String localBasePath = request.getSession().getServletContext().getRealPath("");
+        String newFileName = Toolkit.RandomStr()+"."+suffix;
+        
+        //生成 的本地文件路径、镜像文件以及URI路径
+        String localFilePath = localBasePath+filePath+"File_"+newFileName;
+        try {
+        	//创建路径文件夹
+        	File sourcePath = new File(localBasePath+filePath);
+        	sourcePath.mkdir();
+        	// 写入文件
+            File source = new File(localFilePath);
+            
+            file.transferTo(source);
+            result.put("url", filePath+"File_"+newFileName);
+            result.put("error", 0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.put("error", 1);
+		}
+        
+		return result;
+	}
+	
+}

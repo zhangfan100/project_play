@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IMyStudentDao">
+	
+	<select id="queryMyStudentPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="StudentInfo">
+		select id,name,licenceCode,sex,phone,address,createDate from StudentInfo where coachId=#{conditions.cohId}
+	<if test="conditions.beginDate!=null"> and createDate &gt;= #{conditions.beginDate}</if>
+	<if test="conditions.endDate!=null">and date(createDate) &lt;= #{conditions.endDate}</if>
+	<if test="conditions.keyWord!=null">
+			<![CDATA[ and (`name` like CONCAT('%',#{conditions.keyWord},'%'))]]>
+		</if> 
+	</select>
+	
+</mapper>

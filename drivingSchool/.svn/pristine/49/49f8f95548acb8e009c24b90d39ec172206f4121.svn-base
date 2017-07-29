@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IBasicPropertiesDao">
+	
+	
+	<select id="queryBasicProp" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="BasicProperty">
+	select 
+		*
+	from
+	BasicProperty
+	where Type!=0
+	
+	<if test="conditions.keyWords!=null">
+		<![CDATA[ and (Title like concat('%',#{conditions.keyWords},'%') or  `Key` like concat('%',#{conditions.keyWords},'%'))]]>
+	</if>
+	</select>
+	
+	<select id="getBasicPropInfo" parameterType="Integer" resultType="BasicProperty">
+		select * from BasicProperty where id=#{id}
+	</select>
+	
+	<select id="getBasicPropInfoKey" parameterType="String" resultType="BasicProperty">
+		select * from BasicProperty where `key`= #{key}
+	</select>
+	
+	
+	<update id="updateBasicPropInfo" parameterType="com.HuiShengTec.entity.BasicProperty">
+	update BasicProperty
+	<set>
+	<if test="key!=null">
+				`Key`=#{key},
+	</if>
+	<if test="title!=null">
+				Title=#{title},
+	</if>
+	<if test="value!=null">
+				Value=#{value},
+	</if>
+	</set>
+	where id=#{id}
+	</update>
+	
+	
+	
+	<select id="queryAllCache" resultType="BasicProperty">
+		select * from BasicProperty
+	</select>
+	
+	<!-- 查询联系我们 -->
+	<select id="queryContactInfo" resultType="BasicProperty">
+		select * from BasicProperty where type=300
+	</select>
+	
+	<!-- 查询版权信息 -->
+	<select id="queryCopyRightInfo" resultType="BasicProperty">
+		select * from BasicProperty where type=500
+	</select>
+	<select id="queryBasicPropertiesByKey" parameterType="String" resultType="BasicProperty">
+		select * from BasicProperty where `Key`=#{key}
+	</select>
+</mapper>

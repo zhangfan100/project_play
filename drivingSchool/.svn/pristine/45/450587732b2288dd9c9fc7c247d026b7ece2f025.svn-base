@@ -1,0 +1,58 @@
+package com.HuiShengTec.app.magAction;
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.HuiShengTec.app.core.BaseAction;
+import com.HuiShengTec.utils.PushletUtil;
+import com.alibaba.fastjson.JSON;
+
+/**
+ * ****************************************************************************
+ * 
+ * @Description: [车辆实时监控位置]
+ * @CreateDate: [2015年4月20日 下午2:47:36]
+ * @Version: [v1.0]
+ */
+@RequestMapping("/mag")
+@Scope("prototype")
+@Controller
+public class VehicleMonitorAction extends BaseAction {
+
+	/**
+	 * 
+	 * @Description: TODO(跳转到车辆地图页面)
+	 */
+	@RequestMapping("vehicleMonitorManage")
+	public String vehicleMonitorManage() {
+		return "manage/vehicleMonitorAction/vehicleMonitorManage";
+	}
+	
+	 /**
+	  * 
+	  * @Description: TODO(传输GPS)
+	  */
+	 @RequestMapping("setGPS")
+	 @ResponseBody
+	public Integer setGPS(@RequestParam Map<String, String> param) {
+		 Integer carId=Integer.parseInt(param.get("carCode"));
+		 String longitude=param.get("longitude");
+		 String latitude=param.get("latitude");
+		 Map<String, Object> gpsAddr=new HashMap<String, Object>();
+		 gpsAddr.put("longitude", longitude);
+		 gpsAddr.put("longitude", latitude);
+		 
+//		 CarGPSAddrCache.updateGpsAddr(carId,JSON.toJSONString(param));
+		 
+		PushletUtil.addPushData("message",JSON.toJSONString(param));
+		return 1;
+	}
+	
+}

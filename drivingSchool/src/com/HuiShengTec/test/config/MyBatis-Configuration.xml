@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+ <!-- 为这个bean取了一个 别名 -->
+	<typeAliases>
+		<typeAlias alias="PageBean" type="com.HuiShengTec.base.entity.PageBean"/>
+	</typeAliases>
+	<!-- MyBatis允许使用插件来拦截方法调用  这里是使用该插件对分页进行处理 -->
+	<plugins>
+		<plugin interceptor="com.HuiShengTec.base.dao.DataInterceptor.MySqlDataInterceptor">
+		</plugin>
+	</plugins>
+</configuration>

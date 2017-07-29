@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ICoachInfoDao">
+	<select id="queryCoachInfo" parameterType="Integer" resultType="CoachInfo">
+		SELECT * FROM CoachInfo e where e.id=#{id}
+</select>
+   <!-- 根据关键字搜索教练 -->
+    <select id="queryCoachByKeyWord" resultType="java.util.HashMap"
+		parameterType="com.HuiShengTec.base.entity.PageBean">
+		SELECT
+		c.*
+		FROM 
+		coachinfo c 
+		<if test="conditions.keyWord!=null">
+			WHERE c.name LIKE CONCAT("%", #{conditions.keyWord}, "%")
+			OR
+			c.coachCode LIKE CONCAT("%", #{conditions.keyWord}, "%")
+		</if>
+		ORDER BY c.createTime DESC 
+	</select>
+
+	<!-- 查询教练详情 -->
+	<select id="queryCohInfo" parameterType="Integer" resultType="java.util.HashMap">
+		SELECT t1.*,t2.path,t3.title,t4.licenceCode licenceNumber,t5.roleId,t5.id loginId,t5.username,t5.email,t5.status FROM CoachInfo t1 
+		left join Picture t2 on t2.id = picId
+		left join CampusInfo t3 on t3.id = t1.campusId
+		left join CarInfo t4 on t4.id = t1.carId
+		left join Login t5 on t5.userId = t1.id
+		where t1.id=#{id} and t5.roleType = 2
+	</select>
+	
+	<select id="queryMobCohInfoCount">
+	SELECT t1.*,t2.path,t3.title,t4.licenceCode licenceNumber,t5.roleId,t5.id loginId,t5.username,t5.email,t5.status, 
+		(SELECT COUNT(*)AS 'count' FROM LessonInfo l WHERE l.`coachId`=t1.`id` AND l.`status` = 1) AS
+		lessonInfocount,
+		(SELECT COUNT(*)AS 'count' FROM LessonInfo l WHERE l.`coachId`=t1.`id` AND l.`status` = 2) AS
+		historycount
+		FROM CoachInfo t1 
+		LEFT JOIN Picture t2 ON t2.id = picId
+		LEFT JOIN CampusInfo t3 ON t3.id = t1.campusId
+		LEFT JOIN CarInfo t4 ON t4.id = t1.carId
+		LEFT JOIN Login t5 ON t5.userId = t1.id
+		WHERE t1.id=#{id} AND t5.roleType = 2
+		
+	</select>
+	
+
+	<select id="queryCoachInfoById" resultType="java.util.HashMap" parameterType="java.lang.Integer">
+		SELECT C1.name cohName FROM CoachInfo C1 
+		LEFT JOIN CampusInfo C2 
+		ON C2.id = C1.campusId	
+		WHERE C1.campusId=#{campusId}
+	</select>
+
+
+	<insert id="insertStudentInfo" parameterType="CoachInfo" 
+	useGeneratedKeys="true" keyProperty="id">
+		insert into CoachInfo
+			(coachCode,name,picId,carId,licenceCode,licenceType,forShort,sex,birthday,
+			drivingLicenceCode,allowCarType,licenceOrgan,licenceLimitTime,coachAllowCarType,
+			address,zipCode,phone,content,coachAge,drivingAge,campusId,workDate,createTime)
+		values
+			(#{coachCode},#{name},#{picId},#{carId},#{licenceCode},#{licenceType},#{forShort},#{sex},#{birthday},
+			#{drivingLicenceCode},#{allowCarType},#{licenceOrgan},#{licenceLimitTime},#{coachAllowCarType},
+			#{address},#{zipCode},#{phone},#{content},#{coachAge},#{drivingAge},#{campusId},#{workDate},sysdate())
+	</insert>
+	
+	<select id="queryTopScoreCoach" parameterType="Integer" resultType="java.util.HashMap">
+		SELECT 
+		c.*,
+		p.path 
+		FROM 
+		CoachInfo c
+		LEFT JOIN 
+		Picture p
+		ON c.picId=p.id
+		WHERE c.campusId=#{campusId}  ORDER BY coachScore DESC  LIMIT 0,10
+	</select>
+
+	<!-- 分页显示教练信息 -->
+	<select id="queryCoachsByPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		select t1.id,t1.coachCode,t1.name,t1.sex,t1.phone,t2.status,t1.workDate,t2.id loginId from coachInfo t1
+		left join Login t2 on t1.id = t2.userId where t2.roleType=2
+		<if test="conditions.keyWords!=null">
+				<![CDATA[ and (t1.coachCode = #{conditions.keyWords} or t1.name like concat('%',#{conditions.keyWords},'%') or t1.phone=#{conditions.keyWords})]]>
+		</if>
+		order by createTime desc
+	</select>
+
+	<!-- 根据ID，删除教练 -->
+	<!-- <delete id="deleteCoachById" parameterType="java.lang.Integer">
+		delete from CoachInfo
+		where id = #{id}
+	</delete> -->
+
+	<select id="queryDriveCoachPage" resultType="java.util.HashMap"
+		parameterType="com.HuiShengTec.base.entity.PageBean">
+		select t5.*,count(t6.id) stuTotal from
+		(select t1.id,t1.name from CoachInfo t1 left join Login t2 on t1.id =
+		t2.userId
+		left join RolePrivilege t3 on t2.roleId = t3.roleId
+		left join
+		Privilege t4 on t4.id = t3.privilegeId where t4.title='执教权限') t5 left
+		join StudentInfo t6 on t5.id = t6.coachId
+		group by t5.id,t5.name
+	</select>
+
+	<update id="editCoachInfo" parameterType="com.HuiShengTec.entity.CoachInfo">
+		update CoachInfo
+		<set>
+			<if test="coachCode!=null">
+				coachCode=#{coachCode},
+			</if>
+			<if test="name!=null">
+				name=#{name},
+			</if>
+			<if test="picId!=null">
+				picId=#{picId},
+			</if>
+			<if test="carId!=null">
+				carId=#{carId},
+			</if>
+			<if test="licenceCode!=null">
+				licenceCode=#{licenceCode},
+			</if>
+			<if test="licenceType!=null">
+				licenceType=#{licenceType},
+			</if>
+			<if test="forShort!=null">
+				forShort=#{forShort},
+			</if>
+			<if test="sex!=null">
+				sex=#{sex},
+			</if>
+			<if test="birthday!=null">
+				birthday=#{birthday},
+			</if>
+			<if test="drivingLicenceCode!=null">
+				drivingLicenceCode=#{drivingLicenceCode},
+			</if>
+			<if test="allowCarType!=null">
+				allowCarType=#{allowCarType},
+			</if>
+			<if test="licenceOrgan!=null">
+				licenceOrgan=#{licenceOrgan},
+			</if>
+			<if test="licenceLimitTime!=null">
+				licenceLimitTime=#{licenceLimitTime},
+			</if>
+			<if test="coachAllowCarType!=null">
+				coachAllowCarType=#{coachAllowCarType},
+			</if>
+			<if test="address!=null">
+				address=#{address},
+			</if>
+			<if test="zipCode!=null">
+				zipCode=#{zipCode},
+			</if>
+			<if test="phone!=null">
+				phone=#{phone},
+			</if>
+			<if test="content!=null">
+				content=#{content},
+			</if>
+			<if test="coachAge!=null">
+				coachAge=#{coachAge},
+			</if>
+			<if test="drivingAge=null">
+				drivingAge=#{drivingAge},
+			</if>
+			<if test="campusId!=null">
+				campusId=#{campusId},
+			</if>
+			<if test="workDate!=null">
+				workDate=#{workDate},
+			</if>
+			updateTime = sysdate()
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 查询教员顶部照片 -->
+	<select id="queryteacherAttr" parameterType="com.HuiShengTec.base.entity.PageBean"
+		resultType="java.util.HashMap">
+		SELECT 
+		  p.`path` 
+		FROM
+		  coachinfo ci 
+		  LEFT JOIN picture p 
+		    ON p.`id` = ci.`picId` 
+		WHERE ci.id=#{conditions.id}
+	</select>
+	<!-- 查询教员照片 -->
+	<select id="queryTeacherTypeTwoAttr" parameterType="com.HuiShengTec.base.entity.PageBean"
+		resultType="java.util.HashMap">
+		SELECT * FROM (SELECT t.coachId id,t.type,a.path FROM CoachPicture t,Picture
+		a WHERE t.picId=a.id AND t.type=2 AND t.coachId=#{conditions.id} LIMIT
+		0, 1000) t1
+	</select>
+	<!-- 查询评论条数 -->
+	<select id="queryCommentNum" parameterType="java.lang.Integer"
+		resultType="java.util.HashMap">
+		
+		
+		<!-- SELECT t1.coachId id,IFNULL(ONE,0) ONE,IFNULL(two,0) two,IFNULL(three,0)
+		three,IFNULL(four,0) four,IFNULL(five,0) five,IFNULL(total,0) total
+		FROM (SELECT coachId,COUNT(*) total FROM LessonReview GROUP BY
+		coachId) t1 LEFT JOIN
+		(SELECT coachId,COUNT(*) ONE FROM LessonReview
+		WHERE totalScore=1 GROUP BY coachId) t2 ON t1.coachId=t2.coachId LEFT
+		JOIN
+		(SELECT coachId,COUNT(*) two FROM LessonReview WHERE totalScore=2 GROUP BY
+		coachId) t3 ON t1.coachId=t3.coachId LEFT JOIN
+		(SELECT coachId,COUNT(*) three FROM LessonReview WHERE totalScore=3 GROUP BY
+		coachId) t4 ON t1.coachId=t4.coachId LEFT JOIN
+		(SELECT coachId,COUNT(*) four FROM LessonReview WHERE totalScore=4 GROUP BY
+		coachId) t5 ON t1.coachId=t5.coachId LEFT JOIN
+		(SELECT coachId,COUNT(*) five FROM LessonReview WHERE totalScore=5 GROUP BY
+		coachId) t6 ON t1.coachId=t6.coachId
+		WHERE t1.coachId=#{id} -->
+		SELECT score,COUNT(1) total FROM (SELECT CEIL(totalScore) score FROM LessonReview WHERE coachId=#{id}) t1 GROUP BY t1.score
+	</select>
+	<!-- 查询评论信息 -->
+	<select id="queryCommentInfo" parameterType="java.lang.Integer"
+		resultType="java.util.HashMap">
+		SELECT t1.*,IF(t1.isHide=0,t2.name,'匿名') name FROM LessonReview t1,StudentInfo t2 WHERE t1.isDisplay=1
+		AND t1.coachId=#{id} AND t1.stuId=t2.id
+	</select>
+
+	<!-- 查询教员信息 -->
+	<select id="queryCoachShowInfo" parameterType="com.HuiShengTec.base.entity.PageBean"
+		resultType="java.util.HashMap">
+
+		SELECT * FROM(
+		SELECT w1.id,
+		w1.carId,
+		w1.licenceCode,
+		w1.name,
+		w1.sex,
+		w1.birthday,
+		w1.drivingLicenceCode,
+		w1.allowCarType,
+		w1.licenceOrgan,
+		w1.coachCode,
+		w1.licenceLimitTime,
+		w1.coachAllowCarType,
+		w1.address,
+		w1.zipCode,
+		w1.phone,
+		w1.createTime,
+		w1.updateTime,
+		w1.workDate,
+		w1.forShort,
+		w1.coachScore,
+		w1.drivingAge,
+		w1.coachAge,
+		w1.campusId,
+		w2.title,
+		a1.id picId,
+		a1.path
+		FROM
+		CoachInfo w1
+		LEFT JOIN CampusInfo w2
+		ON w2.id = w1.campusId
+		LEFT JOIN Picture a1
+		ON w1.picId = a1.id)r1
+		WHERE 1 = 1
+		<if test="conditions!=null">
+			<if test="conditions.sex!=null">
+				<if test="conditions.sex!='不 限'.toString()">
+					<if test="conditions.sex=='男'.toString()">
+						and sex=0
+					</if>
+					<if test="conditions.sex=='女'.toString()">
+						and sex=1
+					</if>
+				</if>
+			</if>
+			<if test="conditions.drivingAge!=null">
+				<if test="conditions.drivingAge!='不 限'.toString()">
+					<if test="conditions.drivingAge=='五 年 以 下'.toString()">
+						and drivingAge&gt;=0 and drivingAge&lt;5
+					</if>
+					<if test="conditions.drivingAge=='5 - 10 年'.toString()">
+						and drivingAge&gt;=5 and drivingAge&lt;=10
+					</if>
+					<if test="conditions.drivingAge=='十 年 以 上'.toString()">
+						and drivingAge&gt;10
+					</if>
+				</if>
+			</if>
+			<if test="conditions.title!=null">
+				<if test="conditions.title!='全 部'.toString()">
+					and title=#{conditions.title}
+				</if>
+			</if>
+			<if test="conditions.name!=null">
+				<if test="conditions.name!='教 练'.toString()">
+				<![CDATA[ and name like '%'+#{conditions.name}+'%']]>
+				</if>
+			</if>
+			<if test="conditions.id!=null">
+				and id=#{conditions.id}
+			</if>
+			<if test="conditions.sortType!=null">
+				<if test="conditions.sortType=='好评率'.toString()">
+					order by coachScore desc
+				</if>
+				<if test="conditions.sortType=='教龄'.toString()">
+					order by coachAge desc
+				</if>
+				<if test="conditions.sortType=='驾龄'.toString()">
+					order by drivingAge desc
+				</if>
+			</if>
+		</if>
+	</select>
+</mapper>

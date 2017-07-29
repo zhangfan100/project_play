@@ -1,0 +1,306 @@
+package com.HuiShengTec.app.service.impl;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.HuiShengTec.app.dao.ICarInfoDao;
+import com.HuiShengTec.app.dao.ICoachGroupDao;
+import com.HuiShengTec.app.dao.ICoachInfoDao;
+import com.HuiShengTec.app.dao.ICodeTempDao;
+import com.HuiShengTec.app.dao.IDatePriceDao;
+import com.HuiShengTec.app.dao.ILessonInfoDao;
+import com.HuiShengTec.app.dao.ILessonPlanDao;
+import com.HuiShengTec.app.dao.IStuInfoDao;
+import com.HuiShengTec.app.dao.ITimePriceDao;
+import com.HuiShengTec.app.service.ILessonInfoService;
+import com.HuiShengTec.base.entity.PageBean;
+import com.HuiShengTec.base.entity.PageInfo;
+import com.HuiShengTec.entity.CoachInfo;
+import com.HuiShengTec.entity.LessonInfo;
+import com.HuiShengTec.entity.StudentInfo;
+import com.HuiShengTec.utils.Toolkit;
+import com.alibaba.fastjson.JSON;
+
+@Service
+@Transactional
+@Scope("singleton")
+public class LessonInfoServiceImpl implements ILessonInfoService {
+	@Autowired
+	private ILessonInfoDao iLessonInfoDao;
+	@Autowired
+	private IStuInfoDao iStuInfoDao;
+	@Autowired
+	private ICoachInfoDao iCoachInfoDao;
+	@Autowired
+	private ICarInfoDao iCarInfoDao;
+
+	@Autowired
+	private ILessonPlanDao iLessonPlanDao;
+	@Autowired
+	private ITimePriceDao iTimePriceDao;
+	@Autowired
+	private IDatePriceDao iDatePriceDao;
+	@Autowired
+	private ICodeTempDao iCodeTempDao;
+	@Autowired
+	private ICoachGroupDao iCoachGroupDao;
+
+	/**
+	 * 管理端分页查询约课信息
+	 */
+	@Override
+	public PageBean queryLessonInfoPage(PageInfo info) {
+		PageBean bean = Toolkit.fillPageInfo(info);
+		bean.setRows(iLessonInfoDao.queryLessonInfoPage(bean));
+		return bean;
+	}
+
+	/**
+	 * 查询学生课程计划
+	 */
+	public List<HashMap<String, Object>> queryStuLessonPlanInfo(Integer stuId) {
+		return iLessonInfoDao.queryStuLessonPlanInfo(stuId);
+	}
+
+	/**
+	 * 获取允许获取的教师课程安排
+	 */
+	@Override
+	public List<HashMap<String, Object>> queryCoachTimePlan(Integer stuId,
+			Date planDate) {
+		StudentInfo stu = iStuInfoDao.queryStuInfo(stuId);//查询出学生信息
+		HashMap<String, Object> param = Toolkit.initMapCondition("subject",
+				stu.getLessonStep());//把对应学生的进度放入到map中
+		param.put("date", planDate);
+		if(!Toolkit.isEmpty(stu.getCoachId())){
+			param.put("coachId", stu.getCoachId());
+		}
+		/**
+		 * 查询初始结果
+		 */
+		List<HashMap<String, Object>> tempResult = iLessonInfoDao
+				.queryCohLessonPlan(param);
+		List<HashMap<String, Object>> result = new ArrayList<>();
+		HashMap<String, Object> temp = null;
+		/**
+		 * 开始封装结果集
+		 */
+		for (HashMap<String, Object> data : tempResult) {
+			if (Toolkit.isEmpty(temp)) {
+				temp = new HashMap<>();
+				result.add(temp);
+				temp.put("name", data.get("name"));
+				temp.put("coachId", data.get("coachId"));
+			}
+			if (!data.get("coachId").equals(temp.get("coachId"))) {
+				temp = new HashMap<>();
+				result.add(temp);
+				temp.put("name", data.get("name"));
+				temp.put("coachId", data.get("coachId"));
+			}
+			// 学生进程为科目二
+			if (stu.getLessonStep() == 1) {
+				temp.put("t"+ ((Integer) (data.get("timepoint")) > 9 ? data
+										.get("timepoint") : ("0" + data
+										.get("timepoint"))), data.get("count"));
+			} else {
+				// 学生进程为科目三
+				if ((data.get("timeSlot").equals(1))
+						&& Toolkit.isEmpty(temp.get("mor"))) {
+					// 上午
+					temp.put("mor", data.get("count"));
+				} else if (Toolkit.isEmpty(temp.get("aft"))
+						&& data.get("timeSlot").equals(2)) {
+					temp.put("aft", data.get("count"));
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 添加学生预约(新版)
+	 * @throws ParseException [{"cohId":"27","lessonCode":"未保存","studyDate":"2015-04-17","subject":1,"studyTime":"12:00-13:59","price":"未保存","status":-1,"stuId":"63"}]
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public HashMap<String, Object> addLessonInfo(String jsonStr) throws ParseException {
+		@SuppressWarnings("rawtypes")
+		List<HashMap> data = JSON.parseArray(jsonStr, HashMap.class);
+		int flag = 0;
+		for (HashMap<String, Object> map : data) {
+			LessonInfo info = new LessonInfo();
+			info.setCreateTime(new Date());
+			HashMap<String, Object> codeCondition = Toolkit.initMapCondition(
+					"codeType", 1);
+			codeCondition.put("planDate", map.get("studyDate"));
+			if(!"".equals(map.get("price").toString())){
+				info.setCash(Float.valueOf(map.get("price").toString()));
+				info.setCashStatus(0);//未付款状态
+			}else{//老模式不用保存价格 
+				info.setCashStatus(1);//付款状态
+			}
+			if(map.get("student")!=null && !"".equals(map.get("student")) && "1".equals(map.get("student").toString())){
+				info.setPlanWay(0);//学生前台预约
+			}else{
+				info.setPlanWay(2);//驾校后台预约
+			}
+			info.setLessonCode(iCodeTempDao.queryCodeByType(codeCondition));
+			info.setSubject(Integer.parseInt(map.get("subject").toString()));
+			info.setStudentId(Integer.parseInt(map.get("stuId").toString()));
+			info.setCoachId(Integer.parseInt(map.get("cohId").toString()));
+			this.fillCohInfo(info);
+			this.fillStuInfo(info);
+			// 设置时间
+			if (info.getSubject() == 1) {
+				// 科目二
+				String[] studyTime = ((String)map.get("studyTime")).split("-");
+				Date beginTime = Toolkit.formatDate((String)map.get("studyDate")+" "+studyTime[0] +":00", Toolkit.dateTimePattern);
+				Date endTime = Toolkit.formatDate((String)map.get("studyDate")+" "+studyTime[1]+":00", Toolkit.dateTimePattern);
+				info.setBeginTime(beginTime);
+				info.setEndTime(endTime);
+			} else {
+				// 科目三
+				Date beginTime = null;
+				Date endTime = null;
+				if(map.get("studyTime").equals("mor")){
+					beginTime = Toolkit.formatDate((String)map.get("studyDate")+" 06:00:00", Toolkit.dateTimePattern);
+					endTime = Toolkit.formatDate((String)map.get("studyDate")+" 13:59:59", Toolkit.dateTimePattern);
+				}else{
+					beginTime = Toolkit.formatDate((String)map.get("studyDate")+" 14:00:00", Toolkit.dateTimePattern);
+					endTime = Toolkit.formatDate((String)map.get("studyDate")+" 22:59:59", Toolkit.dateTimePattern);
+				}
+				info.setBeginTime(beginTime);
+				info.setEndTime(endTime);
+			}
+			flag+=iLessonInfoDao.addLessonInfo(info);
+		}
+		return Toolkit.getMapStatus(flag);
+	}
+	/**
+	 * 装填学生信息
+	 * @param stuInfo
+	 * @param lessonInfo
+	 */
+	private void fillStuInfo(LessonInfo lessonInfo){
+		StudentInfo stuInfo = iStuInfoDao.queryStuInfo(lessonInfo.getStudentId());
+		lessonInfo.setStuForShort(stuInfo.getForShort());
+		lessonInfo.setStuLicence(stuInfo.getLicenceCode());
+		lessonInfo.setDrivingLicenceId(stuInfo.getLicenceId());
+		lessonInfo.setStuName(stuInfo.getName());
+		lessonInfo.setStuPhone(stuInfo.getPhone());
+		lessonInfo.setStuType(stuInfo.getStuType());
+		lessonInfo.setCampusId(stuInfo.getCampusId());
+	}
+	/**
+	 * 装填教师信息
+	 * @param cohInfo
+	 * @param lessonInfo
+	 */
+	private void fillCohInfo(LessonInfo lessonInfo){
+		CoachInfo cohInfo = iCoachInfoDao.queryCoachInfo(lessonInfo.getCoachId());
+		lessonInfo.setLessonStatus(1);//设置为已分配车辆
+		if(!Toolkit.isEmpty(cohInfo.getCarId())){
+			lessonInfo.setCarId(cohInfo.getCarId());
+		}else{
+			lessonInfo.setCarId(iCarInfoDao.queryFirstFreeCarId(lessonInfo.getBeginTime()));
+		}
+		lessonInfo.setCohLicence(cohInfo.getCoachCode());
+		lessonInfo.setCohForShort(cohInfo.getForShort());
+		lessonInfo.setCohName(cohInfo.getName());
+		lessonInfo.setCohPhone(cohInfo.getPhone());
+	}
+
+	@Override
+	public List<HashMap<String, Object>> queryOrderLessionInfo(Integer userId) {
+		return iLessonInfoDao.queryOrderLessionInfo(userId);
+	}
+
+	/**
+	 * ajax加载课程预约
+	 */
+	@Override
+	public List<HashMap<String, Object>> queryStuLessonInfoPlanList(
+			Integer stuId) {
+		return iLessonInfoDao.queryStuLessonInfoPlanList(stuId);
+	}
+
+	@Override
+	public void cancleLessonPlan(String idStr) {
+		List<Integer> list = new ArrayList<>();
+		String[] ids = idStr.split(",");
+		for (int i = 0; i < ids.length; i++) {
+			list.add(Integer.valueOf(ids[i]));
+		}
+		//iLessonPlanDao.resetLessonPlan(list);
+		iLessonInfoDao.delLessonInfo(list);
+	}
+	
+	@Override
+	public HashMap<String, Object> queryStuLessonInfoCount(Integer stuId) {
+        //查询出科目二和三所有完成和完成异常的总人数
+		List<HashMap<String, Object>> list = iLessonInfoDao
+				.queryStuLessonInfoCount(stuId);
+		HashMap<String, Object> result = new HashMap<>();
+		for (HashMap<String, Object> map : list) {
+			result.put("s" + String.valueOf(map.get("subject")),
+					map.get("count"));
+		}
+		return result;
+	}
+
+	/**
+	 * 加载科目二科目三培训完成 培训异常的详情
+	 */
+	@Override
+	public List<HashMap<String, Object>> queryStuLessonTrainInfo(Integer id,
+			Integer subject) {
+		HashMap<String, Object> condition = new HashMap<>();
+		condition.put("stuId", id);
+		condition.put("subject", subject);
+		return iLessonInfoDao.queryStuLessonTrainInfo(condition);
+	}
+
+	/**
+	 * 为添加评论查询出必要的信息
+	 */
+	@Override
+	public HashMap<String,Object> getLessonInfoById(Integer lessonInfoId) {
+		return iLessonInfoDao.getLessonInfoById(lessonInfoId);
+	}
+
+	@Override
+	public HashMap<String, Object> queryStuLessonInfoDetail(Integer id) {
+		return iLessonInfoDao.queryStuLessonInfoDetail(id);
+	}
+
+	@Override
+	public List<HashMap<String, Object>> queryLessonMinusDetail(Integer lessonInfoId) {
+		return iLessonInfoDao.queryLessonMinusDetail(lessonInfoId);
+	}
+
+	@Override
+	public void confirmPayment(Integer licenceId,float cash, Integer sysId,String cashContent) {
+		HashMap<String, Object> condition = new HashMap<>();
+		condition.put("sysId", sysId);
+		condition.put("cash", cash);
+		condition.put("licenceId", licenceId);
+		condition.put("cashContent", cashContent);
+		iLessonInfoDao.confirmPayment(condition);
+	}
+
+	@Override
+	public List<Map<String, Object>> queryLessonInfoByStuId(Integer stuId) {
+		return iLessonInfoDao.queryLessonInfoByStuId(stuId);
+	}
+
+}

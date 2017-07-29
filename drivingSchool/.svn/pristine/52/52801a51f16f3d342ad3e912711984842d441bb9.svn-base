@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IOperationLogDao">
+	
+	<insert id="saveOperationLog" parameterType="OperationLog">
+		insert into OperationLog(functionId,time,userName,iP) 
+		values(#{functionId},sysdate(),#{userName},#{iP})
+	</insert>
+
+	
+	<select id="queryOperationLogPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		select t1.id,t2.url,t2.content,t1.userName,t1.time,t1.IP from 
+		OperationLog t1 left join Privilege t2 on t2.id = t1.functionId where 1=1
+		
+		<if test="conditions.beginDate!=null"> and date(t1.time) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and date(t1.time) <= #{conditions.endDate}]]></if> 
+		order by t1.time desc 
+	</select>
+	
+	<delete id="delExceptionLog">
+		delete from OperationLog 
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where id  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+</mapper>

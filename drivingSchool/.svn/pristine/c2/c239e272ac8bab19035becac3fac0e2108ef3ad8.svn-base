@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IImageDao">
+
+	<insert id="saveImages" parameterType="Picture" useGeneratedKeys="true" keyProperty="id">
+		insert into Picture(title,path,type,createTime) values(#{title},#{path},#{type},sysdate())
+	</insert>
+	
+	<delete id="deleteImage">
+		delete from Picture where id in
+		<foreach collection="list" close=")" open="(" item="item" separator=",">
+			#{item.id}
+		</foreach>
+	</delete>
+	
+	<update id="editImage" parameterType="Picture">
+		update Picture set title = #{title} where id= #{id}
+	</update>
+	
+	<select id="queryImages" parameterType="java.util.Map" resultType="Picture">
+		select * from Picture where 1=1 
+		
+		<if test="type!=null">
+			and  type = #{type}
+		</if>
+		<if test="types!=null">
+			<foreach collection="types" item="type" open=" and type in(" close=")" separator=",">
+				#{type}
+			</foreach>
+		</if>
+		<if test="beginDate!=null">
+			and  date(createTime)>=#{beginDate}
+		</if>
+		<if test="endDate!=null">
+			<![CDATA[and  date(createTime)<=#{endDate}]]>
+		</if>
+	</select>
+	
+	<select id="queryImage" parameterType="Integer" resultType="Picture">
+		select * from Picture where id = #{id}
+	</select>
+	
+	<select id="queryImagesAttPath" resultType="java.lang.String">
+		select substring(path,INSTR(path, '-')+1) from Picture
+	</select>
+</mapper>

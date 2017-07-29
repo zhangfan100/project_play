@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ICampusInfoDao">
+
+	<select id="queryCampusInfo" resultType="java.util.HashMap">
+		select * from CampusInfo
+	</select>
+
+	<select id="querySchoolName" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+		select * from CampusInfo  where id = #{id}
+	</select>
+	<select id="separateSchoolImg" resultType="Picture">
+	SELECT * FROM Picture WHERE TYPE=3  LIMIT 1
+	</select>
+	
+	<select id="querySeparateSchoolInfo" resultType="com.HuiShengTec.entity.CampusInfo">
+		select * from CampusInfo
+	</select>
+	
+	<update id="editCampusInfoSubmit" parameterType="com.HuiShengTec.entity.CampusInfo">
+		update CampusInfo
+		<set>
+			<if test="title!=null">
+				title=#{title},
+			</if>
+			<if test="phone!=null">
+				phone=#{phone},
+			</if>
+			<if test="campusCode!=null">
+			    campusCode=#{campusCode},
+			</if>
+			<if test="address!=null">
+				address=#{address},
+			</if>
+			<if test="GPSAddress!=null">
+				GPSAddress=#{GPSAddress}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="queryCampusInfoId" parameterType="int" resultType="CampusInfo">
+	SELECT 
+	  e.* 
+	FROM
+	  CampusInfo e 
+	WHERE e.id =#{id}
+	</select>
+	
+	<delete id="delCampusInfo" parameterType="java.lang.Integer">
+	delete from CampusInfo where id=#{id}
+	</delete>
+	<insert id="addCampusInfo" parameterType="com.HuiShengTec.entity.CampusInfo">
+		insert into CampusInfo
+		(title,phone,campusCode,address,GPSAddress) values
+		(#{title},#{phone},#{campusCode},#{address},#{GPSAddress})
+	</insert>
+</mapper>

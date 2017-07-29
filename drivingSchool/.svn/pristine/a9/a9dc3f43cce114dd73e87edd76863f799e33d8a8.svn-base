@@ -1,0 +1,512 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="../../TagLib/FroJSLib.jsp"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<link href="${path}/static/front/css/homepage.css" rel="stylesheet">
+<script type="text/javascript" src="${path}/static/front/js/homepage.js"></script>
+
+<style>
+._timg {
+	width: 100%;
+	height: 142px;
+	cursor:pointer;
+}
+#focus_0 .focus-bar li img{max-width:100%;}
+#focus_1 .focus-bar li img{width:180px;height:151px;}
+</style>
+
+</head>
+<body>
+	<div style="text-align:center;"><img src="${path }/static/img/ad_11.png"/></div>
+	<%@include file="../../TagLib/Menu.jsp"%>
+	<div class="wrap_container yahei" id="wrap_container">
+		<!-- start 驾校宣传照片 -->
+		<div class="img_content">
+			<div class="img_content_left">
+		
+				<section id="side">
+			        <div id="focus">
+			            <div class="hd">
+			              <div class="focus-title" id="focus-title">
+			              	<c:forEach items="${IndexData.picList }" var="item" >
+			              		<c:if test="${item.type==1 }">
+			              			<a href="javascript:void(0);" style="display: none;"><span class="title">${item.title}</span></a>
+			              		</c:if>
+			              	</c:forEach>
+                          </div>
+			            </div>
+			
+			            <div class="focus-bar-box" id="focus-bar-box">
+			              <div class="tempWrap" style="overflow:hidden; position:relative; width:700px">
+			              	<ul class="focus-bar" style="width: 4020px; left: -3350px; position: relative; overflow: hidden; padding: 0px; margin: 0px;">
+				              	<c:forEach items="${IndexData.picList }" var="item" >
+				              		<c:if test="${item.type==1 }">
+				              			 <li style="float: left; width: 700px;"><a href="#"><img alt="" src="${path }/${fn:replace(item.path,'thum/TMP_','images/IMG_')}" /></a></li>
+				              		</c:if>
+				              	</c:forEach>
+		              		</ul>
+		              	 </div>
+			            </div>
+			
+			            <a href="#" class="btn-prev" onclick="return false;" hidefocus="" id="focus-prev" style="display: none;"></a>
+			            <a href="#" class="btn-next" onclick="return false;" hidefocus="" id="focus-next" style="display: none;"></a>
+			            <div class="ft">
+			                <div class="ftbg"></div>
+			                <div id="focus-num" class="change">
+			                      <c:forEach items="${IndexData.picList }" var="item" varStatus="status">
+				              		<c:if test="${item.type==1 }">
+				              			 <a class="${status.index==0?'on':'' }"></a>
+				              		</c:if>
+				              	</c:forEach>
+                             </div>
+			            </div>
+			        </div>
+					<div class="clear"></div>
+				 </section>	 
+	
+			</div>
+			<div class="img_content_right">
+				<ul>
+					<li><a class="" href="${path}/stu/stuIndex?sign=/stu/addLessonInfo"><img
+							src="${path}/static/front/images/zxyy.png"></a></li>
+					<li><a class="" href="${path}/stu/stuIndex?sign=/stu/studentStatistics"><img
+							src="${path}/static/front/images/pxtj.png"></a></li>
+					<li><a class="" href="javascript:void(0);"><img
+							src="${path}/static/front/images/fycx.png"></a></li>
+				</ul>
+			</div>
+		</div>
+		<!-- end 驾校宣传照片 -->
+		<div style="position: fixed;*position: absolute;width: 100px;height: 100px;top: 50%;left: 50%;margin: -50px 10px 0 570px;">
+		 <span style="color: #330000;font-size: 13px;margin-left: 22px;">客服1</span>
+		  <a target="_blank" 
+		    href="http://wpa.qq.com/msgrd?v=3&uin=279929067&site=qq&menu=yes">
+		  <img border="0" src="http://wpa.qq.com/pa?p=2:279929067:51" alt="点击我联系客服1" title="点击我联系客服1"/>
+		  </a>
+		  <br>
+		  <span style="color: #330000;font-size: 13px;margin-left: 22px;">客服2</span>
+		  <a target="_blank" 
+		    href="http://wpa.qq.com/msgrd?v=3&uin=279929067&site=qq&menu=yes">
+		  <img border="0" src="http://wpa.qq.com/pa?p=2:279929067:51" alt="点击我联系客服2" title="点击我联系客服2"/>
+		  </a>
+		</div>
+		<!-- start 报名电话 -->
+		<div class="apply_phone">
+			<ul>
+				<li class="apply_img"><img src="${path}/static/front/images/phone.png"></li>
+				<li class="apply_call f16">报名热线1：${phone2 } （仅限固话拨打） <br>
+					报名热线2：${phone1 } &nbsp;&nbsp;&nbsp; 报名热线3：${phone1 }
+				</li>
+				<li class="apply_photo"><img
+					src="${path}/static/front/images/apply_photo.png"></li>
+				<li><span class="f22 grey">网上自主报名</span> <input type="button"
+					class="white f16" value="立即报名" onclick="javascript:window.location='${path}/stu/registerStu'" /></li>
+			</ul>
+		</div>
+		<!-- end 报名电话 -->
+		<!-- start 左侧部分 -->
+		<div class="left_part">
+
+			<!-- start 金牌教练 -->
+			<div class="left_part_two">
+				<h1>
+					金牌教练
+					<c:forEach varStatus="schoolStatus" var="item"
+						items="${IndexData.campusInfo }">
+						<c:if test="${schoolStatus.first eq false }">
+							<span schoolId="${item.id }" class="f16">${item.title }</span>
+						</c:if>
+						<c:if test="${schoolStatus.first }">
+							<span schoolId="${item.id }" class="f16 selected">${item.title }</span>
+						</c:if>
+					</c:forEach>
+				</h1>
+				<div class="left_part_two_box school_0 nsxqjl">
+					<ul>
+					</ul>
+				</div>
+				<div class="left_part_two_box  school_1 nsxqjl">
+					<ul>
+
+
+					</ul>
+				</div>
+
+
+			</div>
+			<!-- end 金牌教练 -->
+			<div style="margin:20px 0px 25px 0px"><img src="${path }/static/img/ad_12.png"/></div>
+			<!-- start 优秀学员榜 -->
+			<div class="left_part_three">
+				<h1>
+					优秀学员榜
+					<c:forEach varStatus="schoolStatus" var="item"
+						items="${IndexData.campusInfo }">
+						<c:if test="${schoolStatus.first eq false }">
+							<span schoolId="${item.id }" class="f16">${item.title }</span>
+						</c:if>
+						<c:if test="${schoolStatus.first }">
+							<span schoolId="${item.id }" class="f16 selected">${item.title }</span>
+						</c:if>
+					</c:forEach>
+				</h1>
+				<div class="left_part_three_box nsxqxy">
+					<ul class="xy_head f16">
+						<li>排名</li>
+						<li>学员</li>
+						<li>报名日期</li>
+						<li>科目二成绩</li>
+					</ul>
+				</div>
+			</div>
+			<!-- end 优秀学员榜 -->
+		</div>
+		<!-- end 左侧部分 -->
+		<!-- start 右侧部分 -->
+		<div class="right_part">
+			<!-- start 最新报名 -->
+			<div class="right_part_one">
+				<h1>最新报名</h1>
+				<div class="right_box_one">
+					<ul class="bm_head f14">
+						<li>学员</li>
+						<li>驾照</li>
+						<li>时间</li>
+					</ul>
+					<c:forEach varStatus="stuStatus" var="item"
+						items="${IndexData.newStudents }">
+						<c:if test="${stuStatus.first }">
+							<ul style="border-top: none;" class="bm_list f14">
+						</c:if>
+						<c:if test="${stuStatus.first eq false }">
+							<ul class="bm_list f14">
+						</c:if>
+						<li class="gold">${item.name }</li>
+						<li>${item.licenceName }</li>
+						<li><fmt:formatDate value="${item.date }" type="date"
+								pattern="yyyy-MM-dd" /></li>
+						</ul>
+					</c:forEach>
+
+				</div>
+			</div>
+			<!-- end 最新报名 -->
+			<div style="margin:20px 0px;"><img src="${path }/static/img/ad_13.png"/></div>
+			<!-- start 驾校公告 -->
+			<div class="right_part_two">
+				<h1 class="pointer" onclick="javascript:window.location='${path}/pageMessage/viewNotice'">驾校公告</h1>
+				<div class="right_box_two">
+					<div class="jxgg_ul f14" id="jxgg">
+					</div>
+				</div>
+			</div>
+			<!-- end 驾校公告 -->
+			<!-- start 常见问题 -->
+			<div class="right_part_two">
+				<h1 class="pointer" onclick="javascript:window.location='${path}/pageMessage/viewQuestion'">常见问题</h1>
+				<div class="right_box_two">
+					<div class="jxgg_ul f14" id="jxwt">
+					</div>
+				</div>
+			</div>
+			<!-- end 常见问题 -->
+		</div>
+
+		<!-- end 左侧部分 -->
+		<!-- start 场地照片 -->
+		<div class="place_pic">
+			<h1>场地照片</h1>
+			<div class="place_pic_box">
+				<section id="side_0">
+			        <div id="focus_0">
+			            <div class="focus-bar-box" id="focus-bar-box_0">
+			              <div class="tempWrap" style="overflow:hidden; position:relative; width:1000px;padding-left:19px;">
+			              	<ul id="place_bar" class="focus-bar" style="width: 4020px; left: -3350px; position: relative; overflow: hidden; padding: 0px; margin: 0px;">
+			              	
+			              	<c:set var="index" value="0"></c:set>
+			              	<c:forEach var="item"  items="${IndexData.picList }" varStatus="status" >
+			              		<c:if test="${item.type==2 }">
+			              		 	<c:if test="${index%4==0 }">
+			              		 		<li style="float: left; width: 998px;">
+			                      		<ul>
+			              		 	</c:if>
+			              		 	
+			              		 	<li>
+										<a href="${path}${fn:replace(item.path,'thum/TMP_','images/IMG_')}" class="group1" title="${item.title}">
+										<img src="${path}${item.path}">
+										</a>
+									</li>
+			              		 	<c:if test="${(index+1)%4==0}">
+			              		 		</ul></li>
+			              		 	</c:if>
+			              		 	<c:set var="index" value="${index+1 }"></c:set>
+								</c:if>
+								<c:if test="${index%4!=0 && status.index==(fn:length(IndexData.picList)-1)}"></ul></li></c:if>
+							</c:forEach>
+		              		</ul>
+		              	 </div>
+			            </div>
+						
+						<div class="ft">
+			                <div id="focus-num_0" class="change">
+			                	<c:set var="index" value="0"></c:set>
+			                	<c:forEach var="item"  items="${IndexData.picList }" >
+			                		<c:if test="${item.type==2 }">
+			                			<c:if test="${index%4==0 }">
+			                				<a class="${index==0?'on':'' }"></a>
+			                			</c:if>
+			                			<c:set var="index" value="${index+1 }"></c:set>
+			                		</c:if>
+				              	</c:forEach>
+							 </div>
+			            </div>
+
+			        </div>
+					<div class="clear"></div>
+				 </section>	 
+			
+				
+			
+			</div>
+		</div>
+		
+		<!-- end 场地照片 -->
+		<!-- start 荣誉分享 -->
+		<div class="honor_pic">
+			<h1>荣誉分享</h1>
+			<div class="honor_pic_box">
+			<section id="side_1">
+			        <div id="focus_1">
+			            <div class="focus-bar-box" id="focus-bar-box_1">
+			              <div class="tempWrap" style="overflow:hidden; position:relative; width:998px">
+			              	<ul id="honor_bar" class="focus-bar" style="width: 4020px; left: -3350px; position: relative; overflow: hidden; padding: 0px; margin: 0px;">
+								<c:set var="index" value="0"></c:set>
+				              	<c:forEach var="item"  items="${IndexData.picList }" varStatus="status" >
+				              		<c:if test="${item.type==3 }">
+				              		 	<c:if test="${index%5==0 }">
+				              		 		<li style="float: left; width: 998px;">
+				                      		<ul>
+				              		 	</c:if>
+				              		 	
+				              		 	<li>
+											<a href="${path}${fn:replace(item.path,'thum/TMP_','images/IMG_')}" class="group2" title="${item.title}">
+											<img src="${path}${item.path}">
+											</a>
+										</li>
+				              		 	<c:if test="${(index+1)%5==0}">
+				              		 		</ul></li>
+				              		 	</c:if>
+				              		 	<c:set var="index" value="${index+1 }"></c:set>
+									</c:if>
+									<c:if test="${index%5!=0 && status.index==(fn:length(IndexData.picList)-1)}"></ul></li></c:if>
+								</c:forEach>
+		              		</ul>
+		              	 </div>
+			            </div>
+			
+			            <div class="ft">
+			               <!--  <div class="ftbg"></div> -->
+			                <div id="focus-num_1" class="change">
+				                <c:set var="index" value="0"></c:set>
+			                	<c:forEach var="item"  items="${IndexData.picList }" >
+			                		<c:if test="${item.type==3 }">
+			                			<c:if test="${index%5==0 }">
+			                				<a class="${index==0?'on':'' }"></a>
+			                			</c:if>
+			                			<c:set var="index" value="${index+1 }"></c:set>
+			                		</c:if>
+			                		
+				              	</c:forEach>
+                             </div>
+			            </div>
+			        </div>
+					<div class="clear"></div>
+				 </section>	 
+			</div>
+		</div>
+		
+		<!-- end 荣誉分享 -->
+	</div>
+	<div class="footer">
+		<div class="footer_center">
+			<div class="clearfix">
+				<div class="col-md-12 column ">
+					<div class="footer_one">
+						<h3>关于</h3>
+						<ul>
+							<li><a>关于慧莘</a></li>
+							<li><a>版权声明</a></li>
+							<li><a>关于隐私</a></li>
+							<li><a>免责声明</a></li>
+							<li><a>网站地图</a></li>
+							<li><a>加入慧莘</a></li>
+
+						</ul>
+					</div>
+					<div class="footer_two">
+						<h3>友情链接</h3>
+						<ul>
+						<c:forEach var="friend_link" items="${friend_links }">
+							<li><a href="${friend_link.value }">${friend_link.title }</a></li>
+						</c:forEach>
+						</ul>
+
+					</div>
+					<div class="footer_three">
+						<h3>联系我们</h3>
+						<ul>
+							<li><a>${contact }</a></li>
+							<li><a>${phone1 }</a></li>
+							<li><a>${phone2 }</a></li>
+							<li><a>${service_period }</a></li>
+							<li><a>${monitor_phone }</a></li>
+							<li><a>${service_mailbox }</a></li>
+
+						</ul>
+
+					</div>
+					<div class="footer_four">
+						<h3>关注我们</h3>
+						<ul>
+							<li><a>新浪微博</a></li>
+							<li><a>腾讯微博</a></li>
+							<li><a><img src="${path}/static/front/images/ewm.png"></a></li>
+
+						</ul>
+
+					</div>
+					<div class="footer_five">
+						<h3>版权信息</h3>
+						<ul>
+							<li><a>${copyRight_info }</a></li>
+							<li><a>${filings }</a></li>
+							<li><a>${license }</a></li>
+							<li><a>${filings_address }</a></li>
+							<li><a>${filings_code }</a></li>
+							<li><a>${copyRight_years }</a></li>
+							
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	function teaImg(obj) {
+		$(obj).attr("src", "${path}/static/img/defaultPic.jpg").attr("onerror", "");
+	}
+	
+	function jumpPage(url){
+		$.get(url,function(data){
+			$("#wrap_container").html(data);
+		});
+	}
+
+	function loadTeacherData(schoolId) {
+		$.ajax({
+			type : "POST",
+			url : "${path}/querySchoolTeacher",
+			data : {
+				schoolId : schoolId
+			},
+			success : function(data) {
+				fillTeacherData(data);
+			}
+		});
+	}
+	function fillTeacherData(e) {
+		var data = eval(e);
+		for (var i = 0; i < data.length; i++) {
+			var teacherInfo = data[i];
+			var integer = parseInt(teacherInfo.coachScore);
+			var decimals = teacherInfo.coachScore - integer;
+			var text_star = "";
+			for (var j = 0; j < integer; j++) {
+				text_star += '<i class="full_star"></i>';
+			}
+			if (decimals > 0) {
+				text_star += '<i class="half_star"></i>';
+			}
+			var text = "<li><a><img class='_timg' onerror='teaImg(this)'"
+					+" onclick='javascript:window.location=\"${path}/coachshow/toCoachDetail?id="+teacherInfo.id+"\"'"
+					+"  src='${path}"
+					+ "/"
+					+ teacherInfo.path
+					+ "'></a><span>姓名："
+					+ teacherInfo.name
+					+ "</span><span>评价："
+					+ teacherInfo.coachScore.toString()
+					+ "</span><span>"
+					+ text_star + "</span></li>";
+			if (i <= 4) {
+				$(".school_0 ul").append(text);
+			} else {
+				$(".school_1 ul").append(text);
+			}
+		}
+	}
+	function loadStuData(schoolId) {
+		$.ajax({
+			type : "POST",
+			url : "${path}/querySchoolStudent",
+			data : {
+				schoolId : schoolId
+			},
+			success : function(data) {
+				fillStuData(data);
+			}
+		});
+	}
+	function fillStuData(e) {
+		var data = eval(e);
+		var text = "";
+		for (var i = 0; i < data.length; i++) {
+			text = "<ul class='xy f16'><li><span>" + (i + 1)
+					+ "</span></li><li class='gold'>" + data[i].name
+					+ "</li><li>" + data[i].createDate + "</li><li>"
+					+ data[i].score + "</li><li>";
+			$(".left_part_three_box").append(text);
+		}
+	}
+
+	$(function() {
+		//获取驾校公告信息
+		$.post("${path}/pageMessage/queryMessageByKindKey", {
+			"kindKey" : "6"
+		}, function(data) {
+			var _con = $("#jxgg");
+			data = $.parseJSON(data);
+			$.each(data, function(index, item) {
+				var obj = $('<ul><li><a href="${path}/pageMessage/viewInfo?id='
+						+ item.id + '">' + item.title + '</a></li></ul>');
+				if (index == 0) {
+					obj.css("border-top", "none");
+				}
+				_con.append(obj);
+			});
+		});
+
+		//获取常见问题
+		$.post("${path}/pageMessage/queryMessageByKindKey", {
+			"kindKey" : "7"
+		}, function(data) {
+			var _con = $("#jxwt");
+			data = $.parseJSON(data);
+			$.each(data, function(index, item) {
+				var obj = $('<ul ><li><a href="${path}/pageMessage/viewInfo?id='
+						+ item.id + '">' + item.title + '</a></li></ul>');
+				if (index == 0) {
+					obj.css("border-top", "none");
+				}
+				_con.append(obj);
+			});
+		});
+	});
+</script>
+</html>

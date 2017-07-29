@@ -1,0 +1,56 @@
+package com.HuiShengTec.app.service.impl;
+
+import java.util.Date;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.HuiShengTec.app.dao.IVehicleMonitorDao;
+import com.HuiShengTec.app.service.IVehicleMonitorService;
+
+@Service
+@Transactional
+public class VehicleMonitorServiceImpl implements IVehicleMonitorService {
+
+	
+	@Autowired
+	private IVehicleMonitorDao iVehicleMonitorDao;
+	
+	
+	 /**
+	  * 传来车的经纬度和车的id 在最近的距离标示50m时的第一次返回一个id和title
+	  * @author zf
+	  */
+	@Override
+	public Map<String, Object> getFirstJudge(Map<String, Object> param) {
+		Map<String, Object> result = iVehicleMonitorDao.getFirstJudge(param);
+		float dista = Float.valueOf(result.get("distance").toString());
+		Integer distance = (int)(dista);
+		if (distance != null) {
+			if (distance == 50) {
+				HttpSession session = (HttpSession) param.get("session");
+				String carId = param.get("carId").toString();
+				Object carIdLastTime = session.getAttribute(carId);
+				if (null == carIdLastTime) {//说明第一次
+					session.setAttribute(carId, new Date().getTime());
+					return result;
+				} else {//不是第一次 判断两次相差时间 如果相差时间在3分组之内 那么认为是同一趟 否则就返回
+					Long lastTime = (Long) session.getAttribute(carId);
+					Long currentTime = new Date().getTime();
+					Long time = (currentTime - lastTime) / (60 * 1000);
+					if (time > 3) {
+						session.setAttribute(carId, new Date().getTime());//跟新session的时间
+						return result;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+}
+

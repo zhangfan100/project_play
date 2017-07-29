@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IIncomeItemDao">
+
+
+    <select id="queryItemByKeyWord" resultType="java.util.HashMap"
+		parameterType="java.util.HashMap">
+		SELECT
+		i.*
+		FROM
+		incomeitem i
+		<if test="keyWord!=null">
+			WHERE i.itemTag LIKE CONCAT("%", #{keyWord}, "%")
+		</if>
+		ORDER BY i.id DESC LIMIT 0,10
+	</select>
+
+    <select id="queryAllIncomeItem" resultType="java.util.HashMap" parameterType="PageBean">
+          SELECT * FROM incomeitem 
+	</select>
+	
+    <select id="queryIncomeItemById" resultType="java.util.HashMap" parameterType="int">
+          SELECT * FROM incomeitem where id=#{id}
+	</select>
+   
+   <insert id="addIncomeItem" parameterType="IncomeItem" >
+		INSERT INTO incomeitem
+            (
+             itemTag,itemType
+             )
+	VALUES (
+	        #{itemTag},
+	        #{itemType}
+	        )
+	</insert>
+	
+	<update id="updateIncomeItem" parameterType="IncomeItem">
+		update incomeitem
+           <set>
+             itemTag = #{itemTag},
+             itemType = #{itemType}
+           </set>
+		    where id =#{id}
+	</update>
+
+    <delete id="delIncomeItems" parameterType="int">
+		DELETE 
+		FROM
+		  incomeitem
+		WHERE id in 
+        <foreach collection="list" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+	</delete>
+
+</mapper> 

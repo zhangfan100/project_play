@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ILessonInfoDao">
+
+   
+        <select id="queryOrderLessionInfo" parameterType="int"
+		resultType="java.util.HashMap">
+		  SELECT 
+          (SELECT STR_TO_DATE(l.`beginTime`, '%Y-%m-%d')) beginTime,
+          c.`name`,
+          l.`lessonCode`,
+          l.`cash` ,
+          t.`timeSlot`
+       FROM
+            lessoninfo l 
+         INNER JOIN coachinfo c 
+             ON (l.`coachId` = c.`id`) 
+         INNER JOIN timeprice t
+             ON(t.`beginTime`=(SELECT HOUR((SELECT DATE_FORMAT((SELECT begintime FROM lessoninfo WHERE studentId=#{userId} LIMIT 0,1),'%Y-%m-%d %H:%i')))))
+        WHERE l.`studentId` = #{userId} AND l.`beginTime`>NOW()
+	    </select>
+
+<select id="queryCohLessonPlan" parameterType="map" resultType="map">
+	SELECT 
+	  data1.*,
+	  ci.`name`,
+	  CASE
+	    data1.`subject` 
+	    WHEN #{subject} 
+	    THEN COUNT(li.`id`)
+	    ELSE 1
+	  END AS 'count' 
+	FROM
+	  (SELECT 
+	    tp.id,
+	    tp.`beginTime` AS 'timepoint',
+	    tp.`timeSlot`,
+	    cwlc.`coachId`,
+	    cwlc.`subject`,
+	    cwlc.`weekDay` 
+	  FROM
+	    timeprice tp,
+	    CoachWeekLessonConfig cwlc 
+	  WHERE cwlc.`timeSlot` = tp.`timeSlot`) data1 
+	  LEFT JOIN lessoninfo li 
+	    ON li.`coachId` = data1.`coachId` 
+	    AND HOUR(li.`beginTime`) &lt;= data1.`timepoint` 
+	    AND HOUR(li.`endTime`) &gt;= data1.`timepoint` 
+	    AND DAYOFWEEK(li.`endTime`) = data1.`weekDay` + 1 
+	    AND CAST(li.`beginTime` AS DATE) = #{date} 
+	  LEFT JOIN coachinfo ci 
+	    ON ci.`id` = data1.`coachId` 
+	WHERE 
+	  DAYOFWEEK(#{date}) = data1.`weekDay` + 1 
+	<if test="coachId!=null">
+	  AND data1.`coachId`=#{coachId}
+	</if>
+	<if test="coachId==null">
+	  AND data1.`coachId` IN 
+	  (SELECT 
+	    cwlc.`coachId` 
+	  FROM
+	    coachweeklessonconfig cwlc 
+	  WHERE cwlc.`timeSlotType` = 1 
+	    AND cwlc.`weekDay` = DAYOFWEEK(#{date}) 
+	  GROUP BY cwlc.`weekDay`)
+	</if>
+	GROUP BY data1.`timepoint`,
+	  data1.`coachId`,
+	  data1.`subject`,
+	  data1.`weekDay` 
+	ORDER BY
+	  data1.`coachId` ASC,
+	  data1.`timepoint` ASC,
+	  data1.`timepoint` ASC
+	</select>
+
+	<select id="queryLessonInfoPage" parameterType="PageBean"
+		resultType="map">
+	SELECT 
+	  l.`id`,
+	  l.`cohName`,
+	  l.`stuName`,
+	  l.`beginTime`,
+	  l.`endTime`,
+	  l.`realBeginTime`,
+	  l.`realEndTime`,
+	  l.`subject`,
+	  l.cash,
+	  l.cashStatus,
+	  l.`lessonStatus`,
+	  dl.`title`,
+	  l.`lessonCode`,
+	  l.`planWay`,
+	  st.coachId
+	FROM
+	  LessonInfo l 
+	  LEFT JOIN drivinglicence dl 
+	    ON dl.`id` = l.`drivingLicenceId` 
+	    left join studentinfo st
+	     on st.id = l.studentId
+	ORDER BY l.`beginTime` DESC 
+	</select>
+	<!-- 这里是为了查询出该学员已经预约的课程 -->
+	<select id="queryStuLessonPlanInfo" parameterType="int"
+		resultType="java.util.HashMap">
+			SELECT 
+			 l.`id`,
+			  l.`lessonCode`,
+			  CAST(l.`beginTime` AS DATE) AS `studyDate`,
+			  CONCAT(
+			    DATE_FORMAT(l.`beginTime`, '%H:%i'),
+			    "-",
+			    DATE_FORMAT(l.`endTime`, '%H:%i')
+			  ) AS `studyTime`,
+			  i.`name`,
+			  l.`cash` AS `price`,
+			  l.`subject`,
+			  l.`lessonStatus`,
+			  l.`coachId`,
+			  cf.carType
+			FROM
+			  LessonInfo l 
+			  LEFT JOIN CoachInfo i 
+			    ON l.`coachId` = i.`id`
+			    left join carinfo cf
+			     on(cf.id=l.carId) 
+			WHERE l.`lessonStatus` &lt;&gt; 2 
+			  AND l.`studentId` = #{stuId} 
+			  AND CAST(l.`beginTime` AS DATE) >=CAST(SYSDATE() AS DATE)
+<!-- 			  AND l.`beginTime`&gt;=SYSDATE()   -->
+	</select>
+	
+	<!-- 查询出学生预约课程未缴费的 -->
+	<select id="queryLessonInfoByStuId" parameterType="int"
+		resultType="java.util.HashMap">
+			SELECT 
+			 l.`id`,
+			  l.`lessonCode`,
+			  CAST(l.`beginTime` AS DATE) AS `studyDate`,
+			  CONCAT(
+			    DATE_FORMAT(l.`beginTime`, '%H:%i'),
+			    "-",
+			    DATE_FORMAT(l.`endTime`, '%H:%i')
+			  ) AS `studyTime`,
+			  l.`cash`,
+			  l.`subject`
+			FROM
+			  LessonInfo l 
+			WHERE  l.`cashStatus` = 0 
+			  AND l.studentId=#{stuId}
+	</select>
+	<insert id="addLessonInfo" parameterType="LessonInfo" >
+		INSERT INTO `lessoninfo`
+            (
+             `lessonCode`,
+             `studentId`,
+             `coachId`,
+             `carId`,
+             `createTime`,
+             `stuPhone`,
+             `cohPhone`,
+             `drivingLicenceId`,
+             `subject`,
+             `campusId`,
+             `lessonStatus`,
+             `beginTime`,
+             `endTime`,
+             `signInTime`,
+             `signOutTime`,
+             `realBeginTime`,
+             `realEndTime`,
+             `cash`,
+             `cashStatus`,
+             `stuName`,
+             `stuForShort`,
+             `stuLicence`,
+             `stuType`,
+             `cohName`,
+             `cohForShort`,
+             `cohLicence`,
+             `score`,
+             `lessonTimeLength`,
+             `lessonDriveLength`,
+             `planWay`,
+             `photoId`
+             )
+	VALUES (
+	        #{lessonCode},
+	        #{studentId},
+	        #{coachId},
+	        #{carId},
+	        #{createTime},
+	        #{stuPhone},
+	        #{cohPhone},
+	        #{drivingLicenceId},
+	        #{subject},
+	        #{campusId},
+	        #{lessonStatus},
+	        #{beginTime},
+	        #{endTime},
+	        #{signInTime},
+	        #{signOutTime},
+	        #{realBeginTime},
+	        #{realEndTime},
+	        #{cash},
+	        #{cashStatus},
+	        #{stuName},
+	        #{stuForShort},
+	        #{stuLicence},
+	        #{stuType},
+	        #{cohName},
+	        #{cohForShort},
+	        #{cohLicence},
+	        #{score},
+	        #{lessonTimeLength},
+	        #{lessonDriveLength},
+	        #{planWay},
+	        #{photoId}
+	        )
+	</insert>
+	<delete id="delLessonInfo" parameterType="int">
+		DELETE 
+		FROM
+		  LessonInfo 
+		WHERE id in 
+        <foreach collection="list" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+		AND `lessonStatus`&lt;&gt;2
+	</delete>
+	
+	<select id="querySingleLessonInfoIdByCode" resultType="Integer"  parameterType="string" >
+		SELECT 
+		  l.`id` 
+		FROM
+		  LessonInfo l 
+		WHERE 1 = 1 
+		  AND l.`lessonCode`=#{lessonCode}
+	</select>
+	
+	<select id="queryCohLessonInfo" parameterType="com.HuiShengTec.base.entity.PageBean"
+		resultType="java.util.HashMap">
+		SELECT 
+		  li.`id`,
+		  li.`lessonCode`,
+		  li.`stuName`,
+		  li.`stuPhone`,
+		  CAST(li.`beginTime` AS DATE) AS "studyDate",
+		  CONCAT(
+		    DATE_FORMAT(li.`beginTime`, '%H:%i'),
+		    "-",
+		    DATE_FORMAT(li.`endTime`, '%H:%i')
+		  ) `time` 
+		FROM
+		  LessonInfo li 
+		WHERE li.`coachId`=#{conditions.coachId}
+		AND CAST(li.`beginTime` AS DATE)
+		<if test="conditions.mode==1">&gt;=</if>
+		<if test="conditions.mode!=1">&lt;=</if> CAST(SYSDATE() AS DATE)
+		<if test="conditions.mode==1">
+		AND li.`status`&lt;&gt;2
+		</if>
+		<if test="conditions.mode!=1">
+		AND li.`status`=2
+		</if>
+	</select>
+	<!-- ajax通过登录学生id得到预约课程 -->
+	<select id="queryStuLessonInfoPlanList" parameterType="int" resultType="java.util.HashMap" >
+		SELECT 
+		  l.`id`,
+		  l.`subject`,
+		  l.`beginTime`,
+		  l.`endTime`,
+		  l.`cohName`,
+		  l.`lessonCode` ,
+		  l.`lessonStatus`,
+		  l.cash
+		FROM
+		  LessonInfo l 
+		WHERE  l.studentId = #{stuId} 
+		  AND l.`beginTime`&gt;=SYSDATE()
+	</select>
+	<select id="queryStuLessonTrainInfo" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+	SELECT 
+		l.id, 
+		l.`beginTime`, 
+		l.`endTime`, 
+		l.`subject`, 
+		l.`cohName`,
+ 		l.`lessonCode`, 
+ 		l.`lessonStatus`, 
+ 		count(t2.id) count 
+ 	FROM 
+ 		LessonInfo l left join lessonReview t2 on t2.lessonInfoId = l.id 
+ 	WHERE l.`lessonStatus` IN (2, 3) AND  l.`studentId` = #{stuId} 
+	<if test="subject!=0"> AND l.`subject` =#{subject}</if>
+        group by
+          l.id,
+          l.`beginTime`,
+		  l.`endTime`,
+		  l.`subject`,
+		  l.`cohName`,
+		  l.`lessonCode`,
+		  l.`lessonStatus` 
+	</select>
+		<select id="queryStuLessonInfoDetail" parameterType="int" resultType="java.util.HashMap" >
+		SELECT tl.*,sm.name FROM lessoninfo tl LEFT JOIN sysadmininfo sm ON(tl.paymentUserId=sm.id) WHERE tl.`id`=#{id}
+	</select>
+	<select id="queryLessonMinusDetail" parameterType="int" resultType="java.util.HashMap" >
+		SELECT * FROM `lessondetail` l WHERE l.lessonId=#{lessonInfoId}
+	</select>
+	
+	<select id="getLessonInfoById" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+		select 
+			t1.id,
+			t1.lessonCode,
+			t1.subject,
+			t2.name,
+			t1.coachId
+		 from lessoninfo t1 left join CoachInfo t2 on t2.id = t1.coachId where t1.id = #{id}
+	</select>
+	
+	<update id="confirmPayment" parameterType="java.util.Map">
+		update lessoninfo  
+		         set realCash=#{cash},
+		         paymentUserId=#{sysId},
+		         cashStatus=1,
+		         payTime=now(),
+		         cashContent=#{cashContent}
+		                   where id =#{licenceId}
+	</update>
+	
+	<!-- 查询出科目一和科目二完成 和完成异常的总人数 -->
+	<select id="queryStuLessonInfoCount" 
+		resultType="java.util.HashMap" 
+		parameterType="int" >
+			SELECT 
+			  1 AS flag,
+			  l.`subject`,
+			  IFNULL(lc.count,0) AS `count`      
+			FROM
+			  LessonInfo l 
+			  LEFT JOIN 
+			    (SELECT 
+			      lc.`subject`,
+			      COUNT(*) AS `count`
+			    FROM
+			      LessonInfo lc WHERE lc.`lessonStatus` NOT IN(1,0) AND lc.`studentId`=#{stuId}
+			    GROUP BY lc.`subject`) lc 
+			    ON lc.`subject` = l.`subject` 
+			GROUP BY l.`subject` 
+	</select>
+</mapper> 

@@ -1,0 +1,19 @@
+package com.HuiShengTec.test.action.publicAction;
+
+import org.junit.Test;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.HuiShengTec.test.basejunit.BaseActionJunit;
+
+public class BarCodeTest extends BaseActionJunit{
+
+	@Test
+	public void testToQueryAllWeekSetting() throws Exception {
+		request.setRequestURI("/getBarCode");  
+		//request.addParameter("code", "d");
+        request.setMethod("POST");    
+        // 执行URI对应的action    
+        final ModelAndView mav = this.excuteAction(request, response); 
+        System.out.println(mav);
+   }
+}

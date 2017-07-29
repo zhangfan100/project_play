@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IAccountStatisticsDao">
+	<insert id="addAccountStatistics" parameterType="AccountStatistics">
+	INSERT INTO `accountstatistics`
+	            (
+	             `type`,
+	             `beginTime`,
+	             `endTime`,
+	             `totalCash`,
+	             `everydayCash`,
+	             `statisticTime`,
+	             `statisticType`
+	             )
+	VALUES (
+	        #{type},
+	        #{beginTime},
+	        #{endTime},
+	        #{totalCash},
+	        #{everydayCash},
+	        #{statisticTime},
+	        #{statisticType})
+	</insert>
+	
+	<!-- 每天的统计 -->
+	<select id="dayStatistics" parameterType="com.HuiShengTec.entity.Accountstatistics" resultType="map">
+	    SELECT
+         MAX(CASE rs.`accountType` WHEN '1' THEN rs.`cash` ELSE 0 END ) AS 'income',
+         MAX(CASE rs.`accountType` WHEN '2' THEN rs.`cash` ELSE 0 END ) AS 'outcome' 
+        FROM
+				(SELECT 
+				  SUM(al.`cash`) AS 'cash',
+				  al.`accountType` 
+			   FROM
+				  accountlog al 
+				WHERE al.`payType` &lt;&gt; 3 
+				  AND al.`status` = 1 
+				  AND al.`time` &gt;=(SELECT CONCAT(CURDATE()," 00:00:00" ) )
+				  AND al.`time` &lt;=(SELECT CONCAT(CURDATE()," 23:59:59" ) ) 
+				GROUP BY al.`accountType` ) rs
+	</select>
+	
+	<!-- 每周的统计 -->
+	<select id="weekStatistics" parameterType="com.HuiShengTec.entity.Accountstatistics" resultType="map">
+	  SELECT
+		MAX(CASE rs.`accountType` WHEN '1' THEN rs.`cash` ELSE 0 END ) AS 'income',
+		MAX(CASE rs.`accountType` WHEN '2' THEN rs.`cash` ELSE 0 END ) AS 'outcome' 
+		FROM
+		(SELECT 
+		  SUM(al.`cash`) AS 'cash',
+		  al.`accountType` 
+		FROM
+		  accountlog al 
+		WHERE al.`payType` &lt;&gt; 3 
+		  AND al.`status` = 1 
+		  AND al.`time` &gt;=(SELECT (CONCAT((SELECT DATE_SUB(CURDATE(), INTERVAL 7 DAY))," 00:00:00" )))
+		  AND al.`time` &lt;=(SELECT (CONCAT((SELECT DATE_SUB(CURDATE(), INTERVAL 1 DAY))," 23:59:59" )) ) 
+		GROUP BY al.`accountType` ) rs
+	</select>
+	
+	<!-- 每月的统计 -->
+	<select id="monthStatistics" parameterType="com.HuiShengTec.entity.Accountstatistics" resultType="map">
+		  SELECT
+			MAX(CASE rs.`accountType` WHEN '1' THEN rs.`cash` ELSE 0 END ) AS 'income',
+			MAX(CASE rs.`accountType` WHEN '2' THEN rs.`cash` ELSE 0 END ) AS 'outcome' 
+			FROM
+				(SELECT 
+				  SUM(al.`cash`) AS 'cash',
+				  al.`accountType` 
+				FROM
+				  accountlog al 
+				WHERE al.`payType` &lt;&gt; 3 
+				  AND al.`status` = 1 
+				  AND al.`time` &gt;=(SELECT  CONCAT ((SELECT DATE_ADD(DATE_ADD(LAST_DAY(CURDATE()),INTERVAL 1 DAY),INTERVAL -2 MONTH))," 00:00:00"))
+				  AND al.`time` &lt;=(SELECT  CONCAT (LAST_DAY((SELECT DATE_ADD(DATE_ADD(LAST_DAY(CURDATE()),INTERVAL 1 DAY),INTERVAL -2 MONTH)))," 23:59:59")) 
+				GROUP BY al.`accountType` ) rs
+	</select>
+	
+	<!-- 每季度的统计 -->
+	<select id="quarterStatistics" parameterType="com.HuiShengTec.entity.Accountstatistics" resultType="map">
+	     SELECT
+			MAX(CASE rs.`accountType` WHEN '1' THEN rs.`cash` ELSE 0 END ) AS 'income',
+			MAX(CASE rs.`accountType` WHEN '2' THEN rs.`cash` ELSE 0 END ) AS 'outcome' 
+			FROM
+			(SELECT 
+			  SUM(al.`cash`) AS 'cash',
+			  al.`accountType` 
+			FROM
+			  accountlog al 
+			WHERE 
+			      al.`payType` &lt;&gt; 3 
+			  AND al.`status` = 1 
+			  AND QUARTER(al.time)=QUARTER(NOW())-1
+			GROUP BY al.`accountType` ) rs
+	</select>
+	
+	<!-- 每年的统计 -->
+	<select id="yearStatistics" parameterType="com.HuiShengTec.entity.Accountstatistics" resultType="map">
+	    SELECT
+			MAX(CASE rs.`accountType` WHEN '1' THEN rs.`cash` ELSE 0 END ) AS 'income',
+			MAX(CASE rs.`accountType` WHEN '2' THEN rs.`cash` ELSE 0 END ) AS 'outcome' 
+			FROM
+			(SELECT 
+			  SUM(al.`cash`) AS 'cash',
+			  al.`accountType` 
+			FROM
+			  accountlog al 
+			WHERE al.`payType` &lt;&gt; 3 
+			  AND al.`status` = 1 
+			  AND YEAR(al.time)=YEAR(DATE_SUB(NOW(),INTERVAL 1 YEAR))
+			GROUP BY al.`accountType` ) rs
+	</select>
+	
+	<!-- 得到选择时间段的日的统计数据 -->
+	<select id="getDayStatisticalData" parameterType="Accountstatistics" resultType="map">
+	  <choose>
+	        <when test="type!=null">
+	          SELECT SUM(IF(rs.`accountType` = 1, rs.`cash`, 0)) AS 'income',
+	              SUM(IF(rs.`accountType` = 2, rs.`cash`, 0)) AS 'outcome',
+	              rs.`time` AS 'date' 
+	              FROM
+				(SELECT 
+				  SUM(al.`cash`) AS 'cash',
+				  al.`accountType` ,
+				  DATE(al.`time`) AS 'time'
+				FROM
+				  accountlog al 
+				WHERE al.`payType` &lt;&gt; 3 
+				  AND al.`status` = 1 
+				  AND al.accountType=#{type}
+				  AND DATE(al.`time`) &gt;=(DATE(#{beginTime}))
+				  AND DATE(al.`time`) &lt;= (DATE(#{endTime}))
+				GROUP BY DATE(al.`time`),al.`accountType` ) rs    GROUP BY rs.`time` 
+	        </when>
+	        <otherwise>
+	          SELECT SUM(IF(rs.`accountType` = 1, rs.`cash`, 0)) AS 'income',
+	              SUM(IF(rs.`accountType` = 2, rs.`cash`, 0)) AS 'outcome',
+	              rs.`time` AS 'date' 
+	              FROM
+				(SELECT 
+				  SUM(al.`cash`) AS 'cash',
+				  al.`accountType` ,
+				  DATE(al.`time`) AS 'time'
+				FROM
+				  accountlog al 
+				WHERE al.`payType` &lt;&gt; 3 
+				  AND al.`status` = 1 
+				  AND DATE(al.`time`) &gt;=(DATE(#{beginTime}))
+				  AND DATE(al.`time`) &lt;= (DATE(#{endTime}))
+				GROUP BY DATE(al.`time`),al.`accountType` ) rs    GROUP BY rs.`time` 
+	        </otherwise>
+	      </choose>
+	  	</select>
+	
+	<!-- 对应选择的几个月里按周的统计 -->
+	<select id="getWeekStatisticalData" parameterType="Accountstatistics" resultType="map">
+	    <choose>
+	        <when test="type!=null">
+	          SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+			       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+			       rs.date 
+			       FROM (
+			       SELECT CONCAT(DATE_FORMAT(a.`beginTime`,'%Y-%m-%d'),'~',DATE_FORMAT(a.`endTime`,'%Y-%m-%d')) AS 'DATE',
+			       a.`totalCash` , a.`type`
+			 FROM accountstatistics a 
+			WHERE a.`beginTime` &gt;= #{beginTime}
+			   AND  a.`endTime` &lt; #{endTime}
+			   AND  a.`statisticType` = 2
+			   AND  a.type = #{type}
+			   ORDER BY a.`beginTime`,a.`type`) rs GROUP BY rs.date
+	        </when>
+	            <otherwise>
+	          SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+			       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+			       rs.date 
+			       FROM (
+			       SELECT CONCAT(DATE_FORMAT(a.`beginTime`,'%Y-%m-%d'),'~',DATE_FORMAT(a.`endTime`,'%Y-%m-%d')) AS 'DATE',
+			       a.`totalCash` , a.`type`
+			 FROM accountstatistics a 
+			WHERE a.`beginTime` &gt;= #{beginTime}
+			   AND  a.`endTime` &lt; #{endTime}
+			   AND  a.`statisticType` = 2
+			   ORDER BY a.`beginTime`,a.`type`) rs GROUP BY rs.date
+	        </otherwise>
+	      </choose>
+	</select>
+	
+	<!-- 对于选择的年，月的统计 -->
+	<select id="getMonthStatisticalData" parameterType="Accountstatistics" resultType="map">
+	 <choose>
+	   <when test="type!=null">
+	      SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+		       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+		       rs.date 
+		       FROM (SELECT SUBSTRING(a.`beginTime`,1,7) AS 'date',a.`totalCash`,a.`type` FROM accountstatistics a
+		 WHERE a.`beginTime` &gt;= #{beginTime}
+		 AND a.`endTime` &lt; #{endTime}
+		 AND a.`statisticType`=3
+		 AND a.type= #{type}
+		 ORDER BY a.`beginTime`,a.`type`) rs GROUP BY rs.date
+	   </when>
+	   <otherwise>
+	     SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+		       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+		       rs.date 
+		       FROM (SELECT SUBSTRING(a.`beginTime`,1,7) AS 'date',a.`totalCash`,a.`type` FROM accountstatistics a
+		 WHERE a.`beginTime` &gt;= #{beginTime}
+		 AND a.`endTime` &lt; #{endTime}
+		 AND a.`statisticType`=3
+		 ORDER BY a.`beginTime`,a.`type`) rs GROUP BY rs.date
+	   </otherwise>
+	 </choose>
+	</select>
+	
+	<!-- 对于季度的统计 -->
+	<select id="getQuarterStatisticalData" parameterType="Accountstatistics" resultType="map">
+	<choose>
+	  <when test="type==null">
+	    SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+		       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+		       rs.date 
+		       FROM (
+					  SELECT  CONCAT(YEAR(a.`beginTime`),'年第',QUARTER(a.`beginTime`),'季度') AS 'date',
+				         a.`totalCash`,a.`type` FROM accountstatistics a
+						 WHERE a.`beginTime` &gt;= #{beginTime}
+						 AND a.`endTime` &lt; #{endTime}
+						 AND a.`statisticType`= 4
+						 ORDER BY a.`beginTime`,a.`type`
+                    ) rs GROUP BY rs.date
+	    
+	  </when>
+	  <otherwise>
+	    SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+		       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+		       rs.date 
+		       FROM (
+					  SELECT  CONCAT(YEAR(a.`beginTime`),'年第',QUARTER(a.`beginTime`),'季度') AS 'date',
+				         a.`totalCash`,a.`type` FROM accountstatistics a
+						 WHERE a.`beginTime` &gt;= #{beginTime}
+						 AND a.`endTime` &lt; #{endTime}
+						 AND a.`statisticType`= 4
+						 AND a.type= #{type}
+						 ORDER BY a.`beginTime`,a.`type`
+                    ) rs GROUP BY rs.date
+	  </otherwise>
+	</choose>
+	</select>
+	
+	
+	<!-- 对于年的统计 -->
+	<select id="getYearStatisticalData" parameterType="AccountLog" resultType="map">
+	<choose>
+	  <when test="type!=null">
+	    SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+		       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+		       rs.date 
+		       FROM (
+					  SELECT  YEAR(a.`beginTime`) AS 'date',
+				         a.`totalCash`,a.`type` FROM accountstatistics a
+						 WHERE a.`beginTime` &gt;= #{beginTime}
+						 AND a.`endTime` &lt; #{endTime}
+						 AND a.`statisticType`= 5
+						 AND a.type= #{type}
+						 ORDER BY a.`beginTime`,a.`type`
+                    ) rs GROUP BY rs.date
+       </when>
+       <otherwise>
+        SELECT SUM(IF(rs.`type` = 1, rs.`totalCash`, 0)) AS 'income',
+		       SUM(IF(rs.`type` = 2, rs.`totalCash`, 0)) AS 'outcome',
+		       rs.date 
+		       FROM (
+					  SELECT  YEAR(a.`beginTime`) AS 'date',
+				         a.`totalCash`,a.`type` FROM accountstatistics a
+						 WHERE a.`beginTime` &gt;= #{beginTime}
+						 AND a.`endTime` &lt; #{endTime}
+						 AND a.`statisticType`= 5
+						 ORDER BY a.`beginTime`,a.`type`
+                    ) rs GROUP BY rs.date
+       </otherwise>
+	</choose>
+	</select>
+</mapper>

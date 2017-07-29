@@ -1,0 +1,28 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="TagLib.jsp"%>
+<!DOCTYPE html>
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="${path}/scripts/html5shiv.js"></script>
+<![endif]-->
+<!-- Fav and touch icons -->
+
+<link href="${path}/static/front/css/bootstrap.min.css" rel="stylesheet">
+<link href="${path}/static/front/css/colorbox.css" rel="stylesheet" />
+<link href="${path}/static/front/css/style.css" rel="stylesheet">
+<link href="${path}/static/front/css/common.css" rel="stylesheet">
+<link href="${path}/static/front/css/bootstrap-datetimepicker.css" rel="stylesheet">
+<link href="${path}/static/front/css/bootstrap-theme.min.css" rel="stylesheet">
+<link rel="Shortcut Icon" href="<c:if test='${not empty jxlogo}'>${path}${jxlogo}</c:if>" type="image/gif">
+<%-- <link rel="shortcut icon" href="${path}/front/images/lqjx_logo.png"> --%>
+<script src="${path }/static/scripts/jquery-1.8.0.min.js" type="text/javascript"></script>
+<!--  
+<script src="${path }/static/front/js/jquery.min.js" type="text/javascript"></script>
+-->
+<script src="${path }/static/scripts/bootstrap.min.js" type="text/javascript"></script>
+<script src="${path}/static/front/js/jquery.SuperSlide.2.1.1.js"></script>
+<script src="${path}/static/front/js/jquery.colorbox.js"></script>
+<script src="${path }/static/front/js/jPages.js"></script>
+<script src="${path }/static/scripts/common.js" type="text/javascript"></script>
+<script src="${path }/static/front/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+<script src="${path }/static/front/js/bootstrap-datetimepicker.fr.js" type="text/javascript"></script>

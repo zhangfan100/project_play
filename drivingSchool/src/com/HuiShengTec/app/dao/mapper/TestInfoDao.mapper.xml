@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ITestInfoDao">
+	<select id="queryTestInfoPage" resultType="java.util.HashMap" parameterType="com.HuiShengTec.base.entity.PageBean" >
+		SELECT
+			t.id,
+			t.testCode,
+			t.stuName,
+			t.studyDate,
+			t.beginTime,
+			t.endTime,
+			t.realBeginTime,
+			t.realEndTime,
+			t.status,
+			t.subject
+		FROM
+			TestInfo t
+		ORDER BY
+			t.studyDate DESC
+	</select>
+	<select id="queryStuTestCount" parameterType="int" resultType="int">
+		SELECT 
+		  COUNT(*) 
+		FROM
+		  TestInfo i 
+		WHERE 1 = 1 
+		  AND i.studyDate >= CAST(SYSDATE() AS DATE) 
+		  AND i.status &lt;&gt; 2 
+		  AND i.stuId = #{stuId} 
+	</select>
+	<select id="queryAllDayTestCount" parameterType="java.util.Date" resultType="int">
+		SELECT 
+		  COUNT(*) 
+		FROM
+		  TestInfo i 
+		WHERE 1 = 1 
+		  AND i.studyDate = CAST(#{date} AS DATE) 
+		  AND i.status &lt;&gt; 2 
+	</select>
+	<insert id="addTestInfo" parameterType="TestInfo" >
+		INSERT INTO `TestInfo` (
+		  `stuId`,
+		  `licenceId`,
+		  `testCode`,
+		  `stuType`,
+		  `subject`,
+		  `studyDate`,
+		  `cash`,
+		  `status`,
+		  `stuCode`,
+		  `stuName`,
+		  `stuForShort`,
+		  `stuPhone`,
+		  `campusId`
+		) 
+		VALUES
+		  (
+		    #{stuId},
+		    #{licenceId},
+		    #{testCode},
+		    #{stuType},
+		    #{subject},
+		    #{studyDate},
+		    #{cash},
+		    #{status},
+		    #{stuCode},
+		    #{stuName},
+		    #{stuForShort},
+		    #{stuPhone},
+		    #{campusId}
+		  )
+	</insert>
+	<delete id="delTestInfo" parameterType="list">
+		DELETE FROM TestInfo WHERE id IN
+		<foreach open="(" separator="," close=")" item="id" collection="list">
+			#{id}
+		</foreach>
+	</delete>
+	<select id="queryStuTestInfoList" resultType="java.util.HashMap" parameterType="int" >
+		SELECT 
+		  t.id,
+		  t.testCode,
+		  t.stuName,
+		  d.`title`,
+		  t.studyDate,
+		  t.beginTime,
+		  t.endTime,
+		  t.realBeginTime,
+		  t.realEndTime,
+		  t.status,
+		  t.subject,
+		  t.cash,
+		  t.score 
+		FROM
+		  TestInfo t 
+		  LEFT JOIN DrivingLicence d 
+		    ON d.`id` = t.`licenceId` 
+		WHERE t.`stuId` = #{stuId} 
+		AND t.`studyDate`&gt;=SYSDATE()
+		ORDER BY t.studyDate DESC 
+	</select>
+	<select id="queryTestDetail" resultType="java.util.HashMap" parameterType="int" >
+		SELECT * FROM `testlogstatistics` WHERE id=#{testInfoId}
+	</select>
+	
+	<select id="queryTestinfoById" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+		select * from TestInfo where id = #{id}
+	</select>
+	
+</mapper>

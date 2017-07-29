@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ILessonStatisticsDao">
+
+	<select id="queryTrainStatistics" parameterType="java.lang.Integer" resultType="java.util.HashMap" >
+      <![CDATA[
+		select t4.rownum,t4.detailType traiItem,count(1) total,t4.realBeginTime time,
+		SUM(IF(t4.score>=80,1,0)) pass,
+		round(SUM(IF(t4.score>=80,1,0))*100.0/count(1),2) passRate
+		from (
+		   select t2.*,t3.detailType,t3.score from
+		       (select (@rownum:=cast(@rownum as SIGNED)+1) rownum,t1.id,t1.realBeginTime from lessoninfo t1,
+		       (Select (@rownum :=0) ) b
+		       where t1.studentId=#{stuId} and t1.subject=2 and t1.lessonstatus=2 order by t1.realBeginTime desc limit 0,7
+		   ) t2 left join lessondetail t3 on t2.id = t3.lessonId
+		)t4 group by t4.rownum,t4.detailType,t4.realBeginTime order by t4.rownum 
+		]]>
+		</select> 
+
+	<select id="queryPeriodStatistics" parameterType="java.lang.Integer"
+		resultType="java.util.HashMap">
+		SELECT t1.subject,
+		COUNT(1)
+		total FROM LessonInfo t1
+		WHERE t1.studentId=#{stuId}
+		GROUP BY t1.subject
+	</select>
+
+	<select id="queryTrainStatisticsTable" parameterType="java.lang.Integer"
+		resultType="java.util.HashMap">
+		
+		SELECT
+		t4.detailType traiItem,
+		COUNT(1) total,
+		SUM(IF (t4.score >= 80, 1, 0)) pass,
+		CAST(ROUND(SUM(IF (t4.score >= 80, 1, 0)) * 100.0 / COUNT(1),2) AS DECIMAL (5, 2)) passRate
+		FROM
+			(SELECT t2.*,t3.detailType,t3.score FROM
+				(SELECT t1.id FROM LessonInfo t1 WHERE t1.studentId =#{stuId} AND t1.subject = 2) t2
+			LEFT JOIN LessonDetail t3 ON t3.lessonId = t2.id where t3.detailType is not null) t4
+		GROUP BY t4.detailType
+		ORDER BY t4.detailType
+	</select>
+</mapper>

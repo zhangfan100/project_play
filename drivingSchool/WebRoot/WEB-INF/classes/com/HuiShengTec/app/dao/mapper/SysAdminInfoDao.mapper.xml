@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ISysAdminInfoDao">
+	<select id="querySysAdminInfo" parameterType="Integer" resultType="SysAdminInfo">
+	SELECT * FROM SysAdminInfo e where e.id=#{id}
+	</select>
+	
+	<select id="querySysAdminInfoPage" resultType="java.util.HashMap" parameterType="com.HuiShengTec.base.entity.PageBean" >
+	SELECT 
+	  admin.id,
+	  admin.name,
+	  r.title,
+	  l.lastLoginIP,
+	  l.status
+	FROM
+	  SysAdminInfo admin,
+	  Login l,
+	  Role r
+	  WHERE l.userId=admin.id AND r.id=l.roleId AND l.roleType=3
+	</select>
+	<update id="updateSysAdminStatus" parameterType="java.util.HashMap" >
+		UPDATE 
+		  Login 
+		SET
+		  `status` = #{status} 
+		WHERE roleType = 3 
+		  AND userId =#{userId}
+	</update>
+	
+		<select id="querySysAdminByPage" resultType="java.util.HashMap" parameterType="com.HuiShengTec.base.entity.PageBean">
+			select t1.*,t2.email,t2.status,t2.username from SysAdminInfo t1 left join Login t2 on t1.id = t2.userId where t2.roleType=3
+			<if test="conditions.keyWords!=null">
+				<![CDATA[ and (t1.name like concat('%',#{conditions.keyWords},'%') or t1.phone=#{conditions.keyWords})]]>
+			</if>
+			order by createTime desc
+		</select>
+		
+		<select id="querySysByKeyWord" resultType="java.util.HashMap" parameterType="com.HuiShengTec.base.entity.PageBean">
+			select * from SysAdminInfo s where 1=1
+			<if test="conditions.keyWord!=null">
+				<![CDATA[ and (s.name like concat('%',#{conditions.keyWord},'%') or s.phone=#{conditions.keyWord})]]>
+			</if>
+			order by createTime desc
+		</select>
+		
+		<select id="querySysAdminId" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+			SELECT 
+				t1.name,t1.sex,t1.birthday,t1.createTime,t1.address,t1.phone,
+				t2.email,t2.status,t2.username,t2.id,t2.userId,t2.`roleId`
+			FROM SysAdminInfo t1 LEFT JOIN Login t2 ON t1.id = t2.userId WHERE t2.roleType=3 AND t1.id=#{id}
+		</select>
+		
+		<insert id="addSysAdminSbmitInfo" parameterType="com.HuiShengTec.entity.SysAdminInfo" useGeneratedKeys="true" keyProperty="id">
+		insert into SysAdminInfo(name,sex,birthday,createTime,address,phone)values(#{name},#{sex},#{birthday},sysdate(),#{address},#{phone})
+		</insert>
+		<update id="updateSysAdminInfo" parameterType="com.HuiShengTec.entity.SysAdminInfo">
+		update SysAdminInfo
+		<set>
+			<if test="name!=null">
+				name=#{name},
+			</if>
+			<if test="sex!=null">
+				sex=#{sex},
+			</if>
+			<if test="birthday!=null">
+				birthday=#{birthday},
+			</if>
+			<if test="createTime==null">
+				createTime=sysdate(),
+			</if>
+			<if test="address!=null">
+				address=#{address},
+			</if>
+			<if test="phone!=null">
+				phone=#{phone},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="validatePhone" parameterType="String" resultType="java.lang.Integer">
+	SELECT count(1) FROM SysAdminInfo where phone=#{phone}
+	</select>
+	
+		
+</mapper>

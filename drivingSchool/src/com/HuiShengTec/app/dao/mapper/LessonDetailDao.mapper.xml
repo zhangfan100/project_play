@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ILessonDetailDao">
+	<select id="queryByTrainCode" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		select t1.*,t2.campusCode from lessonDetail t1
+		left join campusinfo t2 on t2.id = t1.campusId
+		 where lessonId=#{conditions.trainCode}
+	</select>
+	
+	<select id="queryDetail" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+		select t2.subject,t2.cohName,t4.title,
+			   substring(t2.realBeginTime,1,10) realBeginTime,
+			   substring(t2.beginTime,12,5) beginTime,
+			   substring(t2.endTime,12,5) endTime,
+			   t5.licenceCode,
+			   t2.cash,
+			   t2.lessonStatus 
+		from 
+		(select t1.id,t1.cohName,t1.realBeginTime,t1.beginTime,t1.endTime,t1.drivingLicenceId,t1.subject,t1.carId,t1.cash,t1.lessonStatus 
+		from LessonInfo t1 where id = #{id}) t2
+		left join drivingLicence t4 on t4.id = t2.drivingLicenceId
+		left join carInfo t5 on t5.id = t2.carId
+	</select>
+	
+	<select id="queryByCode" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		select t3.detailType,t2.*
+			from 
+			lessonminus as t1,
+			PointsMinusItem as t2,
+			lessondetail as t3 
+		where t1.pointsMinusId=t2.id and t1.lessonDetailId=t3.id and t3.id = #{conditions.deducted_code}
+  	</select>
+</mapper>

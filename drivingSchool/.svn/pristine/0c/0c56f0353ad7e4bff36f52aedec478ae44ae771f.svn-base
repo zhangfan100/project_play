@@ -1,0 +1,174 @@
+@CHARSET "UTF-8";
+.donate_head h1{
+  font-size: 18px;
+  font-family: Microsoft YaHei;
+  color: rgb( 115, 115, 114 );
+}
+.donate_2_content{
+  border-width: 1px;
+  border-color: rgb( 210, 210, 210 );
+  border-style: solid;
+  width: 998px;
+  height: 225px;
+  
+}
+.donate_left{
+	width: 498px;
+    height: 180px;
+	float:left;
+	margin-top: 10px;
+	
+}
+.donate_right{
+	width: 490px;
+	height: 180px;
+	float: right;
+	margin-top: 10px;
+	
+}
+.donate_oper ul li{
+	float:left;
+	border-width: 1px;
+	border-color: rgb( 191, 191, 191 );
+	border-style: solid;
+	width: 187px;
+	height: 80px;
+	margin-bottom: 10px;
+	margin-right: 8px;
+	margin-left: 5px;
+}
+.donate_2_content ul li{
+	list-style: initial;
+	padding-top: 14px;
+	margin-left: 40px;
+	
+}
+.donate_2_content ul li a{
+  font-size: 14px;
+  font-family: "Microsoft YaHei";
+  color: rgb( 115, 115, 114 );
+  line-height: 2.4;
+  cursor:pointer;
+}
+.donate_2_content ul li a:hover{
+  color: rgb( 240, 127, 43 );
+}
+.donate_3{
+	width: 1000px;
+	min-height: 350px;
+}
+.donate_time{
+	float: right;
+	padding-right: 30px;
+}
+.donate_center{
+	width: 1px;
+    height: 180px;
+	float:left;
+	border-right: 1px dotted rgb( 198, 196, 196 );
+	margin-top: 20px;
+}
+
+/* 轮播 */
+#focus{ position: relative;height: 414px;width: 1000px;margin:0px auto;}
+#focus .bd{position: relative}
+#focus .btn-prev, #focus .btn-next{display: none;position: absolute;top: 160px;width: 40px;height: 80px;z-index: 2}
+#focus .btn-prev{left: 0;background: url(../images/left-arrow.png) no-repeat;_background: 0;
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/left-arrow.png")}
+#focus .btn-next{right: 0;background: url(../images/right-arrow.png) no-repeat;_background: 0;
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/right-arrow.png")}
+#focus .focus-bar-box{width: 100%;height: 414px;position: relative;overflow: hidden}
+#focus .focus-bar{width: 10000px}
+#focus .focus-bar li{float: left;width: 1000px;height: 414px}
+#focus .focus-bar li a{width: 100%;height: 100%;display: block}
+#focus .focus-bar li img{width: 100%;min-height: 100%}
+#focus .ft{position: absolute;left: 0;bottom: 0;z-index: 1;width: 700px;height: 40px;display: none;}
+#focus .ftbg{position: absolute;top: 0;left: 0;z-index: -1;width: 698px;height: 40px;background: #000;opacity: .6;filter: alpha(opacity=60)}
+#focus .change{position: absolute;right: 0;bottom: 15px;height: 10px}
+#focus .change a{float: left;width: 10px;height: 10px;margin-right: 10px;background: url(../images/btn-normal.png) no-repeat;_background: 0;
+_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/btn-normal.png");cursor: pointer}
+#focus .change a.on{background: url('../images/btn-active.png') no-repeat;_background: 0;
+_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/btn-active.png")}
+#focus .hd{position: absolute;left: 0;bottom: 0;z-index: 2;width: 550px;height: 40px;display: none;}
+#focus .focus-title{overflow: hidden;position: absolute;top: 0;left: 0;height: 40px;padding: 0 14px 0 10px;line-height: 40px;font-size: 16px;font-weight: bold}
+#focus .focus-title .title{color: #f3f3f3;}
+#focus .focus-title a{display: none;color: #fff}
+.donate_1{
+	width:1000px;
+	height:105px;
+	margin-top: 40px;
+	margin-bottom:40px;
+}
+.donate_1 ul li{
+	float:left;
+	width:229px;
+	height:107px;
+}
+.donate_1 ul li a{
+	
+	border-width: 1px;
+  	border-color: rgb( 191, 191, 191 );
+  	border-style: solid;
+	display: block;
+}
+#focus_0{ position: relative;width: 950px;height: 105px;margin:0px auto;}
+#focus_0 .bd{position: relative}
+#focus_0 .btn-prev, #focus_0 .btn-next{display: none;position: absolute;top: 130px;width: 40px;height: 80px;z-index: 2}
+#focus_0 .btn-prev{left: 0;background: url(../images/left-arrow.png) no-repeat;_background: 0;
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/left-arrow.png")}
+#focus_0 .btn-next{right: 0;background: url(../images/right-arrow.png) no-repeat;_background: 0;
+filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/right-arrow.png")}
+#focus_0 .focus-bar-box{width: 100%;height: 180px;position: relative;overflow: hidden}
+#focus_0 .focus-bar{width: 942px}
+#focus_0 .focus-bar>li{float: left;width: 950px;height: 107px;}
+#focus_0 .focus-bar>li a{width: 100%;height: 100%;display: block}
+#focus_0 .focus-bar li img{/* width: 100%; */min-height: 100%}
+#focus_0 .ft{position: absolute;left: 0;bottom: 0;z-index: 1;width: 950px;height: 40px}
+#focus_0 .ftbg{position: absolute;top: 0;left: 0;z-index: -1;width: 998px;height: 40px;background: #000;opacity: .6;filter: alpha(opacity=60)}
+#focus_0 .change{position: absolute;right: 460px;bottom: 15px;height: 10px}
+#focus_0 .change a{float: left;width: 10px;height: 10px;margin-right: 10px;background: url(../images/btn-normal.png) no-repeat;_background: 0;
+_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/btn-normal.png");cursor: pointer}
+#focus_0 .change a.on{background: url('../images/btn-active.png') no-repeat;_background: 0;
+_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=image, src="../images/btn-active.png")}
+#focus_0 .hd{position: absolute;left: 0;bottom: 0;z-index: 2;width: 550px;height: 40px}
+#focus_0 .focus-title{overflow: hidden;position: absolute;top: 0;left: 0;height: 40px;padding: 0 14px 0 10px;line-height: 40px;font-size: 16px;font-weight: bold}
+#focus_0 .focus-title .title{color: #f3f3f3;}
+#focus_0 .focus-title a{display: none;color: #fff}
+.arrow a{ 
+	
+	position: absolute;
+	
+	z-index: 2;
+	display:block;  
+	overflow:hidden;
+	cursor:pointer; 
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 195, 195, 198 );
+	border-radius: 2px;
+	background-color: #d9d9e1;
+	width: 20px;
+	height: 107px;
+}
+.arrow a:hover{ 
+	background-color: #b5b5b6;
+}
+.arrow .prev{
+	left: -25px;
+	top: 0px;
+	background-position: 5px 44px;
+	background-image: url('../images/prev.png');
+	background-repeat: no-repeat;
+	background-size: 10px 15px;
+}
+.arrow .next{
+	left: 952px;
+	top: 0px;
+	background-position: 5px 44px;
+	background-image: url('../images/next.png');
+	background-repeat: no-repeat;
+	background-size: 10px 15px;
+}
+#place_bar>li>ul>li{
+	margin:0 4px;
+}

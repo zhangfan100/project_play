@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IMapMarkDao">
+
+	<select id="queryMapMarkInfoByConditions" parameterType="map" resultType="map">
+		select * from mapmark where 1=1
+		<if test="lng!=null">
+			and lng = #{lng}
+		</if>
+		<if test="lat!=null">
+			and lat = #{lat}
+		</if>
+	</select>
+	
+	<select id="queryMapMarkInfo" resultType="map">
+		select * from mapmark 
+	</select>
+	
+	<insert id="saveMapMarkInfo" parameterType="map">
+		INSERT INTO `mapmark`
+            (
+             `lng`,
+             `lat`,
+             `content`,
+             `title`
+             )
+		VALUES (
+		        #{lng},
+		        #{lat},
+		        #{content},
+		        #{title}
+		        );
+	</insert>
+	
+	<delete id="deleteMapMarkInfo" parameterType="map">
+	  DELETE FROM `mapmark`  WHERE id=#{id}
+	</delete>
+	
+	<update id="updateMapMarkInfo" parameterType="map">
+		update mapmark
+		<set>
+			<if test="content!=null">
+				content=#{content},
+			</if>
+			<if test="title!=null">
+				title=#{title}
+			</if>
+		</set>
+		where  lng = #{lng}  and lat = #{lat}
+	</update>
+</mapper>

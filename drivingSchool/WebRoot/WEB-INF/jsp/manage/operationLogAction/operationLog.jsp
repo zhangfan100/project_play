@@ -1,0 +1,98 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="../../TagLib/JSLib.jsp"%>
+
+<body >
+
+	<!-- 异常日志 -->
+	<div id="center-log_manage_operate" class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center',border:false" style="">
+			<div id="" class="easyui-layout" data-options="fit:true">
+				<div class="center-filter clearfix" data-options="region:'north',border:false" style="">
+					<button class="filter_button" type="button" id="delChecked">删除所选</button>
+					<button class="filter_button" type="button" id="delAll">删除全部</button>
+					
+					<form id="log_manage_operate_form" class="filter_form" method="post">
+						<span style="">从</span>
+						<input class="easyui-datebox" editable="false" name="beginDate"></input>
+						<span>至</span>
+						<input class="easyui-datebox" editable="false" name="endDate"></input>
+						
+						<input class="search_button" type="button" id="doSearchBtn"/>
+					</form>
+				</div>
+				<div data-options="region:'center',border:false" >
+					<table id="log_manage_operate_dg" class="easyui-datagrid" title="" 
+							data-options="nowrap:false,autoRowHeight:true,fit:true,fitColumns:true,rownumbers:true,singleSelect:false,pagination:true,
+							url:'${path }/mag/queryOperationLogPage',method:'POST'">
+						<thead>
+							<tr>
+								<th data-options="field:'ck',checkbox:true"></th>
+								<th data-options="field:'url',width:150,align:'center'">操作模块</th>
+								<th data-options="field:'content',width:100,align:'center'">操作内容</th>
+								<th data-options="field:'userName',width:100,align:'center',formatter:userText">操作用户</th>
+								<th data-options="field:'IP',width:100,align:'center'">操作IP</th>
+								<th data-options="field:'time',width:120,align:'center'">操作时间</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	
+		function queryExc(){
+			var param = formToJson("#log_manage_operate_form");
+				$("#log_manage_operate_dg").datagrid({
+					queryParams:param
+				});
+				$("#log_manage_operate_form").form("reset");
+		}
+		$("#doSearchBtn").click(function(){
+			queryExc();
+		});
+		
+		$("#log_manage_exception_form").form({
+			submit:function(){
+				queryExc();
+				return false;
+			}
+		});
+		
+		function userText(value,row,index){
+			return value;
+		}
+		
+		$("#delChecked").click(function(){
+			var rows = $("#log_manage_operate_dg").datagrid("getChecked");
+			var ids = [];
+			$.each(rows,function(index,item){
+				ids.push(item.id);
+			});
+			
+			if(ids.length==0){
+				AlterMessage('请选择!');
+				return;			
+			}
+			del({"ids":ids.join(",")});
+		});
+		
+		$("#delAll").click(function(){
+			var rows = $("#log_manage_operate_dg").datagrid("getChecked");
+			del();
+		});
+
+		function del(param){
+			$.messager.confirm(GV.title, '确认删除?', function(r){
+				if (r){
+					$.post("${path}/mag/delOperationLog",param,function(data){
+						switch(data*1){
+							case 0 :ShowMessage('删除成功!');$("#log_manage_operate_dg").datagrid("reload");break;
+							case 1 :AlterMessage('删除失败!');break;
+						}
+					});
+				}
+			});
+		}
+	</script>
+</body>

@@ -1,0 +1,107 @@
+@CHARSET "UTF-8";
+.train_statistics h2{
+	display: inline;
+	line-height: 2.7;
+}
+.train_statistics h3{
+	font-size: 14px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 115, 110, 106 );
+	display: inline;
+	float:right;
+}
+.train_chart h4,.train_hour_cal h4{
+	margin-left: 17px;
+}
+.train_hour_cal>ul>li{
+	float:left;
+	margin-left: 17px;
+}
+.train_hour_head{
+	font-size: 16px;
+	color: rgb( 255, 255, 255 );
+	background-color: #ff8729;
+	width: 178px;
+  	height: 46px;
+  	text-align: center;
+	line-height: 3;
+}
+.train_hour_content{
+	line-height: 2.3;
+	border-style: solid;
+  	border-width: 1px;
+  	border-color: rgb( 184, 184, 184 );
+	width: 178px;
+	height: 75px;
+	font-size: 30px;
+  	font-family: "Microsoft YaHei";
+	color: rgb( 117, 117, 117 );
+ 	text-align: center;
+}
+.train_hour_detail{
+	margin-left: 18px;
+	margin-top: 160px;
+	min-height: 350px;
+}
+.train_hour_detail>ul>li{
+	line-height: 2.6;
+	height: 45px;
+	float:left;
+	width:190px;
+	text-align: center;
+}
+.train_hour_detail ul:first-child li{
+ 	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 255, 255, 255 );
+	background-color: #ff8729;
+}
+.train_hour_detail ul:not(:first-child) li{
+ 	font-size: 14px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 117, 117, 117 );
+  	border-bottom: 1px solid rgb( 198, 196, 196 );
+}
+.train_hour_detail ul:not(:first-child) li:last-child{
+ 	
+  	border-right: 1px solid rgb( 198, 196, 196 );
+}
+.train_hour_detail ul:not(:first-child) li:first-child{
+	border-left: 1px solid rgb( 198, 196, 196 );
+}
+.train_chart>ul>li>i{
+	border-radius: 2px;
+	
+	width: 17px;
+	height: 17px;
+	display: block;
+	float: left;
+	margin-right: 5px;
+	margin-top: 3px;
+}
+.train_chart>ul{
+	height: 100px;
+}
+.train_chart>ul>li{
+	float:left;
+	margin-top: 20px;
+	margin-left: 34px;
+}
+.train_chart>ul>li .i_0{
+	background-color: #7cb5ec;
+}
+.train_chart>ul>li  .i_1{
+	background-color: rgb(67, 67, 72);
+}
+.train_chart>ul>li .i_2{
+	background-color: rgb(144, 237, 125);
+}
+.train_chart>ul>li .i_3{
+	background-color:rgb( 247, 163, 92 );
+}
+.train_chart>ul>li .i_4{
+	background-color: #8085e9;
+}
+.train_chart>ul>li .i_5{
+	background-color: #f15c80;
+}

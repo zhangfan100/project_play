@@ -1,0 +1,269 @@
+package com.HuiShengTec.app.magAction;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.HuiShengTec.app.core.BaseAction;
+import com.HuiShengTec.app.service.IAccountstatisticsService;
+import com.HuiShengTec.entity.Accountstatistics;
+import com.HuiShengTec.utils.Toolkit;
+
+
+@Controller
+@RequestMapping("mag")
+@Scope("prototype")
+public class ExcelDownLoadAction extends BaseAction {
+
+	@Autowired
+	private IAccountstatisticsService iAccountstatisticsService;
+	
+	
+	@RequestMapping("downLoadData")
+	public void downLoadData(Accountstatistics accountstatistics) throws Exception{
+		
+		Map<String, List<Object>> dataset = iAccountstatisticsService.filDownLoadData(accountstatistics);
+		//封装数据 {date=[2015-05-04], income=[0.00], outcome=[43725.00]}
+        List<Object> dataList = dataset.get("date");
+        if(dataList == null){
+        	return;
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append("项目");
+        for(int i = 0 ;i < dataList.size(); i ++){
+        	sb.append(",明细");
+        }
+		String[] headers = sb.toString().split(",");
+		String rootPath = this.request.getServletContext().getRealPath("/");
+		String tempXlsFile;
+		Integer accountType = accountstatistics.getType();
+		if(accountType != null){
+			if(accountType == 1){
+				tempXlsFile = rootPath+"/excel/income.xls";		//获取收入模板文件
+			}else{
+				tempXlsFile = rootPath+"/excel/outcome.xls";		//获取支出模板文件
+			}
+		}else{
+			tempXlsFile = rootPath+"/excel/in_outcome.xls";		//获取收入,支出模板文件
+		}
+		String sPath = "/tmpfile/"+Toolkit.parseDate(Toolkit.getDateWithoutTime(new Date()), null)+"/";	//临时目录
+		String sFile = this.newFile(rootPath+sPath, "统计.xls");			//防止文件并发访问
+
+		File f = new File(rootPath+sPath);
+		if(!f.exists()){ //如果不存在则创建目录
+			f.mkdirs();
+		}
+		
+		String path = rootPath+sPath+sFile; //要写入的路径
+		
+		File file = this.exportExcel(headers, dataset, path,tempXlsFile);
+	    InputStream is = new FileInputStream(file);
+        response.reset();
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        String fileName = new String(("统计" + ".xls").getBytes(), "iso-8859-1");
+        response.setHeader("Content-Disposition", "attachment;filename="+ fileName);
+	    ServletOutputStream out = response.getOutputStream();
+	    BufferedInputStream bis = null;
+	    BufferedOutputStream bos = null;
+	    try {
+            bis = new BufferedInputStream(is);
+            bos = new BufferedOutputStream(out);
+            byte[] buff = new byte[2048];
+            int bytesRead;
+            while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+                bos.write(buff, 0, bytesRead);
+            }
+            bos.flush();
+            response.flushBuffer();
+	    } catch (IOException e) {
+	            throw e;
+	    } finally {
+	          if (bis != null){
+	        	  bis.close();
+	          }
+	          if (bos != null){
+	        	  bos.close();
+	          }
+	          if(out != null){
+	        	  out.close();
+	          }
+	          if(is != null){
+	        	  is.close();
+	          }
+	          file.getAbsoluteFile().delete();//删除临时的excel
+	    }
+	}
+	
+	/* 目录下已经有同名文件,则文件重命名,增加文件序号 */
+	private String newFile(String sPath, String sFile){
+		String newFileName = new String();
+		String withoutExt = new String();
+		File curFile = new File(sPath + "\\" + sFile);
+		if (curFile.exists()) {
+			for(int counter = 1; curFile.exists(); counter++){
+				withoutExt = this.getNameWithoutExtension(curFile.getName());
+				if(withoutExt.endsWith(counter-1 + ")")){
+					withoutExt = withoutExt.substring(0,withoutExt.indexOf("("));		//idea
+				}
+                newFileName = withoutExt + "(" + counter + ")" + "." + getFileExt(curFile.getName());
+                curFile = new File(sPath + "\\" + newFileName);
+            }
+		}else{
+			newFileName = curFile.getName();
+		}
+		return newFileName;
+	}
+	
+	/**
+	 * 得到没有扩展名的文件名
+	 * * @author [zf]
+	 */
+	 private String getNameWithoutExtension(String fileName){
+	        return fileName.substring(0, fileName.lastIndexOf("."));
+	 }
+	 
+	 /**
+	  * 得到扩展名
+	  * * @author [zf]
+	  */
+	 private String getFileExt(String s){
+		    String s1 = new String();
+		    int i = 0;
+		    int j = 0;
+		    if(s == null)
+		        return null;
+		    i = s.lastIndexOf(46) + 1;  //46代表.的ASCII
+		    j = s.length();
+		    s1 = s.substring(i, j);
+		    if(s.lastIndexOf(46) > 0)
+		        return s1.toLowerCase();
+		    else
+		        return "";
+		}
+	 
+	 /**
+	  * @param headers     表示标题行  headers = { "项目", "明细", "明细", "明细", "明细" };
+	  * @param dataset     数据结果集
+	  * @param path        excel导出的地方
+	  * @param tempXlsFile 导出的文件名
+	  * @return
+	  * @throws Exception
+	  */
+	 private File exportExcel(String[] headers ,Map<String,List<Object>> dataset, String path ,String tempXlsFile) throws Exception {
+		   
+	      // 声明一个工作薄
+		  HSSFWorkbook workbook = new HSSFWorkbook(new FileInputStream(new File(tempXlsFile)));
+	      // 生成一个表格
+	      HSSFSheet sheet = workbook.getSheetAt(0);
+	      // 设置表格默认列宽度为15个字节
+	      sheet.setDefaultColumnWidth(15);
+	      // 生成一个样式
+	      HSSFCellStyle style = workbook.createCellStyle();
+	      // 设置这些样式
+	      style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	      style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+	      style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+	      style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+	      style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+	      style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+	      // 生成一个字体
+	      HSSFFont font = workbook.createFont();
+	      font.setFontHeightInPoints((short) 12);
+	      font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	      // 把字体应用到当前的样式
+	      style.setFont(font);
+	 
+	      int rowIndex = 6;                  //记录行 从第6行开始写
+	      int columnStart = 0;               //记录开始写的列
+	      HSSFRow row;                       //行
+	      HSSFCell column;                   //列
+	      List<Object> dateList;             //用来接受结果
+	      
+	      //产生表格标题行
+	      row = sheet.createRow(rowIndex);
+	      for (int i = 0; i < headers.length; i++) {
+	    	 column = row.createCell(i);
+	    	 column.setCellStyle(style);
+	         column.setCellValue(headers[i]);
+	      }
+	      
+	      //时间行
+	      rowIndex ++;
+	      row = sheet.createRow(rowIndex);
+	      dateList = dataset.get("date");
+	      for(Object object : dateList){
+	    	  columnStart ++;//时间从第一列开始写
+	    	  column = row.createCell(columnStart);
+	    	  column.setCellStyle(style);
+		      column.setCellValue(object.toString());
+	      }
+	      
+	      //收入行
+	      dateList = dataset.get("income");
+	      if (dateList != null) {
+			if (dateList.size() > 0) {//说明有收入
+				rowIndex++;
+				row = sheet.createRow(rowIndex);
+				columnStart = 0;//时间从第一列开始写
+				column = row.createCell(columnStart);
+				column.setCellStyle(style);
+				column.setCellValue("收入");
+				for (Object object : dateList) {
+					columnStart++;
+					column = row.createCell(columnStart);
+					column.setCellStyle(style);
+					column.setCellValue(object.toString());
+				}
+
+			}
+		}
+		//支出行
+	    dateList = dataset.get("outcome");
+	      if (dateList != null) {
+			if (dateList.size() > 0) {//说明有支出
+				rowIndex++;
+				row = sheet.createRow(rowIndex);
+				columnStart = 0;//时间从第一列开始写
+				column = row.createCell(columnStart);
+				column.setCellStyle(style);
+				column.setCellValue("支出");
+				for (Object object : dateList) {
+					columnStart++;
+					column = row.createCell(columnStart);
+					column.setCellStyle(style);
+					column.setCellValue(object.toString());
+				}
+
+			}
+		}
+	      
+	   File file = new File(path);
+       OutputStream stream = new FileOutputStream(file);
+       workbook.write(stream);
+       stream.close();
+       workbook.close();
+	   return file;
+	  }
+		
+}

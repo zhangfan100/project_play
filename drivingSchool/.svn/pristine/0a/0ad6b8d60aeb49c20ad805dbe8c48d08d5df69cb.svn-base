@@ -1,0 +1,146 @@
+@CHARSET "UTF-8";
+.top_content ul li a {
+	color: rgb( 70, 70, 70 );
+}
+/* .main_content{
+	min-height: 700px;
+	border: 1px solid rgb( 198, 196, 196 );
+} */
+.main_box{
+	width:750px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.value_title {
+	font-size: 18px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 31, 26, 23 );
+	border-bottom: 5px solid #ff8729;
+	line-height: 3;
+	padding-left: 40px;
+	padding-top: 15px;
+}
+.value_0_left{
+	padding-left: 40px;
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 54, 53, 53 );
+	float:left;
+	width:250px;
+	line-height: 3;
+	padding-top: 20px;
+}
+.value_0_right{
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 54, 53, 53 );
+	padding-top: 35px;
+	
+}
+.value_0_right{
+	letter-spacing:8px;
+}
+.radio_group{
+	float: right;
+	margin-right: 50px;
+	margin-top: 20px;
+	font-size: 16px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 31, 26, 23 );
+}
+.value_1{
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 31, 26, 23 );
+	margin-top:30px;
+}
+.value_1 .value_title{
+	letter-spacing: 25px;
+}
+.rating-content a{
+	margin: 2px;
+	text-decoration: none;
+	width: 30px;
+	height: 38px;
+	display: block;
+	float: left;
+	background-image: url('../images/value_star.png');background-repeat: no-repeat;
+}
+.rating-title{
+	margin-right: 60px;
+	padding-top: 6px;
+	float:left;
+}
+.rating-content{
+	margin-top: 30px;
+}
+.compose-rating{
+	height: 30px;
+	margin-left: 60px;
+	margin-bottom: 35px;
+}
+.rate_tips{
+	padding-top: 6px;
+}
+.rating-content  li:last-child{
+	margin-right: 60px;
+}
+.rate_tips span{
+	padding-right:20px;
+}
+.rating-quality{
+	margin-top: 50px;
+}
+.rating-rule{
+	margin-bottom: 50px;
+}
+.value_1{
+	border-bottom: 1px solid rgb( 198, 196, 196 );
+}
+.value_submit{
+	font-size: 18px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 255, 255, 255 );
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 229, 116, 27 );
+	border-radius: 2px;
+	background-color:rgb( 229, 116, 27 );
+	background-image: -moz-linear-gradient( 90deg, rgb(230,118,30) 0%, rgb(255,135,41) 100%);
+	background-image: -webkit-linear-gradient( 90deg, rgb(230,118,30) 0%, rgb(255,135,41) 100%);
+	background-image: -ms-linear-gradient( 90deg, rgb(230,118,30) 0%, rgb(255,135,41) 100%);
+  	width: 133px;
+  	height: 48px;
+  	float: right;
+	margin-right: 60px;
+	margin-top: 30px;
+}
+
+/* 评分星星插件 */
+/*容器*/
+.xzw_starSys{font-size: 16px;
+font-family: "Microsoft YaHei";
+color: rgb( 31, 26, 23 );}
+.xzw_starBox{position:relative;width:120px;float:left}
+/**/
+.xzw_starSys .description{}
+.xzw_starSys .score{
+	float:left;
+	margin-left: 70px;
+	margin-right: 30px;
+}
+.xzw_starSys .star{height:28px;width:150px;position:relative;background:url(../images/half.png) repeat-x;cursor:pointer}
+.xzw_starSys .star li{float:left;padding:0px;margin:0px}
+.xzw_starSys .star li a{display:block;width:30px;height:28px;overflow:hidden;text-indent:-9999px;position:absolute;z-index:5}
+.xzw_starSys .star li a:hover{background:url(../images/value_star.png) repeat-x;z-index:3;left:0}
+.xzw_starSys .star a.one-star{left:0}
+.xzw_starSys .star a.one-star:hover{width:30px}
+.xzw_starSys .star a.two-stars{left:30px}
+.xzw_starSys .star a.two-stars:hover{width:60px}
+.xzw_starSys .star a.three-stars{left:60px}
+.xzw_starSys .star a.three-stars:hover{width:90px}
+.xzw_starSys .star a.four-stars{left:90px}
+.xzw_starSys .star a.four-stars:hover{width:120px}
+.xzw_starSys .star a.five-stars{left:120px}
+.xzw_starSys .star a.five-stars:hover{width:150px}
+.xzw_starSys .current-rating{background:url(../images/value_star.png) repeat-x;position:absolute;height:28px;z-index:1;top:0;left:0}

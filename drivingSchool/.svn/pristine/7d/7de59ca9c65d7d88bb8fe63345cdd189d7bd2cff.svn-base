@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.HuiShengTec.app.dao.ILessonReviewDao">
+  	
+  	<select id="queryLessonReview" parameterType="String" resultType="java.util.HashMap">
+  		select totalScore,count(1)  total,sum(totalScore) score from LessonReview where coachId=#{cohId} group by totalScore
+  	</select>
+  	<insert id="insertReply" parameterType="ReviewReply">
+		insert into ReviewReply(reviewId,replyContent,replyDate) values(#{reviewId},#{replyContent},SYSDATE())
+	</insert>
+  	<select id="queryLessonReviewPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+  	SELECT t1.id,t2.name,t3.name stuName,t1.content,t1.totalScore,t1.reviewTime,t1.isDisplay
+		FROM LessonReview t1 LEFT JOIN CoachInfo t2 ON t1.coachId = t2.id
+		LEFT JOIN StudentInfo t3 ON t3.id = t1.stuId WHERE 1=1 
+		<if test="conditions.beginDate!=null"> and CONVERT(varchar(100), t1.reviewTime,23) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and CONVERT(varchar(100), t1.reviewTime,23) <= #{conditions.endDate}]]></if> 
+		<if test="conditions.keyWord!=null"><![CDATA[ and t1.content like '%'+#{conditions.keyWord}+'%']]></if> 
+  	</select>
+  	
+	<insert id="addLessonReview" parameterType="LessonReview" >
+		insert into LessonReview
+		(
+			coachId,
+			content,
+			reviewTime,
+			stuId,
+			isHide,
+			totalScore,
+			qualityScore,
+			ruleScore,
+			serviceScore,
+			replyCount,
+			isDisplay,
+			isNew,
+			lessonInfoId
+		)
+		values
+		(
+			#{coachId},
+			#{content},
+			#{reviewTime},
+			#{stuId},
+			#{isHide},
+			#{totalScore},
+			#{qualityScore},
+			#{ruleScore},
+			#{serviceScore},
+			#{replyCount},
+			#{isDisplay},
+			#{isNew},
+			#{lessonInfoId}
+		)
+	</insert>
+  	<delete id="delLessonReview">
+		delete from LessonReview
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where id  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	<delete id="delReply">
+		delete from ReviewReply 
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where reviewId  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+  	<update id="hideLessonReview" parameterType="java.util.Map">
+		update LessonReview set isDisplay=#{isDisplay} where id in
+		<foreach collection="ids" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+	</update>
+	
+	
+	<update id="updateReply" parameterType="ReviewReply">
+		update ReviewReply set replyContent = #{replyContent},replyDate = SYSDATE()
+		where id = #{id}
+	</update>
+	
+	
+	<!-- 根据回复ID，或教员ID，查询回复 -->
+	<select id="queryReply" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select * from ReviewReply where 1=1
+		<if test="reviewId!=null"> and reviewId = #{reviewId}</if>
+		<if test="id!=null"> and id = #{id}</if>
+	</select>
+  </mapper>

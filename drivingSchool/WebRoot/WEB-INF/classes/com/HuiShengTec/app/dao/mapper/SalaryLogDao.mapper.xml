@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ISalarLogDao">
+	
+	<insert id="insertSalaryLog" parameterType="SalaryLog">
+	  INSERT INTO salarylog 
+	    (coachId,adminId,name,code,type,cash,realCash,accountLogId,
+	     status,payWay,salaryBeginTime,salaryEndTime,payTime,operatorId,content)
+		VALUES
+		(
+		<choose>
+	    <when test="type==1">
+	     #{coachId},null,
+	    </when>
+	    <otherwise>
+	      null,#{adminId},
+	    </otherwise>
+	   </choose>
+		#{name},
+		#{code},
+		#{type},
+		#{cash},
+		#{realCash},
+		#{accountLogId},
+		#{status},
+		#{payWay},
+		#{salaryBeginTime},
+		#{salaryEndTime},
+		SYSDATE(),
+		#{operatorId},
+		#{content}
+		)
+	</insert>
+</mapper>

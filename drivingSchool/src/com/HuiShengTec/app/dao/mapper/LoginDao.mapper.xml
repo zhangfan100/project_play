@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ILoginDao">
+	<select id="queryUserInfo" parameterType="Login" resultType="Login">
+	SELECT * FROM Login e where 
+		(e.username=#{username} or e.email=#{username})
+		and e.password = #{password}
+		and e.roleType=#{roleType}
+	</select>
+	
+	<select id="queryLoginInfoByMobileFlag" parameterType="java.lang.String" resultType="Login">
+		select * from Login where mobileFlag = #{mobileFlag}
+	</select>
+	
+	<!-- 根据ID，删除教练 -->
+	<delete id="deleteLoginById" parameterType="java.lang.Integer">
+		delete from Login where id = #{id}
+	</delete>
+	
+	<update id="updateLoginMobileFlag" parameterType="Login">
+			UPDATE 
+		 		 Login l,
+		  		`studentinfo` s
+			SET
+		 	 	l.mobileFlag =#{mobileFlag},
+		  		l.loginCount = loginCount + 1
+			WHERE (
+			    l.username = #{username}
+			    OR l.email = #{username}
+			    OR s.`phone` = #{username}
+			    AND l.`userId`=s.`id`
+		 	 	) 
+		  	AND l.password = #{password}
+	</update>
+	
+	
+	<update id="updateLoginInfo" parameterType="com.HuiShengTec.entity.Login">
+		update Login
+		<set>
+			<if test="username!=null">
+				username=#{username},
+			</if>
+			<if test="password!=null">
+				password=#{password},
+			</if>
+			<if test="loginCount!=null">
+				loginCount=#{loginCount},
+			</if>
+			<if test="email!=null">
+				email=#{email},
+			</if>
+			<if test="roleId!=null">
+				roleId=#{roleId},
+			</if>
+			<if test="roleType!=null">
+				roleType=#{roleType},
+			</if>
+			<if test="userId!=null">
+				userId=#{userId},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="lastLoginTime!=null">
+				lastLoginTime=#{lastLoginTime},
+			</if>
+			<if test="lastLoginIP!=null">
+				lastLoginIP=#{lastLoginIP},
+			</if>
+			<if test="mobileFlag!=null">
+				mobileFlag=#{mobileFlag},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<update id="updateLoginPassword" parameterType="com.HuiShengTec.entity.Login">
+		update Login
+		<set>
+			<if test="password!=null">
+				password=#{password},
+			</if>
+			<if test="roleType!=null">
+				roleType=#{roleType},
+			</if>
+
+		</set>
+		where id=#{id}
+	</update>
+	
+	<insert id="insertLoginInfo" parameterType="com.HuiShengTec.entity.Login" useGeneratedKeys="true" keyProperty="id">
+		insert into Login(username,password,loginCount,email,roleId,roleType,userId,status)
+		values(#{username},#{password},#{loginCount},#{email},#{roleId},#{roleType},#{userId},#{status})
+	</insert>
+	
+	<select id="validateUserName" parameterType="com.HuiShengTec.entity.Login" resultType="java.lang.Integer">
+	SELECT count(1) FROM Login where username=#{username}
+	</select>
+	<select id="validateEmail" parameterType="com.HuiShengTec.entity.Login" resultType="java.lang.Integer">
+	SELECT count(1) FROM Login where email=#{email}
+	</select>
+	<update id="editStatus" parameterType="com.HuiShengTec.entity.Login">
+	update Login SET status = #{status} where userId = #{userId}
+	</update>
+	
+	<update id="editLoginRoleId" parameterType="com.HuiShengTec.entity.Login">
+	 update Login SET roleId = #{roleId} where id = #{id}
+	</update>
+	
+	<delete id="delSignInLog">
+		delete from SignInLog 
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where id  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	<select id="querySignLogPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="SignInLog">
+		select t1.* from SignInLog t1 where 1=1 
+		<if test="conditions.beginDate!=null"> and date(t1.loginTime) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and date(t1.loginTime) <= #{conditions.endDate}]]></if> 
+		order by t1.loginTime desc 
+	</select>
+</mapper>

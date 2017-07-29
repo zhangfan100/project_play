@@ -1,0 +1,89 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="../../TagLib/TagLib.jsp"%>
+<body >
+	<div class="easyui-layout" data-options="fit:true">
+		<div data-options="region:'center',border:false" style="">
+			<div id="" class="easyui-layout" data-options="fit:true">
+				<div class="center-filter clearfix" data-options="region:'north',border:false" style="">
+					<button class="filter_button" type="button" onclick="carBrandInfoAdd()">新增品牌</button>
+					<button class="filter_button" type="button" onclick="carBrandInfoEditClick()" >编辑品牌</button>
+				</div>
+				<div data-options="region:'center',border:false" >
+					<table id="carBrandManageGrid" class="easyui-datagrid" title="" 
+							data-options="
+							nowrap:false,
+							autoRowHeight:true,
+							fit:true,
+							fitColumns:true,
+							rownumbers:true,
+							singleSelect:true,
+							checkOnSelect:true,
+							selectOnCheck:true,
+							pagination:true,
+							url:'${path }/mag/queryCarBrandPage',method:'POST'">
+						<thead>
+							<tr>
+								<th data-options="field:'id',checkbox:true"></th>
+								<th data-options="field:'title',width:100,align:'center'">品牌名称</th>
+								<th data-options="field:'pricePlus',width:100,align:'center'">差价</th>
+								<th data-options="field:'count',width:100,align:'center'">车辆数目</th>
+								<th data-options="field:'operation',width:100,align:'center',formatter:operationFormatter">操作</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="editCarBrandWindow"></div>
+	<script type="text/javascript">
+	function operationFormatter(value,row,index){
+		var returnStr=
+			"<a class='edit_a_group' onclick='carBrandInfoEdit("
+			+row.id
+			+")'  href='javascript:void(0)'>编辑</a>"
+		return returnStr;
+	}
+	function carBrandInfoEdit(id){
+		$("#editCarBrandWindow").dialog({title:'车辆品牌编辑'}).dialog('open').dialog('refresh','${path}/mag/editCarBrand?brandId='+id);
+
+	}
+	function carBrandInfoAdd(){
+		$("#editCarBrandWindow").dialog({title:'车辆品牌新增'}).dialog('open').dialog('refresh','${path}/mag/addCarBrand');
+	}
+	$("#editCarBrandWindow").dialog({
+		title:"车辆品牌编辑",
+	    width:380,    
+	    height:190,    
+	    modal:true,
+	    maximizable:false,
+	    minimizable:false,
+	    collapsible:false,
+	    draggable:false,
+	    resizable:false,
+	    cache:false,
+	    closed:true,
+	    buttons: [
+	    {
+	    	text:"保存",
+	    	handler:function(){
+	    		$("#carBrand-Form").submit();
+	        }
+	    },{
+	    	text:"关闭",
+	    	handler:function(){
+	    		$("#editCarBrandWindow").dialog("close");
+	        }
+	    }] 
+	});
+	function carBrandInfoEditClick(){
+		var data = $("#carBrandManageGrid").datagrid("getSelected");
+		if(data==null){
+			$.messager.alert("","请选择要编辑的信息！");
+		}else{
+			carBrandInfoEdit(data.id);
+		}
+		
+	}
+	</script>
+</body>

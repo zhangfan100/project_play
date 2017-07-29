@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ICommentDao">
+	
+	<!-- 根据回复ID，或教员ID，查询回复 -->
+	<select id="queryReply" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select * from dbo.ReviewReply where 1=1
+		<if test="reviewId!=null"> and reviewId = #{reviewId}</if>
+		<if test="id!=null"> and id = #{id}</if>
+	</select>
+	
+	<update id="updateReply" parameterType="ReviewReply">
+		update dbo.ReviewReply set replyContent = #{replyContent},replyDate = getDate()
+		where id = #{id}
+	</update>
+	
+	<insert id="insertReply" parameterType="ReviewReply">
+		insert into dbo.ReviewReply(reviewId,replyContent,replyDate) values(#{reviewId},#{replyContent},getDate())
+	</insert>
+	
+	<delete id="delComment">
+		delete from dbo.TrainReview 
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where id  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	<delete id="delReply">
+		delete from dbo.ReviewReply 
+		<if test="array!=null">
+			<foreach collection="array" close=")" open="where reviewId  in (" item="item" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</delete>
+	
+	
+	<update id="hideComment" parameterType="java.util.Map">
+		update dbo.TrainReview set isDisplay=#{isDisplay} where id in
+		<foreach collection="ids" close=")" open=" (" item="item" separator=",">
+			#{item}
+		</foreach>
+	</update>
+	
+	<insert id="addTrainReview" parameterType="TrainReview" >
+		insert into LessonReview
+		(
+			coachId,
+			content,
+			reviewTime,
+			stuId,
+			isHide,
+			totalScore,
+			qualityScore,
+			ruleScore,
+			serviceScore,
+			replyCount,
+			isDisplay,
+			isNew,
+			lessonInfoId
+		)
+		values
+		(
+			#{coachId},
+			#{content},
+			now(),
+			#{stuId},
+			#{isHide},
+			#{totalScore},
+			#{qualityScore},
+			#{ruleScore},
+			#{serviceScore},
+			#{replyCount},
+			#{isDisplay},
+			#{isNew},
+			#{lessonInfoId}
+		)
+	</insert>
+	
+</mapper>

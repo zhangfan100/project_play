@@ -1,0 +1,252 @@
+@CHARSET "UTF-8";
+h1{
+	font-size: 18px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 31, 31, 31 );
+}
+.top_content ul li a{
+	 color: rgb( 70, 70, 70 );
+}
+.breadcrumb>li+li:before {
+	color: rgb( 70, 70, 70 );
+	content: ">\00a0";
+}
+.breadcrumb {
+	
+	background-color: #ffffff;
+}
+.content_up{
+	border: 1px solid rgb( 198, 196, 196 );
+	height:340px;
+}
+.coach_photo{
+	float:left;
+	width: 452px;
+	height: 311px;
+}
+.coach_photo img{
+	width:452px;
+	padding-top: 22px;
+	padding-left: 22px;
+}
+.coach_detail{
+	margin-right: 50px;
+	width: 450px;
+	float: right;
+	height: 311px;
+}
+.coach_detail ul{
+	line-height: 2;
+}
+.coach_name{
+	line-height: 4;
+}
+.coach_detail ul li i{
+	display: inline;
+	float: left;
+	margin-right: 2px;
+	width: 20px;
+	height: 20px;
+	background: url(../images/star_0.png) no-repeat scroll 0% 0% transparent;
+	margin-top: 7px;
+}
+.coach_detail span{
+	float:left;
+}
+.coach_content{
+	margin-bottom: 30px;
+	/* height: 1830px; */
+	margin-top: 30px;
+	border: 1px solid rgb( 198, 196, 196 );
+}
+.coach_head{
+	width: 998px;
+	height:48px;
+	border-bottom: 3px solid rgb( 255, 104, 6 );
+	background-color: #fff;
+}
+.coach_head a{
+	color:rgb( 77, 77, 77 );
+}
+.coach_head ul li{
+	width: 150px;
+	line-height: 45px;
+	text-align: center;
+	float:left;
+	
+}
+.coach_head .active a{
+	color:#fff;
+}
+.coach_head .active{
+	color:#fff;
+	background-color: rgb( 255, 104, 6 );
+}
+.coach_info{
+	height:270px;
+	line-height: 3;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+.coach_img ul li{
+	padding-top: 20px;
+	padding-left: 22px;
+	display: inline-block;
+	vertical-align: top;
+}
+.coach_img_head,.coach_value_head {
+	padding-left: 30px;
+	line-height: 2;
+	border-bottom: 3px solid rgb( 255, 104, 6 );
+}
+.coach_img{
+	max-height:400px;
+}
+.rate-score {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	line-height: 1.5;
+    width: 436px;
+    padding: 0px 20px;
+    text-align: center;
+    border-right: 1px solid rgb( 198, 196, 196 );
+    display: inline-block;
+    height: 145px;
+}
+.rate-score h4 {
+	font-weight: bold;
+	line-height: 2;
+	font-size: 18px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 88, 87, 87 );
+   
+}
+.rate-score strong {
+	font-size: 40px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 88, 87, 87 );
+   
+    
+    margin: 0px 2px;
+}
+.rate-score p {
+    padding-top: 1px;
+    margin-left: -32px;
+    text-align: center;
+}
+.rate-score .score-value-no em, .rate-score .score-value-no {
+    display: block;
+    width: 165px;
+    height: 28px;
+    overflow: hidden;
+}
+.rate-score .score-value-4d8 em {
+    width:165px;
+    display: block;
+    background: url(../images/star_2.png) no-repeat scroll 0% 0% transparent;
+}
+.rate_box{
+	width: 366px;
+	margin: 3px 0px;
+	font-size: 18px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 88, 87, 87 );
+	vertical-align: top;
+	display: inline-block;
+}
+.rate_box ul li{
+	line-height: 2;
+	margin-left: 70px;
+	height: 30px;
+}
+.rate_box ul li .tar{margin:0px 20px;width: 148px;}
+.rate_box ul li span{
+	display: block;
+	float:left;
+}
+.rate_box>ul>li{
+	/* margin-top: 10px;  */
+	margin-right: 20px;
+	margin-left: 78px;
+	width: 333px;
+	height: 30px;
+	display: block;
+	clear: both;
+}
+.coach_value_all{
+	border-bottom: 1px solid rgb( 198, 196, 196 );
+}
+.rate_name span{
+	padding-left: 15px;
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 88, 87, 87 );
+	display: block;
+	float:left;
+}
+.rate_name .time{
+	margin-right: 50px;
+	float:right;
+}
+.rate_name .five{
+	margin-top: -3px;
+	margin-left: 20px;
+	width: 145px;
+	height: 28px;
+	background: url(../images/5_star_1.png) no-repeat scroll 0% 0% transparent;
+}
+.rate_name .four{
+	margin-top: -3px;
+	margin-left: 20px;
+	width: 145px;
+	height: 28px;
+	background: url(../images/4_star_1.png) no-repeat scroll 0% 0% transparent;
+}
+.rate_name .three{
+	margin-top: -3px;
+	margin-left: 20px;
+	width: 145px;
+	height: 28px;
+	background: url(../images/3_star_1.png) no-repeat scroll 0% 0% transparent;
+}
+.coach_value_list .content{
+	font-size: 16px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 88, 87, 87 );
+  	padding-left: 22px;
+	line-height: 3;
+}
+.coach_value_list ul li{
+	height:128px;
+	border-bottom: 1px dotted rgb( 198, 196, 196 );
+}
+.rate_name{
+	height: 60px;
+	padding-top: 20px;
+}
+#page_navigation a{
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px solid rgb( 198, 196, 196 );
+	margin: 2px;
+	color: rgb( 77, 77, 77 );
+	text-decoration: none;
+	width: 35px;
+	height: 35px;
+	display: block;
+	float: left;
+	
+}
+.page_link:hover{
+	background-color: #f9f5f5;
+	color:black !important;
+}
+.active_page{
+	background:rgb( 255, 104, 6 );
+	color:white !important;
+}
+.page_cut{
+	margin-left: 380px;
+	margin-top: 30px;
+	text-align: center;
+}

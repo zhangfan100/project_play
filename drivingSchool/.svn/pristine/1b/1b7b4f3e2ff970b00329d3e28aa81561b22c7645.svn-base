@@ -1,0 +1,231 @@
+@CHARSET "UTF-8";
+h1{
+	font-size: 18px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 31, 31, 31 );
+}
+.top_content ul li a{
+	 color: rgb( 70, 70, 70 );
+}
+.breadcrumb>li+li:before {
+	color: rgb( 70, 70, 70 );
+	content: ">\00a0";
+}
+.breadcrumb {
+	
+	background-color: #ffffff;
+}
+.left_content_one{
+	width:300px;
+	height:225px;
+	border-style: solid;
+	border-width: 2px;
+	border-color: rgb( 255, 102, 3 );
+	background-color: rgb( 255, 255, 255 );
+}
+.company_profile{
+	line-height: 2.5;
+	padding-left: 20px;
+	background-color: #ff6603;
+	height:45px;
+	font-size: 16px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 255, 255, 255 );
+}
+.left_content_one ul li{
+	cursor: pointer;
+	text-align: center;
+	height:68px;
+	height: 59px;
+	line-height: 3.5;
+	border-top: 1px solid rgb( 198, 196, 196 );
+}
+.left_content_one ul li:hover{
+	background-color: #eeeeee;
+}
+.left_content_one ul li a{
+	font-size: 16px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 70, 70, 70 );
+}
+.left_box_two{
+	width:300px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+}
+
+.left_box_three_ul li a{
+ 	font-size: 22px;
+    font-family: "Microsoft YaHei";
+    color: rgb( 97, 96, 96 );
+    padding-left: 10px;
+}
+.left_box_three_ul li:hover a{
+    color: rgb( 240, 127, 43 );
+}
+
+.left_content{
+	float:left;
+}
+.right_content{
+	float:right;
+	width:685px;
+}
+.sx_list .sx_title{
+	padding-left: 30px;
+	color: rgb( 148, 148, 148 );
+	
+}
+.sx_list .back a{
+	color:#ffffff;
+	border-radius: 5px;
+	background-color: rgb( 255, 104, 6 );
+	padding: 5px 20px 5px 20px;
+}
+.sx_list ul li span a{
+	cursor: pointer;
+	color: rgb( 240, 127, 43 );
+	padding-left: 20px;
+	padding-right: 20px;
+	font-size: 14px;
+}
+.sx_list ul li span:hover a{
+	color:#ffffff;
+	border-radius: 5px;
+	background-color: rgb( 255, 104, 6 );
+	padding: 5px 20px 5px 20px;
+}
+.left_box_three{
+	width:300px;
+	height:345px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+}
+.left_box_three ul li{
+	border-bottom: 1px dotted rgb( 198, 196, 196 );
+	height: 86px;
+	padding-top: 10px;
+	padding-left: 20px;
+}
+.sx_list{
+	height:139px;
+	border: 1px solid rgb( 198, 196, 196 );
+}
+.sx_list ul li{
+	line-height: 3;
+	height:46px;
+	border-bottom: 1px dotted rgb( 198, 196, 196 );
+}
+.ranking_div{
+	margin-top: 15px;
+	border: 1px solid rgb( 198, 196, 196 );
+}
+.main_content{
+	height: 1185px;
+	margin-bottom:150px;
+}
+.rank_head{
+	
+	height:41px;
+	border-bottom: 3px solid rgb( 255, 104, 6 );
+}
+.rank_head ul li a{
+	color:rgb( 77, 77, 77 );
+	font-size:16px;
+}
+.rank_head ul li{
+	cursor: pointer;
+	width: 120px;
+	line-height: 2.5;
+	text-align: center;
+	float:left;
+}
+.rank_head .active{
+	background-color: rgb( 255, 104, 6 );
+	color: white;
+	height: 38px;
+	width: 120px;
+}
+.rank_head .active a{
+	color:#fff;
+}
+.rank_head ul li:hover{
+	background-color: rgb( 255, 104, 6 );
+	color: white;
+	height: 38px;
+	width: 120px;
+}
+.rank_head ul li:hover a{
+	color:#fff;
+}
+.rank_content{
+	/* height:141px; */
+	/* border-bottom: 1px dotted rgb( 198, 196, 196 ); */
+}
+.rank_photo{
+	padding-left: 15px;
+	padding-top: 16px;
+	width:119px;
+	float:left;
+}
+.rank_detail{
+	width:240px;
+	float:left;
+	line-height: 3;
+	margin: 15px 0 0 30px;
+}
+.rank_detail ul li{
+	width: 120px;
+	line-height: 2;
+	float:left;
+}
+.rank_score{
+	width: 155px;
+	float: right;
+	text-align: center;
+	padding-top: 38px;
+}
+.rank_content_li{
+	clear:both;
+	height:160px;
+	border-bottom: 1px dotted rgb( 198, 196, 196 );
+}
+.rank_content_li:hover{
+	background-color: #f9f5f5;
+}
+
+#page_navigation a{
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px solid rgb( 198, 196, 196 );
+	margin: 2px;
+	color: rgb( 77, 77, 77 );
+	text-decoration: none;
+	width: 35px;
+	height: 35px;
+	display: block;
+	float: left;
+	
+}
+.page_link:hover{
+	background-color: #f9f5f5;
+	color:black !important;
+}
+.active_page{
+	background:rgb( 255, 104, 6 );
+	color:white !important;
+}
+.page_cut{
+	margin-left: 250px;
+	margin-top: 20px;
+	text-align: center;
+}
+.rank_detail span a{
+	color: rgb( 77, 77, 77 );
+	
+}
+.rank_detail span a:hover{
+	text-decoration: underline;
+}

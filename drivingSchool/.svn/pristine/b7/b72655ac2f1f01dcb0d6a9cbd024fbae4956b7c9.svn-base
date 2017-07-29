@@ -1,0 +1,124 @@
+#admin_header{
+	height:77px;
+	/* overflow:visible; */
+	background-color:#3c68cb;
+}
+
+#system_setting_ico{
+	background-image:url(../../img/admin/system_setting.png);
+}
+#comment_manage_ico{
+	background-image:url(../../img/admin/comment_manage.png);
+}
+#message_manage_ico{
+	background-image:url(../../img/admin/message_manage.png);
+}
+#image_manage_ico{
+	background-image:url(../../img/admin/image_manage.png);
+}
+#log_manage_ico{
+	background-image:url(../../img/admin/log_manage.png);
+}
+
+
+
+
+#comment_reply_button{
+	color:#5d5c5c;
+	letter-spacing:10px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 181, 186, 199 );
+	border-radius: 5px;
+	background-color: #e6eaf5;
+	width: 90px;
+	height: 38px;
+	font-weight:bold;
+	padding-left:13px;
+}
+
+
+
+
+/* 图片管理 */
+
+.images input[type="checkbox"]{
+    margin: -320px 0 0  17px;
+}
+.images{
+	overflow:auto;
+	height:100%;
+	background:#fafafa;
+}
+.images ul{
+	list-style:none;
+	margin:0;
+	padding:0px;
+}
+.images li{
+	display:inline;
+	float:left;
+	margin:10px;
+	padding:7px;
+	border:1px solid #d6d6d6;
+	box-shadow: 0px 1px 3px 0px rgb( 136, 136, 136 );
+	width: 322px;
+	height: 251px;
+
+}
+.item{
+	display:block;
+	text-decoration:none;
+}
+.item img{
+	width: 322px;
+	height: 168px;	
+	margin-bottom:5px;
+}
+.item span{
+	font-weight:bold;
+	color:#c3c3c3;
+}
+.item .image_describe{
+	margin:0 0 0 -20px;
+}
+.item  .image_detail{
+	margin:23px 0 0 14px;
+}
+.item  .image_date{
+	margin-right:130px;
+}
+.item  .image_edit{
+	margin-right:20px;
+	color:#e46706;
+	cursor:pointer;
+}
+.item  .image_delet{
+	cursor:pointer;
+}
+/* *图片管理* */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

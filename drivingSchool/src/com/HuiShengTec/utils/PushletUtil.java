@@ -1,0 +1,63 @@
+package com.HuiShengTec.utils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.HuiShengTec.base.pushletCore.EventPullSource;
+
+import nl.justobjects.pushlet.core.Event;
+
+/**
+ * Pushlet推送
+ * 
+ * @author wtr
+ * 
+ */
+public class PushletUtil extends EventPullSource {
+	private static String gpsPort = "/gpsPort";
+	private static Map<String, String> pushData = null;
+
+	/**
+	 * 每5秒推送一次
+	 */
+	public long getSleepTime() {
+		return 5000;
+	}
+
+	/**
+	 * 装填推送数据
+	 */
+	public synchronized Event pullEvent() {
+		if (pushData == null) {
+			return null;
+		} else {
+			Event event = Event.createDataEvent(gpsPort, pushData);
+			pushData = null;
+			return event;
+		}
+	}
+
+	public static void addPushData(Map<String, String> param) {
+		pushData = param;
+		try {
+			for (Entry<String, String> data : pushData.entrySet()) {
+				data.setValue(URLEncoder.encode(data.getValue(), "UTF-8"));
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void addPushData(String key,String value) {
+		pushData = new HashMap<String, String>();
+		try {
+//			pushData.put(key,URLEncoder.encode(value, "UTF-8"));
+			value = new String(value.getBytes("UTF-8"), "ISO-8859-1");  
+			pushData.put(key,value);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+}

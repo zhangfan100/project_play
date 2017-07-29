@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IDatePriceDao">
+	<insert id="addDatePrice" parameterType="DatePrice">
+		INSERT INTO
+		DatePrice
+		(`date`, `time`, `licenceId`, `price`,`carBrandId`)
+		VALUES
+		(
+		#{date},
+		#{time},
+		#{licenceId},
+		#{price},
+		#{carBrandId}
+		) ;
+	</insert>
+	<delete id="deleteOldDatePrice">
+		DELETE FROM DatePrice WHERE `date` &lt; CAST(SYSDATE() AS DATE)
+	</delete>
+	<select id="queryPlanDateTimePrice" resultType="DatePrice" parameterType="java.util.HashMap" >
+	SELECT 
+	  dp.*
+	FROM
+	  DatePrice dp 
+	WHERE dp.`date` = #{studyDate} 
+	  AND dp.`time` = #{time} 
+	  AND dp.`licenceId` = 
+	  (SELECT 
+	    stu.`licenceId` 
+	  FROM
+	    StudentInfo stu 
+	  WHERE stu.`id` = #{stuId}) 
+	  AND dp.`carBrandId` = 
+	  (SELECT 
+	    cb.`id` AS brandId 
+	  FROM
+	    CoachInfo ci 
+	    LEFT JOIN CarInfo car 
+	      ON ci.`carId` = car.`id` 
+	    LEFT JOIN CarBrand cb 
+	      ON car.`carBrandId` = cb.`id` 
+	  WHERE ci.`id` = #{coachId})
+	  LIMIT 1 
+	</select>
+	<select id="queryCurrentDataPrice" resultType="DatePrice" >
+        SELECT  dp.* FROM DatePrice  dp
+        WHERE dp.date &gt;= CAST(SYSDATE() AS DATE)
+	</select>
+</mapper>

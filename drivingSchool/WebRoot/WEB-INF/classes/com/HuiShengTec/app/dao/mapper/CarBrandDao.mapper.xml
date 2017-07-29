@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ICarBrandDao">
+	<select id="queryCarBrandPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap">
+		SELECT 
+		  e.*,
+		  IFNULL(i.count, 0) AS `count`
+		FROM
+		  CarBrand e 
+		  LEFT JOIN 
+		    (SELECT 
+		      COUNT(*) AS `count`,
+		      i.carBrandId 
+		    FROM
+		      CarInfo i 
+		    GROUP BY i.carBrandId) i 
+		    ON i.carBrandId = e.id  
+	</select>
+	
+	<select id="queryCarBrandById" parameterType="int" resultType="CarBrand">
+	SELECT 
+	  e.* 
+	FROM
+	  CarBrand e 
+	WHERE e.id =#{id}
+	</select>
+	<update id="updateCarBrand">
+		UPDATE 
+		  CarBrand 
+		SET
+		  title = #{title},
+		  pricePlus = #{pricePlus}
+		WHERE id = #{id} 
+	</update>
+	<select id="queryCarBrand" resultType="CarBrand" >
+		select * from CarBrand
+	</select>
+	<insert id="addCarBrand" parameterType="CarBrand">
+		INSERT INTO CarBrand (title, pricePlus) 
+		VALUES
+		  (#{title}, #{pricePlus}) ;
+		
+	</insert>
+</mapper>

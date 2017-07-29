@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.HuiShengTec.app.dao.IAttachmentDao">
+  	<update id="updateById" parameterType="Picture">
+  		update Picture set path=#{path},createTime=sysdate() where id=#{id}
+  	</update>
+  	<insert id="saveAttachment" parameterType="Picture">
+  		insert into Picture(path,type,createTime,title) values(#{path},#{type},sysdate(),#{title})
+  	</insert>
+  	<select id="queryByPath" parameterType="String" resultType="Integer">
+  		select id from Picture where path=#{attPath}
+  	</select>
+  	<select id="queryById" parameterType="Integer" resultType="String">
+  		select path from Picture where id=#{id} 
+  	</select>
+  	<select id="queryAttInfoById" parameterType="int" resultType="Picture">
+  		select * from Picture where id=#{id}
+  	</select>
+  </mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IRoleDao">
+	<select id="queryRolePage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="java.util.HashMap" >
+		SELECT 
+		  e.id,
+		  e.title,
+		  IFNULL(f.count,0) AS 'userCount'
+		FROM
+		  Role e 
+		  LEFT JOIN 
+		    (SELECT 
+		      COUNT(*) AS 'count',
+		      f.roleId 
+		    FROM
+		      Login f 
+		    GROUP BY f.roleId) f 
+		    ON f.roleId = e.id
+		    WHERE e.type=#{conditions.roleType}
+	</select>
+	<select id="queryRoleById" parameterType="int" resultType="Role" >
+		select * from Role where id=#{id}
+	</select>
+	<select id="queryRoleByType" parameterType="java.lang.Integer" resultType="Role">
+		select * from Role where type=#{roleType}
+	</select>
+</mapper>

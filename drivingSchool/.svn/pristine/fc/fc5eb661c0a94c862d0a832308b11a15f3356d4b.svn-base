@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IFroIndexDao">
+	
+	<select id="queryMenu" resultType="java.util.HashMap" >
+		select m.id,m.title,k.kindName,t.title traiName,k.schoolSeptFlag,k.id kindId,m.seperateSchoolId from Message m left join MessageKind k on k.id = m.kindID
+		left join CampusInfo t on t.id = m.seperateSchoolId where k.kindKey in (1,2,5) order by k.id,t.title
+	</select>
+	
+</mapper>

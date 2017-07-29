@@ -1,0 +1,35 @@
+package com.HuiShengTec.base.cache;
+
+import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
+
+import com.HuiShengTec.entity.CarGPSAddr;
+
+public class CarGPSAddrCache {
+	//缓存 key为车辆ID values为车辆GPS信息
+	private static ConcurrentHashMap<Integer,CarGPSAddr> gpsAddr = null;
+	
+	private CarGPSAddrCache(){};
+	
+	public static ConcurrentHashMap<Integer,CarGPSAddr> getCache(){
+		if(gpsAddr==null){
+			gpsAddr=new ConcurrentHashMap<>();
+		}
+		return gpsAddr;
+	}
+	/**
+	 * 更新GPS地址
+	 */
+	public static void updateGpsAddr(Integer carId,String gpsStr){
+		CarGPSAddr addr = new CarGPSAddr();
+		addr.setCarId(carId);
+		addr.setGpsAddr(gpsStr);
+		addr.setLastUpdateTime(new Date());
+		getCache().put(carId, addr);
+	}
+	
+	public static void removeCarAddr(Integer carId){
+		getCache().remove(carId);
+	}
+	
+}

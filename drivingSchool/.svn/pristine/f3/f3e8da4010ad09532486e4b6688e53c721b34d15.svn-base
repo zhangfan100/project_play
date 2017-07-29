@@ -1,0 +1,120 @@
+package com.HuiShengTec.app.froAction;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.HuiShengTec.app.service.ICampusInfoService;
+import com.HuiShengTec.app.service.ICoachInfoService;
+import com.HuiShengTec.app.service.IDrivingLicenceService;
+import com.HuiShengTec.base.action.BaseAction;
+import com.HuiShengTec.base.cache.PropertiesCache;
+import com.HuiShengTec.base.entity.PageBean;
+import com.HuiShengTec.base.entity.PageInfo;
+import com.HuiShengTec.utils.Toolkit;
+
+/**
+ * 
+ * 教练风采
+ * @author lianghong
+ *
+ */
+@Controller
+@RequestMapping("/coachshow")
+public class CoachshowAction extends BaseAction{
+	@Resource
+	private IDrivingLicenceService iDrivingLicenceService;
+	@Resource
+	private ICoachInfoService iCoachInfoService;
+	@Resource
+	private ICampusInfoService iCampusInfoService;
+	
+	/**
+	 * 查询校区和车型，并跳转到教练风采页面
+	 * @return
+	 */
+	@RequestMapping("redirectCoachshow")
+	public String queryXqAndCx(){
+		PageInfo info =new PageInfo();
+		info.setPage(1);
+		info.setRows(100);
+		String name = request.getParameter("name");
+		String signs = request.getParameter("signs");
+		request.setAttribute("name", name);
+		request.setAttribute("signs", signs);
+		request.setAttribute("cx", iDrivingLicenceService.queryAllDrivingLicence());
+		request.setAttribute("xq", iCampusInfoService.queryCampusInfo());
+		PropertiesCache.fillRequestParam(request);
+		return "front/coachInfoAction/coachshow";
+	}
+	
+	/**
+	 * 根据月份查询教练排名
+	 * 算法 按照没有教练所教的学生排名  
+	 * 前台需要传一个map key=month value=具体的那个月 比如month=9
+	 * @author zf
+	 */
+	@RequestMapping("rankCoachByMonth")
+	@ResponseBody
+	public List<Map<String, Object>> rankCoachByMonth(Map<String, Object> param){
+		return iCoachInfoService.rankCoachByMonth(param);
+	}
+	
+	/**
+	 * 查询教练详细信息
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("queryCoachshowInfo")
+	public PageBean queryInfo(){
+		PageInfo info =new PageInfo();
+		info.setPage(1);
+		info.setRows(100);
+		String title = request.getParameter("title");
+		String drivingAge = request.getParameter("drivingAge");
+		String sex = request.getParameter("sex");
+		String name = request.getParameter("name");
+		String sortType = request.getParameter("sortType");
+		if(!Toolkit.isEmpty(title)){
+			info.addConditions("title", title);
+		}
+		if(!Toolkit.isEmpty(drivingAge)){
+			info.addConditions("drivingAge", drivingAge);
+		}
+		if(!Toolkit.isEmpty(sex)){
+			info.addConditions("sex", sex);
+		}
+		if(!Toolkit.isEmpty(name)){
+			name = name.trim();
+			info.addConditions("name", name);
+		}
+		if(!Toolkit.isEmpty(sortType)){
+			info.addConditions("sortType", sortType);
+		}
+		PageBean pb = iCoachInfoService.queryInfo(Toolkit.fillPageInfo(info));
+		return pb;
+	}
+	
+	@RequestMapping("toCoachDetail")
+	public String toCoachDetail(Integer id){
+		PageInfo info =new PageInfo();
+		info.setPage(1);
+		info.setRows(100);
+		if(!Toolkit.isEmpty(id)){
+			info.addConditions("id",id);
+		}
+		PageBean pb = iCoachInfoService.queryInfo(Toolkit.fillPageInfo(info));
+		request.setAttribute("data", pb);
+		request.setAttribute("teaImgOne", iCoachInfoService.queryteacherAttr(Toolkit.fillPageInfo(info)));
+		request.setAttribute("cohImgTwo", iCoachInfoService.queryTeacherTypeTwoAttr(Toolkit.fillPageInfo(info)));
+		request.setAttribute("commentNum", iCoachInfoService.queryCommentNum(id));
+		request.setAttribute("commentInfo", iCoachInfoService.queryCommentInfo(id));
+		PropertiesCache.fillRequestParam(request);
+		return "front/coachInfoAction/coachdetail";
+	}
+}

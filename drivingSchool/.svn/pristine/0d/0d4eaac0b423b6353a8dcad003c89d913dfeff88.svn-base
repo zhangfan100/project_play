@@ -1,0 +1,272 @@
+package com.HuiShengTec.app.service.impl;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.HuiShengTec.app.dao.ICarBrandDao;
+import com.HuiShengTec.app.dao.ICarInfoDao;
+import com.HuiShengTec.app.dao.IDatePriceDao;
+import com.HuiShengTec.app.dao.IDrivingLicenceDao;
+import com.HuiShengTec.app.dao.IStuInfoDao;
+import com.HuiShengTec.app.dao.ITimePriceDao;
+import com.HuiShengTec.app.dao.IWeekPriceDao;
+import com.HuiShengTec.app.service.IMonthTotalPriceService;
+import com.HuiShengTec.base.cache.PropertiesCache;
+import com.HuiShengTec.entity.CarBrand;
+import com.HuiShengTec.entity.DatePrice;
+import com.HuiShengTec.entity.DrivingLicence;
+import com.HuiShengTec.entity.StudentInfo;
+import com.HuiShengTec.entity.TimePrice;
+import com.HuiShengTec.entity.WeekPrice;
+import com.HuiShengTec.utils.Toolkit;
+
+/**
+ * @Description: TODO(关于财务的service层) 
+ * @Date   2015年4月14日 上午10:09:06
+ */
+@Service
+public class MonthTotalPriceServiceImpl implements IMonthTotalPriceService{
+	
+	private final Logger logger = Logger.getLogger(MonthTotalPriceServiceImpl.class.getName());
+	
+	@Autowired
+	private IDrivingLicenceDao iDrivingLicenceDao;
+	@Autowired
+	private IWeekPriceDao iWeekPriceDao;
+	@Autowired
+	private ITimePriceDao iTimePriceDao;
+	@Autowired
+	private ICarBrandDao iCarBrandDao;
+	@Autowired
+	private IDatePriceDao iDatePriceDao;
+	@Autowired
+	private IStuInfoDao iStuInfoDao;
+	@Autowired
+	private ICarInfoDao carInfoDao;
+	
+	/**
+	 * 查询启用的时段差价
+	 * @return
+	 */
+	private List<TimePrice> queryTimePrice() {
+		return iTimePriceDao.queryCurrTimePriceList();
+	}
+	
+	/**
+	 * 查询出大于今天的数据
+	 * @return
+	 */
+	private List<DatePrice> queryCurrentDataPrice() {
+		return iDatePriceDao.queryCurrentDataPrice();
+	}
+	
+	/**
+	 * 星期差价
+	 * @return
+	 */
+	private List<WeekPrice> queryWeekPrice() {
+		return iWeekPriceDao.queryWeekPrice();
+	}
+	
+	/**
+	 * 获取启用的的驾照类型
+	 * @return
+	 */
+	private List<DrivingLicence> queryDrivingLicence(){
+		return iDrivingLicenceDao.queryCurrentDrivingLicence();
+	}
+	
+	/**
+	 * 获取所有的车品牌
+	 * @return
+	 */
+	private List<CarBrand> queryCarBrand(){
+		return iCarBrandDao.queryCarBrand();
+	}
+	
+	/**
+	 * 根据key获取缓存中对应的基础价格
+	 * @return
+	 */
+	private Integer getBasicPropInfoKey(String key) {
+		return Integer.parseInt(PropertiesCache.getValue(key));
+	}
+	
+	/**
+	 * 填充插入到数据库里的数据
+	 * @throws ParseException 
+	 */
+	public void fillData() throws ParseException {
+		logger.debug("填充数据");
+		//得到启用的时间段
+		List<TimePrice> tps = this.queryTimePrice();
+		//得到启用的驾照类型
+		List<DrivingLicence> dls = this.queryDrivingLicence();
+		//得到所有的车品牌
+		List<CarBrand> cbs = this.queryCarBrand();
+		//得到基础价格
+		Integer basicPrice = this.getBasicPropInfoKey("basicPrice");
+		//得到星期差价
+		List<WeekPrice> wps = this.queryWeekPrice();
+		//封装数据 用来插入数据库的准备数据
+		Map<String, Object> maps = null;
+		//封装用于插入数据库的准备数据
+		List<Map<String, Object>> lists = new ArrayList<>();
+		
+		for(int day=0;day<15;day++){//计算半个月的总价
+			for(int i = 0; i < tps.size(); i++){//遍历启用时间段 
+				for(int k = 0; k < dls.size(); k++){//遍历启用驾照类型
+					for(int t = 0; t<cbs.size();t++){//遍历所有的驾校牌照
+						for(int j = 0;j<wps.size();j++){//遍历星期
+							String weekDay = wps.get(j).getWeekDay().toString().trim();
+							if(weekDay.equals(getWeekAndDate(day).get("weekDay").toString().trim())){
+								maps = new HashMap<String, Object>();
+								maps.put("date", getWeekAndDate(day).get("date"));//把时间放入map里面
+								maps.put("time", tps.get(i).getBeginTime());//把时间段放入map里
+								maps.put("licenceId", dls.get(k).getId());//把驾照类型id放入map里
+								maps.put("carBrandId", cbs.get(t).getId());//把驾校车品牌id放入map里
+								float totalPrice = 0;
+								totalPrice += tps.get(i).getPricePlus();
+								totalPrice += wps.get(j).getPricePlus();
+								totalPrice += dls.get(k).getPricePlus();
+								totalPrice += cbs.get(t).getPricePlus();
+								totalPrice += ((Integer)basicPrice);
+								maps.put("price", totalPrice);
+								lists.add(maps);
+							}
+						}//遍历星期结束
+					}//遍历所有的驾校牌照结束
+				}//遍历驾照类型 只计算启用的驾照类型结束
+			}//遍历时间段结束
+		}//计算半个月的总价结束
+		updateDatePrice(lists);
+	}
+	
+	/**
+	 * 只要和数据表中数据不一样就插入 有了就不插入
+	 * @param lists
+	 * @throws ParseException 
+	 */
+	private void updateDatePrice(List<Map<String, Object>> lists) throws ParseException  {
+		//获得大于今天的数据
+        List<DatePrice> dps = this.queryCurrentDataPrice();
+        /**
+         * 比较数据
+         */
+        for(Map<String, Object> map:lists){
+        	boolean flag = false;//用来记录是否有相同的 默认没有相同的 true为有相同的
+        	String date = map.get("date").toString().trim();
+    		String time = map.get("time").toString().trim();
+    		String licenceId = map.get("licenceId").toString().trim();
+    		String carBrandId = map.get("carBrandId").toString().trim();
+    		String price = map.get("price").toString().trim();
+        	for(DatePrice dp : dps){
+        		if(date.equals(Toolkit.parseDate(dp.getDate(), null)) && time.equals(dp.getTime().toString().trim()) && licenceId.equals(dp.getLicenceId().toString().trim())
+        				&& carBrandId.equals(dp.getCarBrandId().toString().trim()) && price.equals(dp.getPrice().toString().trim())){//只要有一个和数据库相同 就设置标志位为true
+        			flag = true;
+        			break;//跳出内循环
+        		}
+        	}
+        	if(!flag){//如果没有相同的就插入记录到数据库里面
+        		logger.debug("插入新的数据到数据库中");
+        		DatePrice data = new DatePrice();
+    			data.setDate(Toolkit.formatDate(date, null));
+    			data.setTime(Integer.parseInt(time));
+    			data.setLicenceId(Integer.parseInt(licenceId));
+    			data.setCarBrandId(Integer.parseInt(carBrandId));
+    			data.setPrice(Float.parseFloat(price));
+    			iDatePriceDao.addDatePrice(data);
+        	}
+        }
+	}
+
+	
+	/**
+	 * 通过传入一个数字 该数字表示从今天往后的第几天然后得到对应的星期 0表示今天 1表示明天。。。
+	 * @param days
+	 * @return 返回的map  键integer 代表星期 1代表星期天 2代码星期一   。。。值是对应的日期形式
+	 */
+	private static Map<String, Object> getWeekAndDate(Integer days) {
+		Map<String, Object> map = new HashMap<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, days);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        map.put("date", format.format(calendar.getTime()));
+        map.put("weekDay", calendar.get(Calendar.DAY_OF_WEEK));
+        return map;
+    }
+
+	/**
+	 * 通过选择的教练和时段得到科目二的总价
+	 */
+	@Override
+	public Map<String, Object> getTotalPrice(Integer stuId, Integer cohId, Date studyDate,
+			String studyTime) {
+		Map<String, Object> returnValue = new HashMap<>();
+		String date = Toolkit.parseDate(studyDate, null);
+		//09:00-11:59  08:00-08:59   8,8 08:00-08:59 09:00-10:59 18:00-20:59 18:00-20:59
+		String timeStr = this.getTimeByStudyTime(studyTime);//8,10    8 9 10  8,8
+		HashMap<String, Object> condition = new HashMap<>();
+		condition.put("studyDate", date);
+		condition.put("stuId", stuId);
+		condition.put("coachId", cohId);
+		returnValue.put("carType", carInfoDao.queryCarInfo(cohId).get("carType"));
+		String[] strs = timeStr.split(",");
+		//通过学生id得到驾照类型id 
+		StudentInfo studentInfo = iStuInfoDao.queryStuInfo(stuId);
+		if(strs[0].equals(strs[1])){//说明就一个时间段  08:00-08:59   8,8
+			condition.put("time", strs[0]);
+			if(studentInfo.getCoachId()!=null && !"".equals(studentInfo.getCoachId()) && studentInfo.getCoachId()==cohId){//老模式 有说明他已经和该教练商量好了价格 不要计算了
+				returnValue.put("price", 0);
+				return returnValue;
+			}else{
+				returnValue.put("price", iDatePriceDao.queryPlanDateTimePrice(condition).getPrice());
+				return returnValue;
+			}
+		}
+		if(studentInfo.getCoachId()!=null && !"".equals(studentInfo.getCoachId()) && studentInfo.getCoachId()==cohId){//老模式 有说明他已经和该教练商量好了价格 不要计算了
+			returnValue.put("price", 0);
+			return returnValue;
+		}
+		int begin = Integer.parseInt(strs[0]);
+		int end = Integer.parseInt(strs[1]);
+		float total = 0;
+		for(int i = begin;i<=end;i++){//{time=8, coachId=27, studyDate=2015-04-15, stuId=65}
+			condition.put("time", i);
+			total += iDatePriceDao.queryPlanDateTimePrice(condition).getPrice();
+		}
+		
+		returnValue.put("price", total);
+		return returnValue;
+	}
+	
+	/**
+	 * 分割字符串
+	 * @param studyTime
+	 * @return
+	 */
+	private String getTimeByStudyTime(String studyTime){
+		String[] strs = studyTime.split("-");
+		StringBuffer sb = new StringBuffer();
+		for(String str:strs){
+			if(str.startsWith("0")){//如以0开始 那么去掉开头的0  如07--》7
+				sb.append(str.charAt(1)+",");
+			}else{
+				sb.append(str.substring(0, 2)+",");
+			}
+		}
+		return sb.substring(0, sb.length()-1);
+	}
+	
+}

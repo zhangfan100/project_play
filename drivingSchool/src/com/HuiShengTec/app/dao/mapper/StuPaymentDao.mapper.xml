@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IStuPaymentLogDao">
+
+    <select id="queryStuPaymentInfo" resultType="java.util.HashMap" parameterType="PageBean">
+          SELECT * FROM studentpaymentlog where 1=1
+        <if test="conditions.beginDate!=null"> and date(payTime) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and date(payTime) <= #{conditions.endDate}]]></if>
+		order by payTime desc 
+	</select>
+	
+	<insert id="insertCoachPaymentLog" parameterType="StudentPaymentLog">
+		insert into studentpaymentlog(stuId,stuName,paymentType,paymentItem,cash,realCash,accountLogId,payTime,opeartionUserId,userName) 
+	    values(#{stuId},#{stuName},#{paymentType},#{paymentItem},#{cash},#{realCash},#{accountLogId},sysdate(),#{opeartionUserId},#{userName})
+	</insert>
+</mapper> 

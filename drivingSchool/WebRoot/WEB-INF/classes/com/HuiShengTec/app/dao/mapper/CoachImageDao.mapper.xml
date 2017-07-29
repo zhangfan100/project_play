@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.HuiShengTec.app.dao.ICoachImageDao">
+  
+  	<!-- 查询当前老师所有详情图片 -->
+	<select id="queryImages" parameterType="java.util.Map" resultType="java.util.HashMap">
+		select t2.id rid,t2.coachId,t2.type,t3.id,t3.path,t3.createTime,t3.title from (
+		select * from  CoachPicture t1 where t1.coachId=#{coachId}) t2
+		left join Picture t3 on t2.picId = t3.id
+	</select>
+	
+	<!-- 标记当前图像为封面 -->
+	<update id="markConver" parameterType="Integer">
+		update CoachPicture set type=1 where id=#{rid}
+	</update>
+	
+	<!-- 标记当前老师所有图片为非封面 -->
+	<update id="markNoConver" parameterType="Integer">
+		update  CoachPicture set type=2 where  coachId=#{coachId} and type=1
+	</update>
+	
+	<!-- 删除图像表数据 -->
+	<delete id="deleteImage">
+		delete from Picture where id in
+		<foreach collection="list" close=")" open="(" item="item" separator=",">
+			#{item.id}
+		</foreach>
+	</delete>
+	
+	<!-- 删除老师关系图像表数据 -->
+	<delete id="deleteTeacherAttachment">
+		delete from CoachPicture where picId in
+		<foreach collection="list" close=")" open="(" item="item" separator=",">
+			#{item.id}
+		</foreach>
+	</delete>
+	
+	<!-- 保存图像表数据 -->
+	<insert id="saveImages" parameterType="Picture" useGeneratedKeys="true" keyProperty="id">
+		insert into Picture(title,path,type,createTime) values(#{title},#{path},#{type},sysdate())
+	</insert>
+	
+	<!-- 保存老师关系图像表数据 -->
+	<insert id="saveTeacherAttachment" parameterType="CoachPicture">
+		insert into CoachPicture(coachId,picId,type) values(#{coachId},#{picId},#{type})
+	</insert>
+	
+  </mapper>

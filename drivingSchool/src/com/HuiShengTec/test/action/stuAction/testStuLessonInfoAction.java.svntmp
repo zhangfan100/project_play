@@ -1,0 +1,63 @@
+package com.HuiShengTec.test.action.stuAction;
+
+import org.junit.Test;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.HuiShengTec.entity.Login;
+import com.HuiShengTec.entity.StudentInfo;
+import com.HuiShengTec.test.basejunit.BaseActionJunit;
+
+public class testStuLessonInfoAction extends BaseActionJunit {
+	
+	
+	@Test
+	public void findLessonInfoTest() throws Exception{
+		request.setRequestURI("/stu/findLessonInfo");    
+		request.addParameter("studyDate", "2015-04-08");  
+		Login login = new Login();
+		login.setUserId(62);
+		request.getSession().setAttribute("loginInfo", login);
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav.getModel().size());
+	}
+	
+	@Test
+	public void toSubject3AddLessonTest() throws Exception{
+		request.setRequestURI("/stu/toSubject3AddLesson");    
+		Login login = new Login();
+		login.setUserId(62);
+		request.getSession().setAttribute("loginInfo", login);
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav.getViewName());
+	}
+	
+	@Test
+	public void saveLessonInfoPlanSubmitTest() throws Exception{
+		Login login = new Login();
+		login.setUserId(62);
+		request.getSession().setAttribute("loginInfo", login);
+		request.setRequestURI("/stu/saveLessonInfoPlanSubmit");
+		String s = "[{\"cohId\":\"27\",\"lessonCode\":\"未保存\",\"studyDate\":\"2015-04-06\",\"subject\":1,\"studyTime\":\"12:00-13:59\",\"price\":\"未保存\",\"status\":-1}]";
+		request.addParameter("jsonStr", s);  
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav.getViewName());
+	}
+	
+	@Test
+	public void queryStuLessonPlanInfoTest() throws Exception{
+		StudentInfo st = new StudentInfo();
+		st.setId(103);
+		request.getSession().setAttribute("userInfo", st);
+		request.setRequestURI("/stu/queryStuLessonPlanInfo");
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav.getViewName());
+	}
+}

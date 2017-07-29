@@ -1,0 +1,46 @@
+package com.HuiShengTec.test.action.stuAction;
+
+import org.junit.Test;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.HuiShengTec.entity.Login;
+import com.HuiShengTec.test.basejunit.BaseActionJunit;
+
+public class TestStuLoginInfoAction extends BaseActionJunit{
+
+
+	@Test
+	public void registerStuTest() throws Exception{
+		request.setRequestURI("/stu/registerStu");    
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav.getViewName());
+	}
+	@Test
+	public void validateUserNameTest() throws Exception{
+		request.setRequestURI("/stu/validateUserName");    
+		request.addParameter("username", "sdf");
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav);
+	}
+	@Test
+	public void validateEmailTest() throws Exception{
+		request.setRequestURI("/stu/validateEmail");    
+		request.addParameter("email", "sdf");
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav);
+	}
+	@Test
+	public void registerStuSbmitInfoTest() throws Exception{
+		request.setRequestURI("/stu/registerStuSbmitInfo");    
+		request.setMethod("POST");    
+		// 执行URI对应的action    
+		final ModelAndView mav = this.excuteAction(request, response);
+		System.out.println(mav);
+	}
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.HuiShengTec.app.dao.IStudentLotteryInfoDao">
+  
+  <select id="querystudentLotteryInfoPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="HashMap">
+		SELECT sy.`createTime`,sy.`id`,sy.`stuLotteryCode`,sy.status,stu.`name`,stu.`phone`,ly.`title`,p.`prizeName`,p.`type` FROM `studentlotteryinfo` sy
+			LEFT JOIN `studentinfo` stu
+			ON sy.`stuId`=stu.`id`
+			LEFT JOIN `lotteryinfo` ly
+			ON sy.`lotteryId`=ly.`id`
+			LEFT JOIN `prizeinfo` p
+			ON sy.`prizeId`=p.`id`
+
+		<if test="conditions.beginDate!=null"> and sy.`createTime` &gt;= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null">and date(sy.`createTime`) &lt;= #{conditions.endDate}</if>
+		<if test="conditions.keyWord!=null">
+			<![CDATA[ and (stu.`name` like CONCAT('%',#{conditions.keyWord},'%'))]]>
+		</if> 
+		ORDER BY sy.`createTime` DESC
+	</select>
+    <insert id="addStudentLotteryInfo" parameterType="StudentLotteryInfo">
+	    	INSERT INTO `studentlotteryinfo`
+	            (
+	             `stuLotteryCode`,
+	             `stuId`,
+	             `lotteryId`,
+	             `prizeId`,
+	             `createTime`,
+	             `status`)
+	VALUES (
+	        #{stuLotteryCode},
+	        #{stuId},
+	        #{lotteryId},
+	        #{prizeId},
+	        SYSDATE(),
+	        0)
+    </insert>
+    
+    <select id="queryStudentLotteryInfoCount" parameterType="map" resultType="Integer">
+    SELECT COUNT(stulott.`id`) FROM `studentlotteryinfo` stulott WHERE stulott.`stuId`=#{stuId} AND stulott.`lotteryId`=#{lotteryId}
+    </select>
+    
+<update id="editStudentLotteryStatus" parameterType="LotteryInfo">
+	UPDATE 
+	  `studentlotteryinfo` s 
+	SET
+	  s	.status =#{status}
+	WHERE s.`id` = #{id}
+</update>
+    
+    
+  </mapper>

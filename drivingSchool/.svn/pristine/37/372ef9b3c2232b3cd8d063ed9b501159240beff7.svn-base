@@ -1,0 +1,234 @@
+@CHARSET "UTF-8";
+
+.img_content_left{
+	float:left;
+	margin-right: 20px;
+}
+.apply_phone{
+	width:1000px;
+	height:110px;
+	margin-top:20px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+	background-color: #e7e7e7;
+}
+.apply_phone ul li{
+	float:left;
+}
+.apply_img{
+	margin-top: 20px;
+	margin-left: 35px;
+}
+.apply_call{
+	letter-spacing: 1px;
+	margin-top: 20px;
+	margin-left: 25px;
+	color: rgb( 97, 96, 96 );
+  	line-height: 2.25;
+  	width:460px;
+}
+.apply_photo{
+	margin-top: 10px;
+	margin-left: 35px;
+}
+.apply_phone span{
+	margin-left: 25px;
+	line-height:3;
+}
+.apply_phone input{
+	margin-left: 25px;
+	width: 85px;
+	height: 28px;
+	display: block;
+	border-width: 2px;
+	border-color: rgb( 255, 102, 3 );
+	border-style: solid;
+	background-color: #ff6600;
+}
+
+.left_part{
+	width:685px;
+	float:left;
+}
+.left_part h1,.right_part h1,.place_pic h1,.honor_pic h1{
+	font-size: 18px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 31, 31, 31 );
+}
+.left_part_one_box{
+	width:684px;
+	height:175px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+	
+}
+.left_part_one_ul li{
+	float:left;
+}
+.left_part_two_box{
+	width:684px;
+	height:283px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+	
+}
+.left_part_two h1 span,.left_part_three h1 span{
+	margin-left: 50px;
+	cursor: pointer;
+	float:right;
+	
+}
+.left_part_two h1 span:hover,.left_part_three h1 span:hover{
+	color: #ffa733;
+}
+.left_part_two h1 .selected,.left_part_three h1 .selected{
+	color: rgb( 255, 104, 6 );
+}
+.left_part_two_box ul li{
+	float:left;
+	width:120px;
+	padding-top: 25px;
+	padding-left: 15px;
+	margin-left: 10px;
+}
+.left_part_two_box ul li a{
+	display: block;
+	padding: 3px 3px;
+	width: 110px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+}
+.left_part_two_box ul li span{
+	display: block;
+	padding-top: 9px;
+	font-size: 12px;
+  	font-family: "Microsoft YaHei";
+  	color: rgb( 31, 31, 31 );
+}
+.lqxqjl{
+	display:none;
+}
+.lqxqxy{
+	display:none;
+}
+.left_part_three_box{
+	width:684px;
+	height:498px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+	
+}
+.left_part_three ul li{
+	float:left;
+	width:100px;
+	text-align: center;
+	margin-left: 10px;
+	padding-top: 10px;
+}
+.xy_head{
+	background-color: #edf1f6;
+	height:45px;
+	border-bottom: 1px solid rgb( 198, 196, 196 );
+}
+.xy{
+	height:45px;
+	border-top: 1px dotted rgb( 198, 196, 196 );
+}
+.right_part{
+	float:right;
+}
+.right_box_one{
+	width:300px;
+	height:325px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+}
+.right_box_one ul li{
+	
+	float: left;
+	width: 80px;
+	text-align: center;
+	margin-left: 12px;
+	padding-top: 10px;
+}
+.right_box_one .bm_head{
+	color: rgb( 41, 42, 42 );
+	background-color: #edf1f6;
+	height: 45px;
+	border-bottom: 1px solid rgb( 198, 196, 196 );
+}
+.right_box_one .bm_list{
+	height:45px;
+	border-top: 1px dotted rgb( 198, 196, 196 );
+}
+.right_box_two{
+	width:300px;
+	height:345px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+}
+.right_box_two ul li a{
+	
+	font-size: 14px;
+	font-family: "Microsoft YaHei";
+	color: rgb( 59, 59, 59 );
+}
+.right_box_two ul li a:hover{
+	color: rgb( 240, 127, 43 );
+}
+.right_box_two ul li{
+	border-top: 1px dotted rgb( 198, 196, 196 );
+	list-style: initial;
+	padding-top: 14px;
+	width: 230px;
+	margin-left: 40px;
+	height:65px;
+}
+.place_pic{
+	clear: both;
+	padding-top: 2px;
+}
+.place_pic_box{
+	width:1000px;
+	height:180px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgb( 198, 196, 196 );
+}
+.place_pic_box ul li{
+	float:left;
+	width:240px;
+	height:180px;
+}
+.place_pic_box ul li a{
+	padding: 20px 25px;
+	display: block;
+}
+.honor_pic{
+	clear: both;
+	padding-top: 2px;
+}
+.honor_pic_box{
+	width:1000px;
+	height:285px;
+	border-style: solid;
+	border-width: 1px;
+	margin-bottom: 50px;
+	border-color: rgb( 198, 196, 196 );
+}
+.honor_pic_box ul li{
+	float:left;
+	width:195px;
+	/* height:180px; */
+}
+.honor_pic_box ul li a{
+	padding: 20px 25px;
+	display: block;
+}

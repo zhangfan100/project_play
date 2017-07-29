@@ -1,0 +1,144 @@
+.contact_phone {
+float:right;
+}
+.contact_phone ul li{
+float:left;
+margin-top: 20px;
+margin-left:0px;
+}
+.line{
+background-color: #ff6603;
+opacity: 0.988;
+box-shadow: 0px 1px 0px 0px rgb( 195, 78, 2 );
+height: 6px;
+}
+.contact_call{
+letter-spacing: 1px;
+margin-left: 25px;
+color: rgb( 97, 96, 96 );
+line-height: 2.25;
+}
+.main{
+margin:0 auto;
+height:575px;
+border-bottom:1px solid #bfbfbf;
+}
+.main_content{
+width:1000px;
+height:568px;
+margin:0 auto;
+}
+.foot{
+margin:0 auto;
+/* height:82px; */
+}
+.foot_content{
+width:1000px;
+/* height:82px; */
+margin:0 auto;
+padding-top:20px;
+padding-bottom:10px;
+}
+.icon1{
+position:relative;
+top:-200px;
+z-index:-1;
+left:-200px;
+overflow:hidden;
+}
+.icon2{
+position:relative;
+top:70px;
+z-index:1;
+left:0px;
+overflow:hidden;
+}
+.login_table{
+background:#fff;
+}
+.login_table{
+width:360px;
+height:420px;
+border:1px solid #cccaca;
+border-radius:3px;
+padding:10px;
+}
+.text{
+float:left;
+width:25%;
+font-size:16px;
+color:#606060;
+padding:8px 4px;
+}
+.form-group{
+margin:20px 30px;
+}
+.form-control{
+width:75%;
+height:38px;
+}
+.mt{
+font-size:18px;
+color:#a7a4a4;
+margin:0 5px;
+padding:0 20px;
+}
+.l_title{
+padding:30px 30px 10px 30px;
+}
+.l_button{
+margin:20px 20px 10px 20px;
+text-align:center;
+}
+.mt1{
+float: left;
+padding: 0 30px;
+font-size: 14px;
+color: #848282;
+}
+.mt2{
+float: right;
+padding: 0 30px;
+font-size: 14px;
+color: #848282;
+}
+.mt1 a,.mt2 a{
+color: #848282;
+}
+.mt1 a:hover,.mt2 a:hover{
+color: #f07d22;
+}
+.footul{
+
+}
+.footul li{float:left;}
+.foot_li{
+width:70px;
+}
+.foot_li a{
+color:#848282;
+font-size:14px;
+}
+.foot_li a:hover{
+color:#ee7b21;
+font-size:14px;
+}
+.m3{
+color:#848282;
+font-size:14px;
+}
+.foot_gap {
+width: 0;
+margin: 1px 12px 0 5px;
+overflow: hidden;
+border-right: 1px solid rgb( 68, 68, 68 );
+}
+.lfooter{
+margin:20px;
+}
+.rw{
+color:red;
+}
+.wrong{
+margin: 15px 20px 10px 30px;
+}

@@ -1,0 +1,168 @@
+package com.HuiShengTec.app.publicAction;
+
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.HuiShengTec.app.core.BaseAction;
+import com.HuiShengTec.app.service.ILoginService;
+import com.HuiShengTec.base.cache.PropertiesCache;
+import com.HuiShengTec.entity.Login;
+import com.HuiShengTec.entity.SignInLog;
+import com.HuiShengTec.utils.Toolkit;
+
+@Controller
+@Scope("prototype")
+public class LoginAction extends BaseAction {
+	@Autowired
+	private ILoginService iLoginService;
+	
+	/**
+	 * 教练登陆
+	 * @return
+	 */
+	@RequestMapping("coh/login")
+	public String coachLogin(Model model){
+		PropertiesCache.fillRequestParam(request);
+		return "coach/loginAction/coachLogin";
+	}
+	/**
+	 * 管理员登陆
+	 * @return
+	 */
+	@RequestMapping("mag/login")
+	public String mLogin(Model model){
+		//这里是填充页面需要显示的logo等
+		PropertiesCache.fillRequestParam(request);
+		return "manage/loginAction/magLogin";
+	}
+	/**
+	 * 学生登陆
+	 * @return
+	 */
+	@RequestMapping("stu/login")
+	public String stuogin(){
+		PropertiesCache.fillRequestParam(request);
+		/*if (!Toolkit.isEmpty(getCurrLoginInfo())) {
+			return "redirect:stuIndex";
+		}*/
+		return "student/loginAction/stuLogin";
+	}
+	 
+	/**
+	 * 开启、禁用帐号
+	 * @param login
+	 * @return
+	 */
+	@RequestMapping("/mag/enableAccount")
+	@ResponseBody
+	public Integer enableAccount(Login login){
+		
+		//如果是启用就改为禁用
+		login.setStatus(login.getStatus()==0?1:0);
+		return iLoginService.enableAccount(login);
+	}
+	
+	/**
+	 * 重置密码
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("/mag/resetPassword")
+	@ResponseBody
+	public Integer resetPassword(Login login){
+		login.setPassword(Toolkit.Md5encode(PropertiesCache.getValue("default_password")));
+		return iLoginService.resetPassword(login);
+	}
+	
+	/**
+	 * 退出登陆
+	 * @return
+	 */
+	@RequestMapping("logout")
+	public void logout(){
+		session.invalidate();
+	}
+	
+	/**
+	 * 登陆
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping({"stu/loginSubmit","coh/loginSubmit","mag/loginSubmit"})
+	public Integer loginSubmit(Login data,String vcode){
+		
+		//验证码判断
+		if(!session.getAttribute("vcode").equals(vcode)){
+			return 1;
+		}
+		
+		//MD5加密密码
+		data.setPassword(Toolkit.Md5encode(data.getPassword()));
+		//根据访问URL判断登陆类型
+		//1-学生 2-教练 3-管理员
+		int roleType=-1;
+		if(request.getRequestURI().indexOf("stu")!=-1){
+			roleType=1;
+		}else if(request.getRequestURI().indexOf("coh")!=-1){
+			roleType=2;
+		}else{
+			roleType=3;
+		}
+		
+		//设定登陆类型
+		data.setRoleType(roleType);
+		Object loginInfo = iLoginService.queryUserInfo(data);
+		if(!Toolkit.isEmpty(loginInfo)){
+			session.setAttribute("loginInfo", data);
+			session.setAttribute("userInfo",loginInfo );
+			// 更新登陆信息
+			this.updateLoginInfo(data);
+			// 插入登陆日志
+			this.addSignLog(data);
+		}else{
+			return 2;
+		}
+		return 0;
+	}
+	
+	/**
+	 * 插入登陆日志
+	 */
+	private void addSignLog(Login data) {
+		SignInLog log = new SignInLog();
+		log.setLoginIP(getIpAddr());
+		log.setLoginTime(new Date());
+		log.setRoleType(data.getRoleType());
+		log.setUserName(data.getUsername());
+		log.setUserId(data.getId());
+		iLoginService.addSignInLog(log);
+	}
+	/**
+	 * 更新登陆信息
+	 * 
+	 * @param data
+	 * @return
+	 */
+	private void updateLoginInfo(Login data) {
+		Login newData = new Login();
+		newData.setEmail(data.getEmail());
+		newData.setId(data.getId());
+		newData.setUserId(data.getUserId());
+		newData.setLastLoginIP(getIpAddr());
+		newData.setLastLoginTime(new Date());
+		newData.setLoginCount(data.getLoginCount()==null?0:data.getLoginCount() + 1);
+		newData.setPassword(data.getPassword());
+		newData.setRoleType(data.getRoleType());
+		newData.setUsername(data.getUsername());
+		if (data.getMobileFlag()!=null) {
+			data.setMobileFlag(data.getMobileFlag());
+		}
+		iLoginService.updateLoginInfo(newData);
+	}
+}

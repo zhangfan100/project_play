@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IFinancialDao">
+	
+	
+	<insert id="insertSalaryInfo" parameterType="SalaryInfo">
+	insert into 
+	salaryinfo(coachId,adminId,salaryType,cash,inuseTime,status)
+	<choose>
+		<when test="adminId == null">
+		 	values(#{coachId},null,#{salaryType},#{cash},sysdate(),#{status})
+		</when>
+		<otherwise>
+		    values(null,#{adminId},#{salaryType},#{cash},sysdate(),#{status})
+		</otherwise>
+	</choose>
+	</insert>
+	
+	<select id="getPaymentAccountLog" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="map">
+		SELECT s.*,sm.name AS operateName,
+		  CONCAT(
+			    MONTH(s.`salaryBeginTime`),"月",DAY(s.`salaryBeginTime`),"日",
+			    "-",
+			    MONTH(s.`salaryEndTime`),"月",DAY(s.`salaryEndTime`),"日"
+			  ) AS `salaryTime`
+		  FROM salarylog s INNER JOIN sysadmininfo sm ON (sm.id=s.operatorId) where 1=1 
+		<if test="conditions.beginDate!=null"> and date(payTime) >= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null"><![CDATA[ and date(payTime) <= #{conditions.endDate}]]></if>
+		order by payTime desc
+	</select>
+	
+	<select id="fillFinancialDetail" parameterType="PageBean" resultType="map">
+		<choose>
+		  <when test="conditions.type==1">
+		    SELECT e.*,MAX(sl.payTime) AS 'payTime',
+		     sl.salaryBeginTime,sl.salaryEndTime,max(sl.status) as 'salaryStatus' 
+             FROM (
+                  SELECT si.*,si.`coachId` AS 'userId',ci.`coachCode`,ci.`name` 
+                  FROM salaryinfo si ,coachinfo ci 
+                  WHERE si.salaryType = 1
+                  AND ci.`id`=si.`coachId` 
+                  AND si.coachId = #{conditions.coachId} 
+                  AND si.status=1) e 
+             LEFT JOIN salarylog sl ON(sl.coachId=e.coachId) ORDER BY sl.id
+		  </when>
+		  <otherwise>
+		    SELECT e.*,MAX(sl.payTime) AS 'payTime',
+		    sl.salaryBeginTime,sl.salaryEndTime,max(sl.status) as 'salaryStatus' 
+			    FROM (
+			       SELECT si.*,si.`adminId` AS 'userId' ,sm.`name`
+			       FROM salaryinfo si ,
+			       sysadmininfo sm 
+			       WHERE si.salaryType = 2 
+			       AND  sm.`id`=si.`adminId` 
+			       AND si.adminId = #{conditions.adminId}  
+			       AND si.status=1) e 
+			    LEFT JOIN salarylog sl ON(sl.adminId=e.adminId) ORDER BY sl.id
+		  </otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="queryPaymentAccountByCondition" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="map">
+		SELECT
+		*
+		FROM
+		(SELECT
+		 si.`id`,
+		ci.`name` AS name,
+		ci.sex AS 'sex',
+		si.`salaryType`,
+		ci.`id` AS 'userId',
+		si.`cash`,
+		si.`inuseTime`,
+		sl.`status`,
+		MAX(sl.`payTime`) AS 'payTime'
+		FROM
+		salaryinfo si
+		LEFT JOIN coachinfo ci ON(si.`coachId` = ci.`id`)
+		LEFT JOIN salarylog sl ON(sl.coachId=si.coachId)
+		WHERE  si.`salaryType` = 1
+		AND si.`status`=1
+		AND sl.`status`=0
+		GROUP BY si.`coachId`
+		UNION
+		SELECT
+		si.`id`,
+		sai.`name` AS name,
+		sai.sex AS 'sex',
+		si.`salaryType`,
+		sai.`id` AS 'userId',
+		si.`cash`,
+		si.`inuseTime`,
+		sl.`status`,
+		MAX(sl.`payTime`) AS 'payTime'
+		FROM
+		salaryinfo si
+		LEFT JOIN sysadmininfo sai ON(si.`adminId` = sai.`id`)
+		LEFT JOIN salarylog sl ON(sl.`adminId`=si.`adminId`)
+		WHERE sl.`status`=0
+		AND si.`status`=1
+		AND si.`salaryType` = 2 
+        GROUP BY si.`adminId`) e
+		WHERE 1=1  
+		<if test="conditions.keyWord!=null">
+		and e.`name` LIKE CONCAT("%",#{conditions.keyWord},"%")
+		</if>
+		<if test="conditions.salaryType!=null">
+		and e.`salaryType` = #{conditions.salaryType}
+		</if>
+		ORDER BY e.inuseTime
+	</select>
+	
+	
+</mapper>

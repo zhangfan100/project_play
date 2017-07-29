@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.IStuInfoDao">
+	<select id="queryStuInfo" parameterType="Integer" resultType="StudentInfo">
+		SELECT * FROM StudentInfo e where e.id=#{id}
+	</select>
+		
+	<select id="querySchoolTopStu" parameterType="Integer" resultType="java.util.HashMap">
+	SELECT ld.* FROM (
+		SELECT
+			s.name,
+			s.campusId AS campusId,
+			s.createDate AS createDate,
+			IFNULL(MAX(ld.score),90)AS score
+		FROM 
+			StudentInfo s
+		LEFT JOIN
+			LessonInfo l
+		ON l.studentId=s.id AND l.subject=1
+		LEFT JOIN
+			LessonDetail ld
+		ON ld.lessonId=l.id
+		GROUP BY
+			s.name,
+			s.campusId,
+			
+			s.createDate
+	)ld WHERE
+	ld.campusId=#{campusId}
+	ORDER BY ld.score DESC LIMIT 0,10
+	</select>
+	
+	<!-- 管理员 获取学生信息-->
+	<select id="queryStudentInfoById" parameterType="Integer" resultType="java.util.HashMap">
+		select t1.*,t4.name coachName,t3.path,t2.id loginId,t2.roleId,t2.username,t2.email,t2.lastLoginTime,t2.lastLoginIP,t2.status from StudentInfo t1  
+			left join Login t2 on t2.userId=t1.id 
+			left join Picture t3 on t1.photoId = t3.id
+			left join CoachInfo t4 on t4.id = t1.coachId
+			where t1.id = #{id} and t2.roleType=1 order by t1.createDate desc
+	</select>
+	
+	<!-- 手机端获取学生信息 -->
+	<select id="queryStudentInfo" parameterType="Integer"
+		resultType="java.util.HashMap">
+		SELECT
+		s.name stuname,
+		s.sex,
+		s.licenceCode,
+		s.phone,
+		s.address,
+		s.id stuId,
+		lo.roleId,
+		p.path,
+		c.title school,
+		h.name coachname,
+		h.id coachId,
+		d.title DrivingLicenceType,
+		(SELECT COUNT(*)AS 'count' FROM LessonInfo l WHERE l.`stuId`=s.`id` AND l.`status` = 1 AND l.`beginTime`&gt;=SYSDATE()) AS
+		lessonInfocount,
+		(SELECT COUNT(*) FROM `TestInfo` t WHERE t.`stuId`=s.`id` AND t.studyDate &gt;=SYSDATE()) AS Testcount
+		FROM
+		StudentInfo s
+		LEFT JOIN Login lo ON lo.userId = s.id
+		LEFT JOIN Picture p ON s.photoId = p.id
+		LEFT JOIN CampusInfo c ON s.campusId = c.id
+		LEFT JOIN CoachInfo h ON s.coachId = h.id
+		LEFT JOIN DrivingLicence d ON s.licenceId=d.id
+		WHERE s.id =#{id}
+		AND lo.roleType = 1
+		ORDER BY s.createDate DESC
+	</select>
+	
+	<!-- 根据学员ID查询学员头像 -->
+	<select id="queryStudentHead" parameterType="Integer" resultType="String">
+		select path from 
+		(select t1.photoId from StudentInfo t1 where t1.id = #{id}) t2 
+		left join Picture t3 on t2.photoId = t3.id
+	</select>
+
+	<!-- 验证身份证 -->
+	<select id="validateCode" parameterType="com.HuiShengTec.entity.Login"
+		resultType="java.lang.Integer">
+		SELECT count(1) FROM StudentInfo where licenceCode=#{licenceCode}
+	</select>
+	<!-- 学生信息更新 -->
+	<update id="updateStudentInfo" parameterType="StudentInfo">
+		update StudentInfo
+		<set>
+			<if test="stuCode!=null">
+				stuCode=#{stuCode},
+			</if>
+			<if test="coachId!=null">
+				coachId=#{coachId},
+			</if>
+			<if test="name!=null">
+				name=#{name},
+			</if>
+			<if test="licenceCode!=null">
+				licenceCode=#{licenceCode},
+			</if>
+			<if test="sex!=null">
+				sex=#{sex},
+			</if>
+			<if test="birthday!=null">
+				birthday=#{birthday},
+			</if>
+			<if test="licenceId!=null">
+				licenceId=#{licenceId},
+			</if>
+			<if test="createDate!=null">
+				createDate=#{createDate},
+			</if>
+			<if test="phone!=null">
+				phone=#{phone},
+			</if>
+			<if test="address!=null">
+				address=#{address},
+			</if>
+			<if test="photoId!=null">
+				photoId=#{photoId},
+			</if>
+			<if test="stuType!=null">
+				stuType=#{stuType},
+			</if>
+			<if test="campusId!=null">
+				campusId=#{campusId},
+			</if>
+			<if test="lessonStep!=null">
+				lessonStep=#{lessonStep},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<!-- 插入学生信息 -->
+	<insert id="insertStudentInfo" parameterType="StudentInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into StudentInfo
+		(stuCode,coachId,name,licenceCode,sex,birthday,licenceId,createDate,phone,address,photoId,stuType,campusId,lessonStep)
+		values
+		(#{stuCode},#{coachId},#{name},#{licenceCode},#{sex},#{birthday},#{licenceId},SYSDATE(),#{phone},#{address},#{photoId},#{stuType},#{campusId},#{lessonStep})
+	</insert>
+
+	<select id="queryNewStudents" resultType="java.util.HashMap">
+		select
+		e.id,
+		e.name,
+		f.title as licenceName,
+		e.createDate as date
+		from
+		StudentInfo e
+		left
+		join
+		DrivingLicence f
+		on f.id=e.licenceId
+		order by
+		e.createDate desc limit 0,6
+	</select>
+
+	<select id="getStuTotalInfo" parameterType="Integer" resultType="java.util.HashMap">
+		select
+		stu.id,
+		stu.name,
+		stu.licenceCode as code,
+		l.title as licence,
+		a.attPath as path,
+		stu.address as addr,
+		stu.phone as phone,
+		stu.coachId
+		as teacherId
+		from
+		StudentInfo stu
+		left join
+		DrivingLicence l
+		on
+		stu.licenceId=l.id
+		left join
+		Attachment a
+		on
+		a.id=stu.photoId
+		where
+		stu.id=#{id}
+	</select>
+	<select id="queryStudentsByPage" resultType="java.util.HashMap"
+		parameterType="com.HuiShengTec.base.entity.PageBean">
+		select t1.*,t2.id loginId,t2.email,t2.status from StudentInfo t1 left
+		join Login t2
+		on t1.id = t2.userId where t2.roleType=1
+		<if test="conditions.keyWords!=null">
+				<![CDATA[ and (t1.stuCode = #{conditions.keyWords} or t1.name like concat('%',#{conditions.keyWords},'%') or t1.phone=#{conditions.keyWords})]]>
+		</if>
+		order by createDate desc
+	</select>
+	
+	<select id="queryStudentsByKeyWord" resultType="java.util.HashMap"
+		parameterType="PageBean">
+		SELECT
+		s.id,
+		s.name,
+		s.sex,
+		s.licenceCode,
+		d.title,
+		s.phone,
+		s.`lessonStep`,
+		s.`coachId`
+		FROM
+		StudentInfo s
+		LEFT
+		JOIN DrivingLicence d
+		ON d.id = s.licenceId
+		<if test="conditions.keyWord!=null">
+			WHERE s.name LIKE CONCAT("%", #{conditions.keyWord}, "%")
+			OR
+			s.forShort LIKE CONCAT("%", #{conditions.keyWord}, "%")
+			OR s.stuCode LIKE
+			CONCAT("%", #{conditions.keyWord}, "%")
+			OR s.phone LIKE CONCAT("%", #{conditions.keyWord},
+			"%")
+		</if>
+		ORDER BY s.createDate DESC 
+	</select>
+
+	<update id="editStudentInfo" parameterType="com.HuiShengTec.entity.StudentInfo">
+		update StudentInfo
+		<set>
+			<if test="phone!=null">
+				phone=#{phone},
+			</if>
+			<if test="address!=null">
+				address=#{address},
+			</if>
+			<if test="photoId!=null">
+				photoId=#{photoId},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ILotteryInfoDao">
+<select id="queryCurrentLotteryInfo" resultType="LotteryInfo">
+	SELECT 
+	  * 
+	FROM
+	  `lotteryInfo` li 
+	WHERE li.`beginTime` &lt;= SYSDATE() 
+	  AND li.`endTime` &gt;= SYSDATE()
+</select>
+<select id="queryLotteryInfoById" parameterType="int" resultType="LotteryInfo">
+	SELECT 
+	  * 
+	FROM
+	  `lotteryInfo` li 
+	WHERE 
+	  li.`id`=#{id}
+</select>
+
+<select id="queryLotteryInfoPage" parameterType="com.HuiShengTec.base.entity.PageBean" resultType="HashMap">
+	SELECT * FROM `lotteryinfo`ly where 1=1
+	<if test="conditions.beginDate!=null"> and ly.beginTime &gt;= #{conditions.beginDate}</if>
+		<if test="conditions.endDate!=null">and date(ly.endTime) &lt;= #{conditions.endDate}</if>
+		<if test="conditions.keyWord!=null">
+			<![CDATA[ and (ly.`title` like CONCAT('%',#{conditions.keyWord},'%'))]]>
+		</if> 
+		order by ly.`beginTime` desc
+</select>
+
+
+<select id="queryLotteryInfoId" parameterType="Integer" resultType="Map">
+	SELECT * FROM `lotteryinfo`ly where 1=1 and id=#{id}
+</select>
+<select id="queryStuLotteryCode" resultType="String">
+CALL getNewCode2(4,SYSDATE());
+</select>
+
+<select id="queryLotteryinfo" resultType="Integer">
+SELECT 
+  id 
+FROM
+  lotteryinfo li 
+WHERE li.`beginTime`&lt;= SYSDATE() 
+  AND li.`endTime`&gt;= SYSDATE() 
+
+</select>
+
+<select id="queryLotteryInfo" resultType="com.HuiShengTec.entity.LotteryInfo">
+SELECT l.`title`,l.`id` FROM `lotteryinfo` l WHERE l.`beginTime`&lt;=SYSDATE() AND l.`endTime`&gt;=SYSDATE()
+</select>
+
+<insert id="addLotteryInfoSubmit" parameterType="com.HuiShengTec.entity.LotteryInfo" useGeneratedKeys="true" keyProperty="id">
+INSERT INTO LotteryInfo (title,status,createDate,beginTime,endTime) 
+VALUES (#{title},#{status},SYSDATE(),#{beginTime},#{endTime})
+</insert>
+
+<update id="editLotteryStatus" parameterType="LotteryInfo">
+	UPDATE 
+	  `LotteryInfo` p 
+	SET
+	  p.status =#{status}
+	WHERE p.`id` = #{id}
+</update>
+
+<update id="editLotterySubmit" parameterType="LotteryInfo">
+	update LotteryInfo
+		<set>
+			<if test="beginTime!=null">
+				beginTime=#{beginTime},
+			</if>
+			<if test="endTime!=null">
+				endTime=#{endTime},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="title!=null">
+				title=#{title},
+			</if>
+		</set>
+		where id=#{id}
+</update>
+
+<update id="editLotteryAllStatus">
+UPDATE LotteryInfo SET STATUS=0
+</update>
+
+</mapper>

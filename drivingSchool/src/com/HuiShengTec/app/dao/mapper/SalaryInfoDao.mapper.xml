@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.HuiShengTec.app.dao.ISalaryInfoDao">
+
+	<select id="querySalaryInfoPage" parameterType="PageBean"
+		resultType="map">
+		SELECT
+		*
+		FROM
+		(SELECT
+		 si.`id`,
+		ci.`name` AS 'name',
+		si.`salaryType`,
+		ci.`id` AS 'userId',
+		si.`cash`,
+		si.`inuseTime`,
+		si.`status`
+		FROM
+		salaryinfo si,
+		coachinfo ci
+		WHERE si.`coachId` = ci.`id`
+		AND si.`salaryType` = 1
+		UNION
+		SELECT
+		si.`id`,
+		sai.`name` AS 'name',
+		si.`salaryType`,
+		sai.`id` AS 'userId',
+		si.`cash`,
+		si.`inuseTime`,
+		si.`status`
+		FROM
+		salaryinfo si,
+		sysadmininfo sai
+		WHERE si.`adminId` = sai.`id`
+		AND si.`salaryType` = 2) e
+		where 1=1 
+		<if test="conditions.keyWord!=null">
+		and e.`name` LIKE CONCAT("%",#{conditions.keyWord},"%")
+		</if>
+		<if test="conditions.infoType!=null">
+		and e.`salaryType` = #{conditions.infoType}
+		</if>
+		ORDER BY e.inuseTime
+	</select>
+	
+	<update id="changeStatus" parameterType="map" >
+	   update salaryinfo set status=#{status}
+	   where id = #{id}
+	</update>
+	
+	
+	<insert id="insertSalaryInfo" parameterType="SalaryInfo">
+	  INSERT INTO salaryinfo (coachId,adminId,salaryType,cash,inuseTime,status)
+		VALUES
+		(
+		<choose>
+	    <when test="salaryType==1">
+	     #{coachId},null,
+	    </when>
+	    <otherwise>
+	      null,#{adminId},
+	    </otherwise>
+	   </choose>
+		#{salaryType},
+		#{cash},
+		SYSDATE(),
+		#{status}
+		)
+	</insert>
+</mapper>

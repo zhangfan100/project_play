@@ -1,0 +1,492 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@include file="../../TagLib/TagLib.jsp"%>
+<body>
+	<style>
+        .rightContent .checkT tr td{
+            font-size: 14px;
+        }
+        .rightContent .checkT tr td:first-child{
+            width:80px;
+        }
+        .checkT tbody tr td.temp-Select-begin{
+            background: url(${path }/static/images/ch.PNG) no-repeat center center;
+        }
+        .checkT tbody tr td.temp-Select-end{
+            background: url(${path }/static/images/noC.PNG) no-repeat center center;
+        }
+        .checkT tbody tr td:first-child{
+            background: white;
+        }
+        .title_7{
+            font-size: 14px;
+        }
+        .timeTitle{
+        	width: 53px;
+        }
+        .timeTitle.timeEdge{
+        	width: 80px;
+        }
+        .timeTitle.isHide{
+        	display: none;
+        }
+        .icon_left{
+        	cursor:pointer;
+        	margin-right:10px;
+        	margin-top: -5px;
+        }
+        .icon_right{
+        	cursor:pointer;
+        	margin-left:10px;
+           	margin-top: -5px;
+        }
+        .hideSelect{
+        	display: none;
+        }
+        .disable-Select{
+        	background:#eee;
+        }
+        .temp-Disable-Select{
+        	background:#eee;
+        }
+        p{
+        	  text-indent:0; 
+        }
+    </style>
+    <div class="content_2 rightContent">
+	<h2>在线选课</h2>
+	<div class="content_4">
+		<div class="content_5">
+			<p class="reminder">
+				<span style="width:180px;"> <span class="title_6"
+					>当前科目：</span> <span class="subject">科目二</span>
+				</span> <span class="time"> <span class="title_6">选择预约日期</span> <input
+					type="text" class="form_datetime" readonly value="${beginDate}" />
+				</span>
+			</p>
+			<p class="title_6">已选预约</p>
+			<div style='width:100%;height:210px;border:1px solid #a0a0a0;overflow:hidden;margin-top:15px;'>
+			<table cellspacing="0" cellpadding="0" class="pastC">
+				<thead>
+					<tr>
+						<td>培训日期</td>
+						<td>时间段</td>
+						<td>教练</td>
+						<td>培训编号</td>
+						<td>车辆类型</td>
+						<td>价格</td>
+						<td>状态</td>
+					</tr>
+				</thead>
+				<tbody id="currStuLessonInfo">
+				</tbody>
+			</table>
+			</div>
+			<p class="button">
+				<span style="font-size: 14px;color:#545d6a;margin-left: 5px">
+					<span id="infoTag" style="color: red;display:inline-block;width:465px;height:22px;"></span><span> <span>需付金额</span>
+						<span style="color:#ff6603;font-weight: bold">￥95</span>
+				</span>
+				</span> <input style="margin-left:2%" onclick="saveLessonInfo()" type="button" value="保存预约" />
+			</p>
+			<p class="order">
+				<span class="title_6">选着时间</span> 
+					<span class="title_7">开始时间:</span>
+					<input id="beginTime" 
+					style="
+						outline: none;
+						width:130px;
+						border:1px solid #d2d2d2;
+						height:30px;
+						border-radius: 5px;"
+					type="text" 
+					disabled="disabled" /> 
+					<span class="title_7">结束时间:</span>
+					<input id="endTime" 
+					style="
+						outline: none;
+						width:130px;
+						border:1px solid #d2d2d2;
+						height:30px;
+						border-radius: 5px;"
+					type="text" 
+					disabled="disabled"/> 
+					<span>
+					<sapn>
+						<span id="noChec"style=" width:22px;height:22px;background: url(${path }/static/images/checkbox1.png) no-repeat;"></span>
+						<label class="check" for="noChec">不可选</label> 
+					</sapn> 
+					<sapn style="margin-left:5px"> 
+						<span id="Chec" style="height:22px;width:22px;background: url(${path }/static/images/ch.PNG) no-repeat;"></span>
+						<label class="check" for="Chec">开始时间</label> 
+					</sapn>
+					<sapn style="margin-left:5px"> 
+						<span id="Chec" style="height:22px;width:22px;background: url(${path }/static/images/noC.PNG) no-repeat;"></span>
+						<label class="check" for="Chec">结束时间</label> 
+					</sapn>
+				</span>
+
+			</p>
+			<div style='overflow: hidden ;width:100%;height:auto'>
+				<table cellpadding="0" cellspacing="0" class="orderT checkT"
+					style='overflow: hidden'>
+					<thead>
+						<tr id="timeTitleTag" style="border-top:none">
+							<td></td>
+							
+						</tr>
+					</thead>
+					<tbody id="cohLessonInfo" >
+					
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+	</div>
+	<script type="text/javascript">
+		var timeTitle=${timePriceTitle};
+		var firstTime=timeTitle[0].beginTime;
+		var lastTime=timeTitle[timeTitle.length-1].beginTime;
+		var lastCount=${lessonPlanLimit};
+		var flag = true;//时间选择的是否合适 fasle为不合适 true为合适
+		var allTime = [6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22];
+		/* 日历插件 */
+		$(".form_datetime").datetimepicker({
+			weekStart : 1,
+			startDate : '${beginDate}',
+			endDate : '${endDate}',
+			initialDate : '${beginDate}',
+			todayBtn : 1,
+			autoclose : 1,
+			todayHighlight : 1,
+			startView : 2,
+			minView : 'month',
+			format : "yyyy-mm-dd",
+			forceParse : 0
+		}).change(function(){
+		    isValidityPeriod();//判断选择的日期是否在接下来的一周之内
+			loadCohLessonPlan();
+			removeTemp();
+		});
+		var lessonPlanLimited = 0;	//已选预约总数
+		$(function(){
+			//加载已选课程
+			queryStuLessonPlanInfo();
+			initTimeTitle();
+		});
+
+		/**
+		 *判断选择的日期是否在一周之内
+		 */
+		
+		function isValidityPeriod(){
+			 var date = $(".form_datetime").val();//获取选择的时间
+			 date = new Date(date);
+			 var currDate = new Date();
+			 var startDate=currDate.getTime()+24*60*60*1000;
+			 startDate = new Date(startDate);//开始的时间
+			 var planDate = currDate.getTime()+8*24*60*60*1000;
+			 planDate = new Date(planDate);//开始的时间
+			 if((date<currDate)||(date>planDate)){
+				 $("#infoTag").html("");
+				 $("#infoTag").html("只允许选择从"
+							+(currDate.getMonth()+1)+"月"
+							+(currDate.getDate()+1)+"日"
+							+"到"
+							+(planDate.getMonth()+1)+"月"
+							+(planDate.getDate()+1)+"日"
+							+"之间的课程！");
+				 flag = false;
+				 return false;
+			 }
+			 $("#infoTag").html("");
+			 flag = true;
+			 return true;
+		}
+		/**
+		 * 加载已选课程
+		 */
+		function queryStuLessonPlanInfo(){
+			$("#currStuLessonInfo").html("");
+			$.post("${path}/stu/queryStuLessonPlanInfo",function(data){
+				data = $.parseJSON(data);
+				lessonPlanLimited = data.length;
+				lastCount=${lessonPlanLimit}-lessonPlanLimited;
+				$("#cohLessonInfo").html("");
+				$.each(data,function(index,item){
+					var innerTag ="<tr>";
+					innerTag += "<td>" + item.studyDate + "</td>";
+					innerTag += "<td>" + item.studyTime + "</td>";
+					innerTag += "<td>" + item.name + "</td>";
+					innerTag += "<td>" + item.lessonCode+ "</td>";
+					innerTag += "<td>" + (item.carType==0?"教练训练车型":item.carType==1?"场地训练车型":"场地模拟车型")+"</td>";
+					if(item.price==undefined){
+						innerTag += "<td></td>";
+					}else{
+						innerTag += "<td>" + item.price+"</td>";
+					}
+					innerTag += "<td>已分配车辆</td>";
+					innerTag += "</tr>";
+					$("#currStuLessonInfo").append(innerTag);
+				});
+			});
+		}
+		
+		/**
+		加载可以预约的课程
+		*/
+		function loadCohLessonPlan(){
+			$("#cohLessonInfo").html("");
+			$.post("${path}/stu/queryTeacherTimePlan",{studyDate:$(".form_datetime").val()},function(data){
+				data = $.parseJSON(data);
+				$.each(data,function(index,item){
+					var insertTag = "<tr>";
+					insertTag+="<td>"+item.name+"</td>";
+					$.each(item,function(key,value){
+						if((key!="name")&&(key!="coachId")){
+							insertTag+="<td coachId='";
+							insertTag+=item.coachId;
+							insertTag+="' timeTag='";
+							insertTag+=key;
+							insertTag+="' ";
+							insertTag+=(parseInt(value))>0?"class='selectTd disable-Select'":"class='selectTd enable-Select'";
+							insertTag+=" ></td>";
+						}
+					});
+					insertTag+="</tr>";
+					$("#cohLessonInfo").append(insertTag);
+					$(".timeTitle.isHide").each(function(index,item){
+						var timeTag=$(this).attr("timeTag");
+						if(parseInt(timeTag)<10){
+							timeTag="t0"+timeTag;
+						}else{
+							timeTag="t"+timeTag;
+						}
+						$("td[timeTag='"+timeTag+"']").addClass("hideSelect");
+					});
+				});
+				$(".selectTd.enable-Select").click(selectLesson);
+			});
+		}
+		function initTimeTitle(){
+			if(timeTitle.length-10>0){//时间段前面一行最多10个 如果多余10个 那么就有左右两边的按钮
+				var half = parseInt((timeTitle.length-10)/2);//求出多余的一半
+				for (var i = 0; i < half; i++) {//前面的一半隐藏
+					timeTitle[i].isShow=false;
+				}
+				for (var i = 10+half; i < timeTitle.length; i++) {//后面的一半隐藏
+					timeTitle[i].isShow=false;
+				}
+			}
+			var innerTag="";
+			$(timeTitle).each(function(index,element){//遍历
+				var timeTag = element.beginTime<10?"0"+element.beginTime:""+element.beginTime;
+				if(element.isShow==false){//隐藏的设置class为timeTitle isHide
+					innerTag+="<td timeTag='"+element.beginTime+"' class='timeTitle isHide' >"
+						+"<span class='ti'>"
+						+timeTag
+						+":00</span></td>";
+				}else{//那么这里就需要显示
+					var leftBtn="<img class='icon_left' src='${path }/static/images/Icon_left.png' alt=''/>";
+					var rightBtn="<img class='icon_right' src='${path }/static/images/Icon_right.png' alt=''/>";
+					innerTag+="<td timeTag='"+element.beginTime+"' class='timeTitle' >";
+					if(index==half){//这里是需要挂上左边按钮
+						innerTag+=leftBtn;
+					}
+					innerTag+="<span class='ti'>"
+						+timeTag;
+					innerTag+=":00</span>";
+					if(index==9+half){//这里是需要挂上右边按钮
+						innerTag+=rightBtn;
+					}
+					innerTag+="</td>";
+				}
+			});
+			$("#timeTitleTag").append(innerTag);
+			$(".icon_left").click(leftClick);
+			$(".icon_right").click(rightClick);
+			loadCohLessonPlan();
+			
+		}
+		function leftClick(){
+			if(!flag){//如果时间不对 不许点击
+				return;
+			}
+			var leftBtn="<img class='icon_left' src='${path }/static/images/Icon_left.png' alt=''/>";
+			var rightBtn="<img class='icon_right' src='${path }/static/images/Icon_right.png' alt=''/>";
+			var showTimeTag=parseInt($(this).parent("td").attr("timeTag"))-1;
+			$(".icon_left").remove();
+			$(".icon_right").remove();
+			$(".timeTitle.isHide[timeTag='"+showTimeTag+"']").removeClass("isHide");
+			if(showTimeTag!=firstTime){
+				$(".timeTitle[timeTag='"+showTimeTag+"']").prepend(leftBtn);
+			}
+			$(".timeTitle[timeTag='"+(showTimeTag+10)+"']").addClass("isHide");
+			$(".timeTitle[timeTag='"+(showTimeTag+9)+"']").append(rightBtn);
+			$(".icon_left").click(leftClick);
+			$(".icon_right").click(rightClick);
+			$(".selectTd").removeClass("hideSelect");
+			$(".selectTd").each(function(index,item){
+				var currTimeTag = parseInt($(this).attr("timeTag").substring(1,4));
+				if((currTimeTag<showTimeTag)||(currTimeTag>(showTimeTag+9))){
+					$(item).addClass("hideSelect");
+				}
+			});
+			$(".selectTd.enable-Select").unbind().click(selectLesson);
+		}
+		function rightClick(){
+			if(!flag){//如果时间不对 不许点击
+				return;
+			}
+			var leftBtn="<img class='icon_left' src='${path }/static/images/Icon_left.png' alt=''/>";
+			var rightBtn="<img class='icon_right' src='${path }/static/images/Icon_right.png' alt=''/>";
+			var showTimeTag=parseInt($(this).parent("td").attr("timeTag"))+1;
+			$(".icon_left").remove();
+			$(".icon_right").remove();
+			$(".timeTitle.isHide[timeTag='"+showTimeTag+"']").removeClass("isHide");
+			if(showTimeTag!=lastTime){
+				$(".timeTitle[timeTag='"+showTimeTag+"']").append(rightBtn);
+			}
+			$(".timeTitle[timeTag='"+(showTimeTag-10)+"']").addClass("isHide");
+			$(".timeTitle[timeTag='"+(showTimeTag-9)+"']").prepend(leftBtn);
+			$(".icon_left").click(leftClick);
+			$(".icon_right").click(rightClick);
+			$(".selectTd").removeClass("hideSelect");
+			$(".selectTd").each(function(index,item){
+				var currTimeTag = parseInt($(this).attr("timeTag").substring(1,4));
+				if((currTimeTag>showTimeTag)||(currTimeTag<(showTimeTag-9))){
+					$(item).addClass("hideSelect");
+				}
+			});
+			$(".selectTd.enable-Select").unbind().click(selectLesson);
+		}
+		
+		function selectLesson(){
+			if(!flag){//如果时间不对 不许点击
+				return;
+			}
+			$("#infoTag").html("");
+			if($(this).hasClass("temp-Select")){
+				$("#beginTime").val("");
+				$("#endTime").val("");
+				$(this).removeClass("temp-Select").removeClass("temp-Select-begin").removeClass("temp-Select-end");
+				if($(".temp-Select").length==1){
+					$("#beginTime").val($(".temp-Select").attr("timeTag").substring(1,3)+":00");
+					$(".temp-Select").removeClass("temp-Select-end").addClass("temp-Select-begin");
+				}else if($(".temp-Select").length==0){
+					$(".selectTd.temp-Disable-Select")
+					.removeClass("temp-Disable-Select")
+					.addClass("enable-Select");
+					$(".selectTd.enable-Select").unbind().click(selectLesson);					
+				}
+				removeTemp();
+			}else{
+				if(lastCount>0){
+					if($(".temp-Select").length==0){
+						$(this).addClass("temp-Select").addClass("temp-Select-begin");
+						$("#beginTime").val($(this).attr("timeTag").substring(1,3)+":00");
+						$(".selectTd.enable-Select").unbind();
+						$(".selectTd.enable-Select[coachId!="+$(this).attr("coachId")+"]")
+							.removeClass("enable-Select")
+							.addClass("temp-Disable-Select");
+						$(".selectTd.enable-Select").click(selectLesson);
+					}else {
+						var selectTime = parseInt($(this).attr("timeTag").substring(1,3));						
+						if ($(".temp-Select").length==1){
+							var beginTime = parseInt($("#beginTime").val().substring(0,2));
+							if((beginTime-selectTime)>2|(beginTime-selectTime)<-2){
+								$("#infoTag").html("只允许预约三小时以内的课程！");
+							}else{
+								var beginTimeTag = beginTime>9?""+beginTime:"0"+beginTime;
+								var selectTimeTag = selectTime>9?""+selectTime:"0"+selectTime;
+								if(beginTime>selectTime){
+									$("#beginTime").val(selectTimeTag+":00");
+									$("#endTime").val(beginTimeTag+":59");
+									$(".temp-Select").removeClass("temp-Select-begin").addClass("temp-Select-end");
+									$(this).addClass("temp-Select").addClass("temp-Select-begin");
+								}else{
+									$("#endTime").val(selectTimeTag+":59");
+									$("#beginTime").val(beginTimeTag+":00");
+									$(this).addClass("temp-Select").addClass("temp-Select-end");
+								}
+								
+								var coachName =$($(this).parent("tr").children()[0]).html();
+								
+								//需要的数据
+								var needData = {
+										 cohId:$(this).attr("coachId"),
+										 studyDate:$(".form_datetime").val(),
+										 studyTime:$("#beginTime").val()+"-"+ $("#endTime").val()
+								};
+								//发送ajax得到price和车辆类型
+								$.ajax({
+							        type: "post",
+							        url: "${path}/stu/getTotalPriceAndCarType",
+							        data:needData,
+							        success: function(data){
+							        	data = eval("("+data+")");
+							        	var price = data.price;
+							        	if(price==0){
+							        		price="";
+							        	}
+										var tempData ="<tr coachId='"+$(this).attr("coachId")+"' tempFlag='true'>";
+										tempData += "<td>" + $(".form_datetime").val() + "</td>";
+										tempData += "<td>" + $("#beginTime").val()+"-"+ $("#endTime").val() + "</td>";
+										tempData += "<td>" + coachName + "</td>";
+										tempData += "<td><span class='red'>未保存</span></td>";
+										tempData += "<td>"+(data.carType==0?"教练训练车型":data.carType==1?"场地训练车型":"场地模拟车型")+"</td>";
+										tempData += "<td price='"+price+"'>"+price+"</td>";
+										tempData += "<td><span class='red'>未保存</span></td>";
+										tempData += "</tr>";
+										$("#currStuLessonInfo").append(tempData);
+							        }
+							    });
+								
+							}
+						}else{
+							$("#infoTag").html("只允许预约三小时以内的课程！");
+						}
+					}
+				}else{
+					$("#infoTag").html("您已经约满三个课时，请上课后再来预约！");
+				}
+			}
+		}
+		
+		function removeTemp(){
+			$("#currStuLessonInfo>tr").each(function(){
+				if($(this).attr("tempFlag")){
+					$(this).remove();
+				}
+			});
+		}
+		function saveLessonInfo(){
+			if($(".temp-Select").length<2){
+				$("#infoTag").html("请选择开始时间与结束时间！");
+				return;
+			}
+			var data ={
+					cohId:$(".temp-Select").attr("coachId"),
+					lessonCode:"未保存",
+					studyDate:$(".form_datetime").val(),
+					subject:1,
+					studyTime:$("#beginTime").val()+"-"+$("#endTime").val(),
+					price:$("#currStuLessonInfo").find("td[price]").attr("price"),
+					student:"1",//用于后台区别是管理端预约还是学生端预约
+					status:-1
+				};
+			$.ajax({
+		        type: "post",
+		        url: "${path}/stu/saveLessonInfoPlanSubmit",
+		        data: {
+		        	jsonStr:"["+JSON.stringify(data)+"]"
+		        },
+		        success: function(data){
+		        	loadCohLessonPlan();
+		        	queryStuLessonPlanInfo();
+		        }
+		    });
+		}
+	</script>
+</body>
